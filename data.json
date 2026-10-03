@@ -1,14 +1,7 @@
 {
   "attendance": {},
   "bonus": {},
-  "quizzes": [
-    {
-      "id": "qmus9tb9w",
-      "max": 30,
-      "title": "q1",
-      "scores": {}
-    }
-  ],
+  "quizzes": [],
   "people": [],
   "canceled": [
     "2026-10-03"
