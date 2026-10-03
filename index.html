@@ -75,6 +75,10 @@ footer{text-align:center;color:#5a6488;font-size:13px;padding-bottom:30px}
 <input id="un" placeholder="Username" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><div id="err" class="sub" style="color:var(--no);font-weight:800"></div>
 <div class="dbtns"><button class="btn" data-a="login">Log in</button><button class="btn ghost" data-a="logout">Log out</button><button class="btn ghost" data-a="dl">⬇ Download JSON</button><button class="btn ghost" data-a="close">Close</button></div></dialog>
 
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const SATS=[];for(let d=Date.UTC(2026,9,3);d<=Date.UTC(2027,8,18);d+=6048e5)SATS.push(new Date(d).toISOString().slice(0,10));
@@ -113,18 +117,31 @@ async function load(){let j=null;
  try{if(cfg.token){const r=await fetch(API(),{headers:H(),cache:'no-store'});if(r.ok)j=JSON.parse(dec((await r.json()).content));else setStatus('⚠ Token or repo name is wrong',4000)}
   if(!j)j=await fetchDB()}
  catch(e){setStatus('⚠ Could not load data.json',4000)}
- if(j)db={people:[],attendance:{},canceled:[],quizzes:[],...j};
- if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;view()}
+ if(j&&!fbGot)db=norm(j);
+ if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;view();loaded=true;if(pendingSeed&&cfg.token){pendingSeed=false;fbSave()}}
 async function save(){setStatus('Saving to GitHub…');
  try{let r=await fetch(API(),{headers:H(),cache:'no-store'}),cur=r.ok?await r.json():{};
   r=await fetch(API(),{method:'PUT',headers:{...H(),'Content-Type':'application/json'},body:JSON.stringify({message:'Update scores '+new Date().toISOString(),content:enc(JSON.stringify(db,null,2)),sha:cur.sha})});
   if(!r.ok)throw new Error((await r.json()).message);setStatus('Saved ✓',2500)}
  catch(e){setStatus('⚠ Not saved: '+e.message)}}
 async function run(){if(busy){dirty=true;return}busy=true;await save();busy=false;if(dirty){dirty=false;run()}}
-const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);tm=setTimeout(run,600)};
+const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);clearTimeout(tg);if(FB)tm=setTimeout(fbSave,250);tg=setTimeout(run,FB?4000:600)};
 const needLogin=()=>{if(cfg.token)return false;openDlg();return true};
 function openDlg(){$('un').value='';$('pw').value='';$('err').textContent='';$('dlg').showModal()}
 function applyMode(){document.body.classList.toggle('ro',!cfg.token);$('lk').textContent=cfg.token?'🔓 Teacher mode':'🔐 Teacher login'}
+
+/* ---------- live database (Firebase): everyone gets changes instantly; GitHub keeps the backup ---------- */
+const FB=window.FBCFG&&FBCFG.databaseURL&&window.firebase?FBCFG:null;
+let fbRef=null,fbGot=false,loaded=false,pendingSeed=false,tg;
+const arr=x=>Array.isArray(x)?x:Object.values(x||{});
+const norm=j=>{const n={attendance:{},bonus:{},...j,people:arr(j.people),canceled:arr(j.canceled),quizzes:arr(j.quizzes)};n.quizzes.forEach(x=>x.scores??={});return n};
+const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a<b?-1:1)):v);
+function fbSave(){if(!FB||!fbRef)return;fbRef.set(JSON.parse(JSON.stringify(db))).then(()=>setStatus('Saved live ✓',2000)).catch(e=>setStatus('⚠ Live save failed: '+e.message,6000))}
+function fbStart(){if(!FB)return;firebase.initializeApp(FB);fbRef=firebase.database().ref('data');
+ fbRef.on('value',s=>{const v=s.val();
+  if(v==null){if(cfg.token&&loaded)fbSave();else pendingSeed=true;return}
+  fbGot=true;const n=norm(v);
+  if(canon(n)!==canon(db)){db=n;if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;list()}})}
 
 /* ---------- teacher login: auth.json holds the GitHub token encrypted with the password ---------- */
 const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
@@ -133,6 +150,7 @@ async function doLogin(){const e=$('err');e.textContent='Checking…';
  try{const r=await fetch('auth.json?'+Date.now(),{cache:'no-store'});if(!r.ok){e.textContent='auth.json was not found in the repo. Run setup.html first.';return}
   const A=await r.json();if($('un').value.trim()!==A.username)throw 0;
   const o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(A.iv)},await key($('pw').value,b64d(A.salt)),b64d(A.data))));
+  if(FB)try{await firebase.auth().signInWithEmailAndPassword(A.username+'@bible.study',$('pw').value)}catch(x){e.textContent='Live database login failed. Create the user '+A.username+'@bible.study in Firebase Authentication with the same password.';return}
   cfg={token:o.token,owner:o.owner,repo:o.repo};localStorage.setItem('bs_cfg',JSON.stringify(cfg));tab='att';$('pw').value='';$('dlg').close();load()}
  catch(x){e.textContent='Wrong username or password.'}}
 
@@ -188,7 +206,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data
  if(a==='pick'){quizId=id;view();return}
  if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));l.download='data.json';l.click();return}
  if(a==='login')return doLogin();
- if(a==='logout'){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
+ if(a==='logout'){if(FB)firebase.auth().signOut();cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
  if(needLogin())return;
  if(a==='P'||a==='X'||a==='B'||a==='H')return mark(id,a);
  if(a==='bp'||a==='bm'){const b=(db.bonus??={});b[id]=Math.max(0,(b[id]||0)+(a==='bp'?1:-1));changed();return list()}
@@ -213,8 +231,8 @@ document.addEventListener('change',e=>{const t=e.target;
 $('q').addEventListener('input',e=>{q=e.target.value;list()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pk'))addPerson()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pw')doLogin()});
-const norm=j=>({people:[],attendance:{},canceled:[],quizzes:[],...j});
-async function poll(){if(cfg.token||document.hidden)return;try{const j=norm(await fetchDB());if(JSON.stringify(j)!==JSON.stringify(db)){db=j;list()}}catch(e){}}
+async function poll(){if(FB||cfg.token||document.hidden)return;try{const j=norm(await fetchDB());if(JSON.stringify(j)!==JSON.stringify(db)){db=j;list()}}catch(e){}}
 setInterval(poll,5000);document.addEventListener('visibilitychange',poll);
+fbStart();
 view();load();
 </script></body></html>

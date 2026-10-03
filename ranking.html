@@ -34,7 +34,13 @@ h3{margin:18px 0 0;color:var(--navy);font-size:16px;padding-bottom:6px;border-bo
 <header class="hero"><a class="back" href="index.html">← Scoreboard</a><br>
 <svg class="cross"><use href="#cross"/></svg><h1>Our Top Students</h1><p>Updates live</p></header>
 <main id="m"></main>
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
+const FB=window.FBCFG&&FBCFG.databaseURL&&window.firebase?FBCFG:null;let got=false;
+const arr=x=>Array.isArray(x)?x:Object.values(x||{});
+const norm=j=>({attendance:{},bonus:{},...j,people:arr(j.people),canceled:arr(j.canceled),quizzes:arr(j.quizzes).map(x=>({...x,scores:x.scores||{}}))});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const n1=x=>+(+x).toFixed(1),PREPS=['1st Prep','2nd Prep'],M=['🥇','🥈','🥉'];
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
@@ -58,6 +64,7 @@ async function fetchDB(){
   if(Date.now()>off.api){try{const r=await fetch(`https://api.github.com/repos/${OWN}/${REP}/contents/data.json`,{cache:'no-cache',headers:{Accept:'application/vnd.github.raw+json'}});
    if(r.ok)return await r.json();off.api=Date.now()+6e5}catch(e){off.api=Date.now()+6e5}}}
  return (await fetch('data.json?'+Date.now(),{cache:'no-store'})).json()}
-async function go(){if(document.hidden&&last)return;try{const j=await fetchDB(),k=JSON.stringify(j);if(k!==last){last=k;draw({people:[],attendance:{},canceled:[],quizzes:[],...j})}}catch(e){if(!last)$('m').innerHTML='<div class="card empty">Could not load the scores. Try again in a moment.</div>'}}
-go();setInterval(go,5000);document.addEventListener('visibilitychange',go);
+async function go(){if(got||(document.hidden&&last))return;try{const j=await fetchDB(),k=JSON.stringify(j);if(k!==last){last=k;draw(norm(j))}}catch(e){if(!last)$('m').innerHTML='<div class="card empty">Could not load the scores. Try again in a moment.</div>'}}
+if(FB){firebase.initializeApp(FB);firebase.database().ref('data').on('value',s=>{const v=s.val();if(v!=null){got=true;draw(norm(v))}})}
+go();if(!FB)setInterval(go,5000);document.addEventListener('visibilitychange',go);
 </script></body></html>
