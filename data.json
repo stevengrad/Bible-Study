@@ -6,7 +6,14 @@
       "class": "2nd Prep"
     }
   ],
-  "attendance": {},
+  "attendance": {
+    "2026-10-03": {
+      "pmus9ihi0cyw": {
+        "s": "P",
+        "b": false
+      }
+    }
+  },
   "canceled": [],
   "quizzes": []
 }
