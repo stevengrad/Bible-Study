@@ -8,7 +8,13 @@
     }
   ],
   "attendance": {
-    "2026-10-03": {}
+    "2026-10-03": {
+      "pmusblu0s1ld": {
+        "s": "P",
+        "b": true,
+        "h": true
+      }
+    }
   },
   "canceled": [],
   "quizzes": [
