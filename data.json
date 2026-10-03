@@ -1,16 +1,5 @@
 {
-  "people": [
-    {
-      "id": "pmus9ihi0cyw",
-      "name": "Steven Botros",
-      "class": "2nd Prep"
-    },
-    {
-      "id": "pmus9maqvvvu",
-      "name": "Andrew samir",
-      "class": "2nd Prep"
-    }
-  ],
+  "people": [],
   "attendance": {
     "2026-10-03": {}
   },
