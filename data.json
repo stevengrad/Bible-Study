@@ -1,6 +1,9 @@
 {
   "attendance": {},
   "bonus": {},
+  "canceled": [
+    "2026-10-03"
+  ],
   "people": [
     {
       "class": "1st Prep",
@@ -17,20 +20,26 @@
       "name": "Michael Raafat"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "240",
       "id": "pmusjwtyqyrv",
-      "name": "Julian Nader",
-      "class": "1st Prep",
-      "cls": "يونان النبي"
+      "name": "Julian Nader"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "460",
       "id": "pmusjwxnxqx0",
-      "name": "Mark Ramy",
+      "name": "Mark Ramy"
+    },
+    {
       "class": "1st Prep",
-      "cls": "يونان النبي"
+      "cls": "داود النبي",
+      "code": "423",
+      "id": "pmusjxiism4f",
+      "name": "Marcelino George"
     }
   ],
-  "canceled": [],
   "quizzes": []
 }
