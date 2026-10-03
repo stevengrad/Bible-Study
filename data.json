@@ -1,19 +1,7 @@
 {
-  "people": [
-    {
-      "id": "pmus9t7aliyo",
-      "name": "Steven Botros",
-      "class": "2nd Prep"
-    }
-  ],
+  "people": [],
   "attendance": {
-    "2026-10-03": {
-      "pmus9t7aliyo": {
-        "s": "P",
-        "b": true,
-        "h": true
-      }
-    }
+    "2026-10-03": {}
   },
   "canceled": [],
   "quizzes": [
@@ -21,12 +9,8 @@
       "id": "qmus9tb9w",
       "title": "q1",
       "max": 30,
-      "scores": {
-        "pmus9t7aliyo": 0
-      }
+      "scores": {}
     }
   ],
-  "bonus": {
-    "pmus9t7aliyo": 0
-  }
+  "bonus": {}
 }
