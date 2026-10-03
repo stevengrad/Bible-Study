@@ -32,7 +32,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outl
 .btn.ghost{background:#fff;border-color:var(--line);color:var(--navy)}.btn.danger{background:#fff;border-color:var(--no);color:var(--no)}
 .sub{font-size:13px;color:#5a6488;margin-top:3px}.rules{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
 .rules span,.chip{padding:3px 11px;border-radius:99px;background:#e3ecff;color:var(--navy);font-size:13px;font-weight:800}
-.chip{margin-left:8px;font-size:12px}.cancel{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700}.cancel input{width:22px;min-height:22px}
+.chip{margin-left:8px;font-size:12px;white-space:nowrap}.cancel{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700}.cancel input{width:22px;min-height:22px}
 .banner{margin-top:12px;padding:16px;border-radius:14px;background:#fff2d6;border:2px dashed var(--gold);text-align:center;font-weight:800;color:#7a5200}
 .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;margin-top:10px;border:2px solid var(--line);border-radius:16px;background:#fff}
 .who{flex:1 1 170px;min-width:150px}.who b{font-size:17px}
@@ -138,6 +138,7 @@ const norm=j=>{const n={attendance:{},bonus:{},...j,people:arr(j.people),cancele
 const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a<b?-1:1)):v);
 function fbSave(){if(!FB||!fbRef)return;fbRef.set(JSON.parse(JSON.stringify(db))).then(()=>setStatus('Saved live ✓',2000)).catch(e=>setStatus('⚠ Live save failed: '+e.message,6000))}
 function fbStart(){if(!FB)return;firebase.initializeApp(FB);fbRef=firebase.database().ref('data');
+ firebase.auth().onAuthStateChanged(u=>{if(!u&&cfg.token){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));load();setStatus('Please log in again to turn on live saving.',7000);openDlg()}});
  fbRef.on('value',s=>{const v=s.val();
   if(v==null){if(cfg.token&&loaded)fbSave();else pendingSeed=true;return}
   fbGot=true;const n=norm(v);
@@ -150,7 +151,7 @@ async function doLogin(){const e=$('err');e.textContent='Checking…';
  try{const r=await fetch('auth.json?'+Date.now(),{cache:'no-store'});if(!r.ok){e.textContent='auth.json was not found in the repo. Run setup.html first.';return}
   const A=await r.json();if($('un').value.trim()!==A.username)throw 0;
   const o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(A.iv)},await key($('pw').value,b64d(A.salt)),b64d(A.data))));
-  if(FB)try{await firebase.auth().signInWithEmailAndPassword(A.username+'@bible.study',$('pw').value)}catch(x){e.textContent='Live database login failed. Create the user '+A.username+'@bible.study in Firebase Authentication with the same password.';return}
+  if(FB)try{await firebase.auth().signInWithEmailAndPassword('teacher@bible.study',$('pw').value)}catch(x){e.textContent='Live database login failed. Check that the user teacher@bible.study exists in Firebase Authentication with this same password.';return}
   cfg={token:o.token,owner:o.owner,repo:o.repo};localStorage.setItem('bs_cfg',JSON.stringify(cfg));tab='att';$('pw').value='';$('dlg').close();load()}
  catch(x){e.textContent='Wrong username or password.'}}
 
@@ -161,7 +162,7 @@ function view(){applyMode();if(!cfg.token)tab='board';
  if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat);
   h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
   <div class="sub" style="margin-top:6px">Saturday ${i+1} of ${SATS.length}</div>
-  <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>درس الألحان +5</span><span>Quiz full mark +50</span></div>
+  <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>
   <label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''}> This Saturday is canceled</label>
   ${c?'<div class="banner">✝ Bible study is canceled this Saturday</div>':''}`}
  if(tab==='quiz'){const n=db.quizzes.length;
