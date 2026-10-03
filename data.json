@@ -1,9 +1,6 @@
 {
   "attendance": {},
   "bonus": {},
-  "canceled": [
-    "2026-10-03"
-  ],
   "people": [
     {
       "class": "1st Prep",
@@ -39,7 +36,15 @@
       "code": "423",
       "id": "pmusjxiism4f",
       "name": "Marcelino George"
+    },
+    {
+      "code": "976",
+      "id": "pmusjy6o2bvj",
+      "name": "Philopateer Adel",
+      "class": "1st Prep",
+      "cls": "اشعياء النبي"
     }
   ],
+  "canceled": [],
   "quizzes": []
 }
