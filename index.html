@@ -1,970 +1,192 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Bible Study Scoreboard</title>
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%9D%EF%B8%8F%3C/text%3E%3C/svg%3E"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --navy: #14306b;
-        --blue: #2457b8;
-        --gold: #d9a53a;
-        --gold2: #f6d77a;
-        --sky: #eaf2ff;
-        --ivory: #fffcf4;
-        --ink: #1c2442;
-        --ok: #2e9d5b;
-        --no: #d6455d;
-        --line: #eadfc4;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family: Nunito, system-ui, sans-serif;
-        color: var(--ink);
-        background: var(--sky)
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E");
-      }
-      button,
-      input,
-      select {
-        font: inherit;
-      }
-      button {
-        cursor: pointer;
-      }
-      .hero {
-        position: relative;
-        overflow: hidden;
-        color: #fff;
-        text-align: center;
-        padding: 22px 16px 74px;
-        background:
-          linear-gradient(rgba(12, 28, 70, 0.55), rgba(12, 28, 70, 0.9)),
-          url(images/hero.jpg) center/cover,
-          linear-gradient(135deg, #14306b, #2f67d0);
-      }
-      .hero:before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: repeating-conic-gradient(
-          from 0deg at 50% -8%,
-          rgba(246, 215, 122, 0.16) 0 5deg,
-          transparent 5deg 10deg
-        );
-      }
-      .hero-in {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 22px;
-        flex-wrap: wrap;
-        max-width: 920px;
-        margin: 20px auto 0;
-      }
-      .portrait {
-        width: 112px;
-        height: 112px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid var(--gold);
-        box-shadow: 0 0 0 7px rgba(246, 215, 122, 0.25);
-      }
-      .cross {
-        width: 54px;
-        height: 70px;
-        filter: drop-shadow(0 0 14px rgba(246, 215, 122, 0.9));
-      }
-      .bible {
-        width: 150px;
-        height: 105px;
-        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
-      }
-      h1 {
-        font-family: "Playfair Display", serif;
-        font-size: clamp(28px, 5.4vw, 46px);
-        margin: 4px 0 6px;
-        letter-spacing: 0.3px;
-      }
-      .verse {
-        margin: 0;
-        font-size: 15px;
-        opacity: 0.92;
-        max-width: 420px;
-      }
-      .lockbtn {
-        position: relative;
-        float: right;
-        border: 2px solid var(--gold2);
-        background: rgba(255, 255, 255, 0.12);
-        color: #fff;
-        border-radius: 99px;
-        padding: 8px 16px;
-        font-weight: 800;
-      }
-      main {
-        position: relative;
-        max-width: 900px;
-        margin: -44px auto 0;
-        padding: 0 12px 80px;
-      }
-      #tabs {
-        display: flex;
-        gap: 8px;
-        overflow-x: auto;
-        padding: 4px 2px 12px;
-      }
-      .tab {
-        flex: 1 0 auto;
-        min-height: 48px;
-        padding: 0 18px;
-        border-radius: 14px;
-        border: 2px solid #fff;
-        background: #fff;
-        color: var(--navy);
-        font-weight: 800;
-        box-shadow: 0 4px 12px rgba(20, 48, 107, 0.12);
-      }
-      .tab.on {
-        background: var(--navy);
-        border-color: var(--gold);
-        color: #fff;
-      }
-      .card {
-        background: var(--ivory);
-        border: 2px solid var(--line);
-        border-radius: 22px;
-        box-shadow: 0 10px 30px rgba(20, 48, 107, 0.14);
-        padding: 16px;
-      }
-      .bar {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-      .bar select {
-        flex: 1;
-        min-width: 0;
-      }
-      select,
-      input {
-        min-height: 46px;
-        border: 2px solid var(--line);
-        border-radius: 12px;
-        padding: 0 12px;
-        background: #fff;
-        color: var(--ink);
-        width: 100%;
-      }
-      input:focus,
-      select:focus,
-      button:focus-visible {
-        outline: 3px solid var(--gold);
-        outline-offset: 1px;
-      }
-      #q {
-        margin-top: 12px;
-      }
-      .form {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .form input {
-        flex: 1 1 150px;
-        width: auto;
-      }
-      .ic {
-        width: 48px;
-        min-height: 46px;
-        border-radius: 12px;
-        border: 2px solid var(--navy);
-        background: var(--navy);
-        color: #fff;
-        font-size: 22px;
-      }
-      .btn {
-        min-height: 46px;
-        padding: 0 18px;
-        border-radius: 12px;
-        border: 2px solid var(--gold);
-        background: var(--gold);
-        color: #3b2a00;
-        font-weight: 800;
-      }
-      .btn.ghost {
-        background: #fff;
-        border-color: var(--line);
-        color: var(--navy);
-      }
-      .btn.danger {
-        background: #fff;
-        border-color: var(--no);
-        color: var(--no);
-      }
-      .sub {
-        font-size: 13px;
-        color: #5a6488;
-        margin-top: 3px;
-      }
-      .rules {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin: 12px 0 0;
-      }
-      .rules span,
-      .chip {
-        padding: 3px 11px;
-        border-radius: 99px;
-        background: #e3ecff;
-        color: var(--navy);
-        font-size: 13px;
-        font-weight: 800;
-      }
-      .chip {
-        margin-left: 8px;
-        font-size: 12px;
-      }
-      .cancel {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 12px;
-        font-weight: 700;
-      }
-      .cancel input {
-        width: 22px;
-        min-height: 22px;
-      }
-      .banner {
-        margin-top: 12px;
-        padding: 16px;
-        border-radius: 14px;
-        background: #fff2d6;
-        border: 2px dashed var(--gold);
-        text-align: center;
-        font-weight: 800;
-        color: #7a5200;
-      }
-      .row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        padding: 12px;
-        margin-top: 10px;
-        border: 2px solid var(--line);
-        border-radius: 16px;
-        background: #fff;
-      }
-      .who {
-        flex: 1 1 170px;
-        min-width: 150px;
-      }
-      .who b {
-        font-size: 17px;
-      }
-      .st,
-      .bib {
-        min-height: 46px;
-        padding: 0 14px;
-        border-radius: 12px;
-        border: 2px solid var(--line);
-        background: #fff;
-        font-weight: 800;
-        color: var(--ink);
-      }
-      .st.okon {
-        background: var(--ok);
-        border-color: var(--ok);
-        color: #fff;
-      }
-      .st.noon {
-        background: var(--no);
-        border-color: var(--no);
-        color: #fff;
-      }
-      .bib.on {
-        background: var(--gold);
-        border-color: var(--gold);
-        color: #3b2a00;
-      }
-      .bib:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-      }
-      .pts {
-        min-width: 56px;
-        text-align: center;
-        font-weight: 800;
-        font-size: 19px;
-        color: var(--blue);
-      }
-      .big {
-        font-size: 26px;
-        font-family: "Playfair Display", serif;
-      }
-      .rk {
-        width: 40px;
-        text-align: center;
-        font-size: 26px;
-        font-weight: 800;
-        color: var(--navy);
-      }
-      .t0 {
-        background: #fff6d9;
-        border-color: var(--gold);
-      }
-      .t1 {
-        background: #f3f6fb;
-      }
-      .t2 {
-        background: #fdf1e6;
-      }
-      .qs {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin: 12px 0;
-      }
-      .qc {
-        min-height: 44px;
-        padding: 0 16px;
-        border-radius: 99px;
-        border: 2px solid var(--line);
-        background: #fff;
-        font-weight: 800;
-        color: var(--navy);
-      }
-      .qc.on {
-        background: var(--navy);
-        color: #fff;
-        border-color: var(--gold);
-      }
-      .sc {
-        width: 84px;
-        text-align: center;
-        font-weight: 800;
-      }
-      .empty {
-        text-align: center;
-        padding: 30px 10px;
-        color: #5a6488;
-        font-weight: 700;
-      }
-      body.ro .edit {
-        display: none !important;
-      }
-      a.tab {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-      }
-      .gh {
-        font-family: "Playfair Display", serif;
-        color: var(--navy);
-        margin: 20px 0 0;
-        padding-bottom: 6px;
-        border-bottom: 3px solid var(--gold);
-      }
-      #status {
-        position: fixed;
-        right: 12px;
-        bottom: 12px;
-        background: var(--navy);
-        color: #fff;
-        padding: 10px 16px;
-        border-radius: 99px;
-        font-weight: 800;
-        opacity: 0;
-        transition: opacity 0.25s;
-        pointer-events: none;
-      }
-      #status.show {
-        opacity: 1;
-      }
-      dialog {
-        border: 3px solid var(--gold);
-        border-radius: 20px;
-        max-width: 380px;
-        width: 92%;
-        background: var(--ivory);
-      }
-      dialog input {
-        margin-top: 8px;
-      }
-      .dbtns {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 14px;
-      }
-      footer {
-        text-align: center;
-        color: #5a6488;
-        font-size: 13px;
-        padding-bottom: 30px;
-      }
-      @media (prefers-reduced-motion: reduce) {
-        * {
-          transition: none !important;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <svg width="0" height="0" style="position: absolute">
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#fff2b8" />
-          <stop offset="1" stop-color="#d9a53a" />
-        </linearGradient>
-      </defs>
-      <symbol id="cross" viewBox="0 0 60 78">
-        <rect x="24" y="2" width="12" height="74" rx="3" fill="url(#g)" />
-        <rect x="6" y="20" width="48" height="12" rx="3" fill="url(#g)" />
-        <circle cx="30" cy="26" r="5" fill="#fff8d6" />
-      </symbol>
-      <symbol id="bible" viewBox="0 0 140 100">
-        <path
-          d="M70 16C54 6 30 6 6 12v72c24-6 48-6 64 4z"
-          fill="#fff8e6"
-          stroke="#d9a53a"
-          stroke-width="3"
-        />
-        <path
-          d="M70 16c16-10 40-10 64-4v72c-24-6-48-6-64 4z"
-          fill="#fff8e6"
-          stroke="#d9a53a"
-          stroke-width="3"
-        />
-        <path
-          d="M16 28c16-3 34-2 46 4M16 40c16-3 34-2 46 4M16 52c16-3 34-2 46 4M124 28c-16-3-34-2-46 4M124 40c-16-3-34-2-46 4M124 52c-16-3-34-2-46 4"
-          stroke="#c9b27a"
-          stroke-width="2.5"
-          fill="none"
-          stroke-linecap="round"
-        />
-        <path d="M96 62h6v18h-6zM90 68h18v6H90z" fill="#d9a53a" />
-        <path d="M70 16v72" stroke="#d9a53a" stroke-width="3" />
-      </symbol>
-    </svg>
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bible Study Scoreboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%9D%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#14306b;--blue:#2457b8;--gold:#d9a53a;--gold2:#f6d77a;--sky:#eaf2ff;--ivory:#fffcf4;--ink:#1c2442;--ok:#2e9d5b;--no:#d6455d;--line:#eadfc4}
+*{box-sizing:border-box}
+body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E")}
+button,input,select{font:inherit}button{cursor:pointer}
+.hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:22px 16px 74px;background:linear-gradient(rgba(12,28,70,.55),rgba(12,28,70,.9)),url(images/hero.jpg) center/cover,linear-gradient(135deg,#14306b,#2f67d0)}
+.hero:before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% -8%,rgba(246,215,122,.16) 0 5deg,transparent 5deg 10deg)}
+.hero-in{position:relative;display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;max-width:920px;margin:20px auto 0}
+.portrait{width:112px;height:112px;border-radius:50%;object-fit:cover;border:4px solid var(--gold);box-shadow:0 0 0 7px rgba(246,215,122,.25)}
+.cross{width:54px;height:70px;filter:drop-shadow(0 0 14px rgba(246,215,122,.9))}.bible{width:150px;height:105px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5.4vw,46px);margin:4px 0 6px;letter-spacing:.3px}
+.verse{margin:0;font-size:15px;opacity:.92;max-width:420px}
+.lockbtn{position:relative;float:right;border:2px solid var(--gold2);background:rgba(255,255,255,.12);color:#fff;border-radius:99px;padding:8px 16px;font-weight:800}
+main{position:relative;max-width:900px;margin:-44px auto 0;padding:0 12px 80px}
+#tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px}
+.tab{flex:1 0 auto;min-height:48px;padding:0 18px;border-radius:14px;border:2px solid #fff;background:#fff;color:var(--navy);font-weight:800;box-shadow:0 4px 12px rgba(20,48,107,.12)}
+.tab.on{background:var(--navy);border-color:var(--gold);color:#fff}
+.card{background:var(--ivory);border:2px solid var(--line);border-radius:22px;box-shadow:0 10px 30px rgba(20,48,107,.14);padding:16px}
+.bar{display:flex;gap:8px;align-items:center}.bar select{flex:1;min-width:0}
+select,input{min-height:46px;border:2px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;color:var(--ink);width:100%}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+#q{margin-top:12px}.form{display:flex;gap:8px;flex-wrap:wrap}.form input{flex:1 1 150px;width:auto}
+.ic{width:48px;min-height:46px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:#fff;font-size:22px}
+.btn{min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--gold);background:var(--gold);color:#3b2a00;font-weight:800}
+.btn.ghost{background:#fff;border-color:var(--line);color:var(--navy)}.btn.danger{background:#fff;border-color:var(--no);color:var(--no)}
+.sub{font-size:13px;color:#5a6488;margin-top:3px}.rules{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+.rules span,.chip{padding:3px 11px;border-radius:99px;background:#e3ecff;color:var(--navy);font-size:13px;font-weight:800}
+.chip{margin-left:8px;font-size:12px}.cancel{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700}.cancel input{width:22px;min-height:22px}
+.banner{margin-top:12px;padding:16px;border-radius:14px;background:#fff2d6;border:2px dashed var(--gold);text-align:center;font-weight:800;color:#7a5200}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;margin-top:10px;border:2px solid var(--line);border-radius:16px;background:#fff}
+.who{flex:1 1 170px;min-width:150px}.who b{font-size:17px}
+.st,.bib{min-height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--ink)}
+.st.okon{background:var(--ok);border-color:var(--ok);color:#fff}.st.noon{background:var(--no);border-color:var(--no);color:#fff}
+.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}
+.pts{min-width:56px;text-align:center;font-weight:800;font-size:19px;color:var(--blue)}.big{font-size:26px;font-family:'Playfair Display',serif}
+.rk{width:40px;text-align:center;font-size:26px;font-weight:800;color:var(--navy)}.t0{background:#fff6d9;border-color:var(--gold)}.t1{background:#f3f6fb}.t2{background:#fdf1e6}
+.qs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.qc{min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--navy)}.qc.on{background:var(--navy);color:#fff;border-color:var(--gold)}
+.sc{width:84px;text-align:center;font-weight:800}.empty{text-align:center;padding:30px 10px;color:#5a6488;font-weight:700}
+body.ro .edit{display:none!important}
+a.tab{display:flex;align-items:center;text-decoration:none}.gh{font-family:'Playfair Display',serif;color:var(--navy);margin:20px 0 0;padding-bottom:6px;border-bottom:3px solid var(--gold)}
+#status{position:fixed;right:12px;bottom:12px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:99px;font-weight:800;opacity:0;transition:opacity .25s;pointer-events:none}#status.show{opacity:1}
+dialog{border:3px solid var(--gold);border-radius:20px;max-width:380px;width:92%;background:var(--ivory)}dialog input{margin-top:8px}.dbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+footer{text-align:center;color:#5a6488;font-size:13px;padding-bottom:30px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#d9a53a"/></linearGradient></defs>
+<symbol id="cross" viewBox="0 0 60 78"><rect x="24" y="2" width="12" height="74" rx="3" fill="url(#g)"/><rect x="6" y="20" width="48" height="12" rx="3" fill="url(#g)"/><circle cx="30" cy="26" r="5" fill="#fff8d6"/></symbol>
+<symbol id="bible" viewBox="0 0 140 100"><path d="M70 16C54 6 30 6 6 12v72c24-6 48-6 64 4z" fill="#fff8e6" stroke="#d9a53a" stroke-width="3"/><path d="M70 16c16-10 40-10 64-4v72c-24-6-48-6-64 4z" fill="#fff8e6" stroke="#d9a53a" stroke-width="3"/><path d="M16 28c16-3 34-2 46 4M16 40c16-3 34-2 46 4M16 52c16-3 34-2 46 4M124 28c-16-3-34-2-46 4M124 40c-16-3-34-2-46 4M124 52c-16-3-34-2-46 4" stroke="#c9b27a" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M96 62h6v18h-6zM90 68h18v6H90z" fill="#d9a53a"/><path d="M70 16v72" stroke="#d9a53a" stroke-width="3"/></symbol></svg>
 
-    <header class="hero">
-      <button class="lockbtn" id="lk" data-a="lock"></button>
-      <div class="hero-in">
-        <img
-          class="portrait"
-          src="images/jesus.jpg"
-          alt=""
-          onerror="this.remove()"
-        />
-        <svg class="cross"><use href="#cross" /></svg>
-        <div>
-          <h1>Bible Study Scoreboard</h1>
-          <p class="verse">
-            “Your word is a lamp to my feet and a light to my path.” — Psalm
-            119:105
-          </p>
-        </div>
-        <svg class="bible"><use href="#bible" /></svg>
-      </div>
-    </header>
+<header class="hero">
+<button class="lockbtn" id="lk" data-a="lock"></button>
+<div class="hero-in">
+<img class="portrait" src="images/jesus.jpg" alt="" onerror="this.remove()">
+<svg class="cross"><use href="#cross"/></svg>
+<div><h1>Bible Study Scoreboard</h1><p class="verse">“Your word is a lamp to my feet and a light to my path.” — Psalm 119:105</p></div>
+<svg class="bible"><use href="#bible"/></svg>
+</div></header>
 
-    <main>
-      <nav id="tabs"></nav>
-      <section class="card">
-        <div id="top"></div>
-        <input id="q" placeholder="🔍 Search by name or class" />
-        <div id="list"></div>
-      </section>
-    </main>
-    <footer>✝ Every Saturday · 3 Oct 2026 to 18 Sep 2027</footer>
-    <div id="status"></div>
+<main>
+<nav id="tabs"></nav>
+<section class="card"><div id="top"></div><input id="q" placeholder="🔍 Search by name or class"><div id="list"></div></section>
+</main>
+<footer>✝ Every Saturday · 3 Oct 2026 to 18 Sep 2027</footer>
+<div id="status"></div>
 
-    <dialog id="dlg">
-      <h3 style="margin: 0 0 6px">🔐 Teacher login</h3>
-      <p class="sub">
-        Everyone can view the scores. To edit, paste your GitHub token. It stays
-        only in this browser.
-      </p>
-      <input id="tk" type="password" placeholder="GitHub token" /><input
-        id="ow"
-        placeholder="GitHub username"
-      /><input id="rp" placeholder="Repository name" />
-      <div class="dbtns">
-        <button class="btn" data-a="login">Save and unlock</button
-        ><button class="btn ghost" data-a="logout">Log out</button
-        ><button class="btn ghost" data-a="dl">⬇ Download JSON</button
-        ><button class="btn ghost" data-a="close">Close</button>
-      </div>
-    </dialog>
+<dialog id="dlg"><h3 style="margin:0 0 6px">🔐 Teacher login</h3>
+<p class="sub">Everyone can view the scores. To edit, paste your GitHub token. It stays only in this browser.</p>
+<input id="tk" type="password" placeholder="GitHub token"><input id="ow" placeholder="GitHub username"><input id="rp" placeholder="Repository name">
+<div class="dbtns"><button class="btn" data-a="login">Save and unlock</button><button class="btn ghost" data-a="logout">Log out</button><button class="btn ghost" data-a="dl">⬇ Download JSON</button><button class="btn ghost" data-a="close">Close</button></div></dialog>
 
-    <script>
-      const $ = (id) => document.getElementById(id),
-        esc = (s) =>
-          String(s ?? "").replace(
-            /[&<>"']/g,
-            (c) =>
-              ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#39;",
-              })[c],
-          );
-      const SATS = [];
-      for (
-        let d = Date.UTC(2026, 9, 3);
-        d <= Date.UTC(2027, 8, 18);
-        d += 6048e5
-      )
-        SATS.push(new Date(d).toISOString().slice(0, 10));
-      const fmt = (s) =>
-        new Date(s + "T00:00:00Z").toLocaleDateString("en-GB", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-          timeZone: "UTC",
-        });
-      const n1 = (x) => +(+x).toFixed(1),
-        PREPS = ["1st Prep", "2nd Prep"];
-      let db = { people: [], attendance: {}, canceled: [], quizzes: [] },
-        cfg = {},
-        tab = "att",
-        q = "",
-        quizId = null,
-        sat = SATS[0];
-      try {
-        cfg = JSON.parse(localStorage.getItem("bs_cfg") || "{}");
-      } catch (e) {}
-      if (!cfg.owner && location.hostname.endsWith("github.io")) {
-        cfg.owner = location.hostname.split(".")[0];
-        cfg.repo = location.pathname.split("/")[1] || "";
-      }
-      const today = new Date().toLocaleDateString("en-CA");
-      sat = [...SATS].reverse().find((d) => d <= today) || SATS[0];
+<script>
+const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SATS=[];for(let d=Date.UTC(2026,9,3);d<=Date.UTC(2027,8,18);d+=6048e5)SATS.push(new Date(d).toISOString().slice(0,10));
+const fmt=s=>new Date(s+'T00:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const n1=x=>+(+x).toFixed(1),PREPS=['1st Prep','2nd Prep'];
+let db={people:[],attendance:{},canceled:[],quizzes:[]},cfg={},tab='att',q='',quizId=null,sat=SATS[0];
+try{cfg=JSON.parse(localStorage.getItem('bs_cfg')||'{}')}catch(e){}
+if(!cfg.owner&&location.hostname.endsWith('github.io')){cfg.owner=location.hostname.split('.')[0];cfg.repo=location.pathname.split('/')[1]||''}
+const today=new Date().toLocaleDateString('en-CA');sat=[...SATS].reverse().find(d=>d<=today)||SATS[0];
 
-      /* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
-      const qPts = (s, m) =>
-        s == null || s === "" ? 0 : +s >= m ? 50 : n1((+s / m) * 50);
-      function score(p) {
-        let a = 0,
-          b = 0,
-          z = 0;
-        for (const d in db.attendance) {
-          if (db.canceled.includes(d)) continue;
-          const r = db.attendance[d][p.id];
-          if (r && r.s === "P") {
-            a += 10;
-            if (r.b) b += 5;
-          }
-        }
-        db.quizzes.forEach((x) => (z += qPts(x.scores[p.id], x.max)));
-        return { a, b, z, t: n1(a + b + z) };
-      }
-      const match = (p) =>
-        (p.name + " " + p.class).toLowerCase().includes(q.trim().toLowerCase());
+/* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
+const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
+function score(p){let a=0,b=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P'){a+=10;if(r.b)b+=5}}
+db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));return{a,b,z,t:n1(a+b+z)}}
+const match=p=>(p.name+' '+p.class).toLowerCase().includes(q.trim().toLowerCase());
 
-      /* ---------- GitHub storage ---------- */
-      const API = () =>
-        `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`;
-      const H = () => ({
-        Authorization: "Bearer " + cfg.token,
-        Accept: "application/vnd.github+json",
-      });
-      const enc = (s) => {
-        let b = "";
-        for (const x of new TextEncoder().encode(s))
-          b += String.fromCharCode(x);
-        return btoa(b);
-      };
-      const dec = (s) =>
-        new TextDecoder().decode(
-          Uint8Array.from(atob(s.replace(/\s/g, "")), (c) => c.charCodeAt(0)),
-        );
-      let st,
-        tm,
-        busy = false,
-        dirty = false;
-      function setStatus(t, ms) {
-        const e = $("status");
-        e.textContent = t;
-        e.classList.add("show");
-        clearTimeout(st);
-        if (ms) st = setTimeout(() => e.classList.remove("show"), ms);
-      }
-      async function load() {
-        let j = null;
-        try {
-          if (cfg.token) {
-            const r = await fetch(API(), { headers: H(), cache: "no-store" });
-            if (r.ok) j = JSON.parse(dec((await r.json()).content));
-            else setStatus("⚠ Token or repo name is wrong", 4000);
-          }
-          if (!j) {
-            const r = await fetch("data.json?" + Date.now(), {
-              cache: "no-store",
-            });
-            j = await r.json();
-          }
-        } catch (e) {
-          setStatus("⚠ Could not load data.json", 4000);
-        }
-        if (j)
-          db = { people: [], attendance: {}, canceled: [], quizzes: [], ...j };
-        if (!db.quizzes.find((x) => x.id === quizId))
-          quizId = db.quizzes[0]?.id || null;
-        view();
-      }
-      async function save() {
-        setStatus("Saving to GitHub…");
-        try {
-          let r = await fetch(API(), { headers: H(), cache: "no-store" }),
-            cur = r.ok ? await r.json() : {};
-          r = await fetch(API(), {
-            method: "PUT",
-            headers: { ...H(), "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message: "Update scores " + new Date().toISOString(),
-              content: enc(JSON.stringify(db, null, 2)),
-              sha: cur.sha,
-            }),
-          });
-          if (!r.ok) throw new Error((await r.json()).message);
-          setStatus("Saved ✓", 2500);
-        } catch (e) {
-          setStatus("⚠ Not saved: " + e.message);
-        }
-      }
-      async function run() {
-        if (busy) {
-          dirty = true;
-          return;
-        }
-        busy = true;
-        await save();
-        busy = false;
-        if (dirty) {
-          dirty = false;
-          run();
-        }
-      }
-      const changed = () => {
-        setStatus("Unsaved changes…");
-        clearTimeout(tm);
-        tm = setTimeout(run, 1200);
-      };
-      const needLogin = () => {
-        if (cfg.token) return false;
-        openDlg();
-        return true;
-      };
-      function openDlg() {
-        $("tk").value = "";
-        $("ow").value = cfg.owner || "";
-        $("rp").value = cfg.repo || "";
-        $("dlg").showModal();
-      }
-      function applyMode() {
-        document.body.classList.toggle("ro", !cfg.token);
-        $("lk").textContent = cfg.token
-          ? "🔓 Teacher mode"
-          : "🔐 Teacher login";
-      }
+/* ---------- GitHub storage ---------- */
+const API=()=>`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`;
+const H=()=>({Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json'});
+const enc=s=>{let b='';for(const x of new TextEncoder().encode(s))b+=String.fromCharCode(x);return btoa(b)};
+const dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
+let st,tm,busy=false,dirty=false;
+function setStatus(t,ms){const e=$('status');e.textContent=t;e.classList.add('show');clearTimeout(st);if(ms)st=setTimeout(()=>e.classList.remove('show'),ms)}
+async function load(){let j=null;
+ try{if(cfg.token){const r=await fetch(API(),{headers:H(),cache:'no-store'});if(r.ok)j=JSON.parse(dec((await r.json()).content));else setStatus('⚠ Token or repo name is wrong',4000)}
+  if(!j){const r=await fetch('data.json?'+Date.now(),{cache:'no-store'});j=await r.json()}}
+ catch(e){setStatus('⚠ Could not load data.json',4000)}
+ if(j)db={people:[],attendance:{},canceled:[],quizzes:[],...j};
+ if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;view()}
+async function save(){setStatus('Saving to GitHub…');
+ try{let r=await fetch(API(),{headers:H(),cache:'no-store'}),cur=r.ok?await r.json():{};
+  r=await fetch(API(),{method:'PUT',headers:{...H(),'Content-Type':'application/json'},body:JSON.stringify({message:'Update scores '+new Date().toISOString(),content:enc(JSON.stringify(db,null,2)),sha:cur.sha})});
+  if(!r.ok)throw new Error((await r.json()).message);setStatus('Saved ✓',2500)}
+ catch(e){setStatus('⚠ Not saved: '+e.message)}}
+async function run(){if(busy){dirty=true;return}busy=true;await save();busy=false;if(dirty){dirty=false;run()}}
+const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);tm=setTimeout(run,1200)};
+const needLogin=()=>{if(cfg.token)return false;openDlg();return true};
+function openDlg(){$('tk').value='';$('ow').value=cfg.owner||'';$('rp').value=cfg.repo||'';$('dlg').showModal()}
+function applyMode(){document.body.classList.toggle('ro',!cfg.token);$('lk').textContent=cfg.token?'🔓 Teacher mode':'🔐 Teacher login'}
 
-      /* ---------- views ---------- */
-      function view() {
-        applyMode();
-        $("tabs").innerHTML =
-          [
-            ["att", "📅 Attendance"],
-            ["board", "🏆 Leaderboard"],
-            ["quiz", "📝 Quizzes"],
-            ["people", "👥 People"],
-          ]
-            .map(
-              ([k, t]) =>
-                `<button class="tab ${tab === k ? "on" : ""}" data-tab="${k}">${t}</button>`,
-            )
-            .join("") + '<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
-        let h = "";
-        if (tab === "att") {
-          const i = SATS.indexOf(sat),
-            c = db.canceled.includes(sat);
-          h = `<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map((d) => `<option value="${d}" ${d === sat ? "selected" : ""}>${fmt(d)}${db.canceled.includes(d) ? " (canceled)" : ""}</option>`).join("")}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
-  <div class="sub" style="margin-top:6px">Saturday ${i + 1} of ${SATS.length}</div>
+/* ---------- views ---------- */
+function view(){applyMode();
+ $('tabs').innerHTML=[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['people','👥 People']].map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
+ let h='';
+ if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat);
+  h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
+  <div class="sub" style="margin-top:6px">Saturday ${i+1} of ${SATS.length}</div>
   <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>Quiz full mark +50</span></div>
-  <label class="cancel edit"><input type="checkbox" id="cx" ${c ? "checked" : ""}> This Saturday is canceled</label>
-  ${c ? '<div class="banner">✝ Bible study is canceled this Saturday</div>' : ""}`;
-        }
-        if (tab === "quiz") {
-          const n = db.quizzes.length;
-          h = `<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
-  <div class="qs">${db.quizzes.map((x) => `<button class="qc ${x.id === quizId ? "on" : ""}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join("")}</div>
-  ${n < 6 ? `<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n + 1}"><input id="qm" type="number" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>` : ""}
-  ${quizId ? '<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>' : ""}`;
-        }
-        if (tab === "people") {
-          h = `<div class="form edit"><input id="pn" placeholder="Name"><select id="pc" style="flex:1 1 150px;width:auto"><option value="">Choose prep…</option>${PREPS.map((g) => `<option>${g}</option>`).join("")}</select><button class="btn" data-a="add">＋ Add person</button></div>
-  <div class="sub" style="margin-top:8px">${db.people.length} people</div>`;
-        }
-        $("top").innerHTML = h;
-        $("q").value = q;
-        list();
-      }
+  <label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''}> This Saturday is canceled</label>
+  ${c?'<div class="banner">✝ Bible study is canceled this Saturday</div>':''}`}
+ if(tab==='quiz'){const n=db.quizzes.length;
+  h=`<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
+  <div class="qs">${db.quizzes.map(x=>`<button class="qc ${x.id===quizId?'on':''}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join('')}</div>
+  ${n<6?`<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n+1}"><input id="qm" type="number" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>`:''}
+  ${quizId?'<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>':''}`}
+ if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><select id="pc" style="flex:1 1 150px;width:auto"><option value="">Choose prep…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><button class="btn" data-a="add">＋ Add person</button></div>
+  <div class="sub" style="margin-top:8px">${db.people.length} people</div>`}
+ $('top').innerHTML=h;$('q').value=q;list()}
 
-      function list() {
-        const L = $("list");
-        if (!db.people.length) {
-          L.innerHTML =
-            '<div class="empty">No one here yet ✝<br>Log in as teacher, open People, and add the first student.</div>';
-          return;
-        }
-        if (tab === "att" && db.canceled.includes(sat)) {
-          L.innerHTML = "";
-          return;
-        }
-        let h = "";
-        if (tab === "board") {
-          const oth = db.people.some((p) => !PREPS.includes(p.class));
-          [...PREPS, ...(oth ? ["Other"] : [])].forEach((g) => {
-            const all = db.people
-              .filter((p) =>
-                g === "Other" ? !PREPS.includes(p.class) : p.class === g,
-              )
-              .map((p) => ({ p, s: score(p) }))
-              .sort((a, b) => b.s.t - a.s.t || a.p.name.localeCompare(b.p.name))
-              .map((o, i, arr) => ({
-                ...o,
-                i,
-                r: 1 + arr.filter((z) => z.s.t > o.s.t).length,
-              }));
-            h +=
-              `<h2 class="gh">${g}</h2>` +
-              (all
-                .filter((o) => match(o.p))
-                .map(
-                  ({ p, s, r }) =>
-                    `<div class="row ${r <= 3 ? "t" + (r - 1) : ""}"><div class="rk">${["🥇", "🥈", "🥉"][r - 1] || r}</div><div class="who"><b>${esc(p.name)}</b><div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 📝 Quizzes ${n1(s.z)}</div></div><div class="pts big">${s.t}</div></div>`,
-                )
-                .join("") || '<div class="empty">No students</div>');
-          });
-        } else {
-          const ps = [...db.people]
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .filter(match);
-          const x = db.quizzes.find((z) => z.id === quizId);
-          if (tab === "quiz" && !x) {
-            L.innerHTML =
-              '<div class="empty">Add a quiz to start entering marks.</div>';
-            return;
-          }
-          ps.forEach((p) => {
-            const who = `<div class="who"><b>${esc(p.name)}</b><span class="chip">${esc(p.class)}</span></div>`;
-            if (tab === "att") {
-              const r = (db.attendance[sat] || {})[p.id] || {},
-                day = r.s === "P" ? 10 + (r.b ? 5 : 0) : 0;
-              h += `<div class="row" data-id="${p.id}">${who}<button class="st ${r.s === "P" ? "okon" : ""}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s === "X" ? "noon" : ""}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b ? "on" : ""}" data-a="B" data-id="${p.id}" ${r.s === "P" ? "" : "disabled"}>📖 Has Bible</button><div class="pts">+${day}</div></div>`;
-            }
-            if (tab === "quiz") {
-              const v = x.scores[p.id];
-              h += `<div class="row" data-id="${p.id}">${who}<input class="sc" type="number" min="0" max="${x.max}" step="0.5" value="${v ?? ""}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v, x.max)} pts</div></div>`;
-            }
-            if (tab === "people")
-              h += `<div class="row">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`;
-          });
-        }
-        L.innerHTML =
-          h || '<div class="empty">No match. Try another name or class.</div>';
-      }
+function list(){const L=$('list');
+ if(!db.people.length){L.innerHTML='<div class="empty">No one here yet ✝<br>Log in as teacher, open People, and add the first student.</div>';return}
+ if(tab==='att'&&db.canceled.includes(sat)){L.innerHTML='';return}
+ let h='';
+ if(tab==='board'){const oth=db.people.some(p=>!PREPS.includes(p.class));
+  [...PREPS,...(oth?['Other']:[])].forEach(g=>{
+   const all=db.people.filter(p=>g==='Other'?!PREPS.includes(p.class):p.class===g).map(p=>({p,s:score(p)})).sort((a,b)=>b.s.t-a.s.t||a.p.name.localeCompare(b.p.name)).map((o,i,arr)=>({...o,i,r:1+arr.filter(z=>z.s.t>o.s.t).length}));
+   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b><div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 📝 Quizzes ${n1(s.z)}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
+ else{const ps=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).filter(match);
+  const x=db.quizzes.find(z=>z.id===quizId);
+  if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
+  ps.forEach(p=>{const who=`<div class="who"><b>${esc(p.name)}</b><span class="chip">${esc(p.class)}</span></div>`;
+   if(tab==='att'){const r=(db.attendance[sat]||{})[p.id]||{},day=r.s==='P'?10+(r.b?5:0):0;
+    h+=`<div class="row" data-id="${p.id}">${who}<button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><div class="pts">+${day}</div></div>`}
+   if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row" data-id="${p.id}">${who}<input class="sc" type="number" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div>`}
+   if(tab==='people')h+=`<div class="row">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`})}
+ L.innerHTML=h||'<div class="empty">No match. Try another name or class.</div>'}
 
-      /* ---------- actions ---------- */
-      function mark(id, v) {
-        const r = (db.attendance[sat] ??= {}),
-          c = r[id] || {};
-        if (v === "B") {
-          if (c.s !== "P") return;
-          r[id] = { s: "P", b: !c.b };
-        } else if (c.s === v) delete r[id];
-        else r[id] = { s: v, b: v === "P" ? !!c.b : false };
-        changed();
-        list();
-      }
-      document.addEventListener("click", (e) => {
-        const t = e.target.closest("[data-tab],[data-a]");
-        if (!t) return;
-        if (t.dataset.tab) {
-          tab = t.dataset.tab;
-          q = "";
-          view();
-          return;
-        }
-        const a = t.dataset.a,
-          id = t.dataset.id;
-        if (a === "lock") return openDlg();
-        if (a === "close") return $("dlg").close();
-        if (a === "prev" || a === "next") {
-          const s = SATS[SATS.indexOf(sat) + (a === "next" ? 1 : -1)];
-          if (s) {
-            sat = s;
-            view();
-          }
-          return;
-        }
-        if (a === "pick") {
-          quizId = id;
-          view();
-          return;
-        }
-        if (a === "dl") {
-          const l = document.createElement("a");
-          l.href = URL.createObjectURL(
-            new Blob([JSON.stringify(db, null, 2)], {
-              type: "application/json",
-            }),
-          );
-          l.download = "data.json";
-          l.click();
-          return;
-        }
-        if (a === "login") {
-          cfg = {
-            token: $("tk").value.trim(),
-            owner: $("ow").value.trim(),
-            repo: $("rp").value.trim(),
-          };
-          localStorage.setItem("bs_cfg", JSON.stringify(cfg));
-          $("dlg").close();
-          load();
-          return;
-        }
-        if (a === "logout") {
-          cfg.token = "";
-          localStorage.setItem("bs_cfg", JSON.stringify(cfg));
-          $("dlg").close();
-          load();
-          return;
-        }
-        if (needLogin()) return;
-        if (a === "P" || a === "X" || a === "B") return mark(id, a);
-        if (a === "add") return addPerson();
-        if (a === "del") {
-          const p = db.people.find((x) => x.id === id);
-          if (
-            !confirm(
-              `Remove ${p.name}? Their attendance and quiz marks will be deleted.`,
-            )
-          )
-            return;
-          db.people = db.people.filter((x) => x.id !== id);
-          for (const d in db.attendance) delete db.attendance[d][id];
-          db.quizzes.forEach((x) => delete x.scores[id]);
-          changed();
-          view();
-        }
-        if (a === "addq") {
-          const m = +$("qm").value;
-          if (!(m > 0))
-            return alert(
-              "Enter what the quiz is out of, for example 10 or 20.",
-            );
-          const n = {
-            id: "q" + Date.now().toString(36),
-            title: $("qt").value.trim() || "Quiz " + (db.quizzes.length + 1),
-            max: m,
-            scores: {},
-          };
-          db.quizzes.push(n);
-          quizId = n.id;
-          changed();
-          view();
-        }
-        if (a === "delq") {
-          const x = db.quizzes.find((z) => z.id === quizId);
-          if (!confirm(`Delete "${x.title}" and all its marks?`)) return;
-          db.quizzes = db.quizzes.filter((z) => z.id !== quizId);
-          quizId = db.quizzes[0]?.id || null;
-          changed();
-          view();
-        }
-      });
-      function addPerson() {
-        const n = $("pn").value.trim(),
-          c = $("pc").value.trim();
-        if (!n || !c) return alert("Type both a name and a class.");
-        db.people.push({
-          id:
-            "p" +
-            Date.now().toString(36) +
-            Math.random().toString(36).slice(2, 5),
-          name: n,
-          class: c,
-        });
-        changed();
-        view();
-        $("pn").focus();
-      }
-      document.addEventListener("change", (e) => {
-        const t = e.target;
-        if (t.id === "sat") {
-          sat = t.value;
-          view();
-        }
-        if (t.id === "cx") {
-          if (needLogin()) {
-            t.checked = !t.checked;
-            return;
-          }
-          db.canceled = t.checked
-            ? [...new Set([...db.canceled, sat])]
-            : db.canceled.filter((d) => d !== sat);
-          changed();
-          view();
-        }
-        if (t.classList.contains("sc")) {
-          if (needLogin()) {
-            view();
-            return;
-          }
-          const x = db.quizzes.find((z) => z.id === quizId);
-          let v = t.value;
-          if (v === "") delete x.scores[t.dataset.id];
-          else {
-            v = Math.min(Math.max(+v, 0), x.max);
-            x.scores[t.dataset.id] = v;
-            t.value = v;
-          }
-          t.closest(".row").querySelector(".pts").textContent =
-            qPts(x.scores[t.dataset.id], x.max) + " pts";
-          changed();
-        }
-      });
-      $("q").addEventListener("input", (e) => {
-        q = e.target.value;
-        list();
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && (e.target.id === "pn" || e.target.id === "pc"))
-          addPerson();
-      });
-      view();
-      load();
-    </script>
-  </body>
-</html>
+/* ---------- actions ---------- */
+function mark(id,v){const r=(db.attendance[sat]??={}),c=r[id]||{};
+ if(v==='B'){if(c.s!=='P')return;r[id]={s:'P',b:!c.b}}
+ else if(c.s===v)delete r[id];else r[id]={s:v,b:v==='P'?!!c.b:false};
+ changed();list()}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-a]');if(!t)return;
+ if(t.dataset.tab){tab=t.dataset.tab;q='';view();return}
+ const a=t.dataset.a,id=t.dataset.id;
+ if(a==='lock')return openDlg();if(a==='close')return $('dlg').close();
+ if(a==='prev'||a==='next'){const s=SATS[SATS.indexOf(sat)+(a==='next'?1:-1)];if(s){sat=s;view()}return}
+ if(a==='pick'){quizId=id;view();return}
+ if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));l.download='data.json';l.click();return}
+ if(a==='login'){cfg={token:$('tk').value.trim(),owner:$('ow').value.trim(),repo:$('rp').value.trim()};localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
+ if(a==='logout'){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
+ if(needLogin())return;
+ if(a==='P'||a==='X'||a==='B')return mark(id,a);
+ if(a==='add')return addPerson();
+ if(a==='del'){const p=db.people.find(x=>x.id===id);if(!confirm(`Remove ${p.name}? Their attendance and quiz marks will be deleted.`))return;
+  db.people=db.people.filter(x=>x.id!==id);for(const d in db.attendance)delete db.attendance[d][id];db.quizzes.forEach(x=>delete x.scores[id]);changed();view()}
+ if(a==='addq'){const m=+$('qm').value;if(!(m>0))return alert('Enter what the quiz is out of, for example 10 or 20.');
+  const n={id:'q'+Date.now().toString(36),title:$('qt').value.trim()||'Quiz '+(db.quizzes.length+1),max:m,scores:{}};db.quizzes.push(n);quizId=n.id;changed();view()}
+ if(a==='delq'){const x=db.quizzes.find(z=>z.id===quizId);if(!confirm(`Delete "${x.title}" and all its marks?`))return;
+  db.quizzes=db.quizzes.filter(z=>z.id!==quizId);quizId=db.quizzes[0]?.id||null;changed();view()}
+});
+function addPerson(){const n=$('pn').value.trim(),c=$('pc').value.trim();if(!n||!c)return alert('Type both a name and a class.');
+ db.people.push({id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c});changed();view();$('pn').focus()}
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.id==='sat'){sat=t.value;view()}
+ if(t.id==='cx'){if(needLogin()){t.checked=!t.checked;return}
+  db.canceled=t.checked?[...new Set([...db.canceled,sat])]:db.canceled.filter(d=>d!==sat);changed();view()}
+ if(t.classList.contains('sc')){if(needLogin()){view();return}
+  const x=db.quizzes.find(z=>z.id===quizId);let v=t.value;
+  if(v==='')delete x.scores[t.dataset.id];else{v=Math.min(Math.max(+v,0),x.max);x.scores[t.dataset.id]=v;t.value=v}
+  t.closest('.row').querySelector('.pts').textContent=qPts(x.scores[t.dataset.id],x.max)+' pts';changed()}});
+$('q').addEventListener('input',e=>{q=e.target.value;list()});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pc'))addPerson()});
+view();load();
+</script></body></html>
