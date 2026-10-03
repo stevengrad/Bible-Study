@@ -51,7 +51,9 @@
       "id": "qmus9tb9w",
       "max": 30,
       "title": "q1",
-      "scores": {}
+      "scores": {
+        "pmusdngboixf": 20
+      }
     }
   ],
   "canceled": []
