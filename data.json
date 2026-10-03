@@ -2,6 +2,14 @@
   "attendance": {},
   "bonus": {},
   "quizzes": [],
-  "people": [],
+  "people": [
+    {
+      "code": "848",
+      "id": "pmusjup3ojyi",
+      "name": "Karas Ramy",
+      "class": "1st Prep",
+      "cls": "داود النبي"
+    }
+  ],
   "canceled": []
 }
