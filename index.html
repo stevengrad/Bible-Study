@@ -38,7 +38,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outl
 .who{flex:1 1 170px;min-width:150px}.who b{font-size:17px}
 .st,.bib{min-height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--ink)}
 .st.okon{background:var(--ok);border-color:var(--ok);color:#fff}.st.noon{background:var(--no);border-color:var(--no);color:#fff}
-.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}.hym.on{background:#8fb4ff;border-color:#8fb4ff;color:#0c1f4d}
+.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}.hym.on{background:#8fb4ff;border-color:#8fb4ff;color:#0c1f4d}.ic.mi{background:#fff;color:var(--navy)}
 .pts{min-width:56px;text-align:center;font-weight:800;font-size:19px;color:var(--blue)}.big{font-size:26px;font-family:'Playfair Display',serif}
 .rk{width:40px;text-align:center;font-size:26px;font-weight:800;color:var(--navy)}.t0{background:#fff6d9;border-color:var(--gold)}.t1{background:#f3f6fb}.t2{background:#fdf1e6}
 .qs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.qc{min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--navy)}.qc.on{background:var(--navy);color:#fff;border-color:var(--gold)}
@@ -88,8 +88,9 @@ const today=new Date().toLocaleDateString('en-CA');sat=[...SATS].reverse().find(
 /* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
 function score(p){let a=0,b=0,h=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P'){a+=10;if(r.b)b+=5;if(r.h)h+=5}}
-db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));return{a,b,h,z,t:n1(a+b+h+z)}}
-const match=p=>(p.name+' '+p.class).toLowerCase().includes(q.trim().toLowerCase());
+db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));const o=+(db.bonus?.[p.id])||0;return{a,b,h,z,o,t:n1(a+b+h+z+o)}}
+const match=p=>(p.name+' '+p.class+' '+(p.cls||'')).toLowerCase().includes(q.trim().toLowerCase());
+const tag=p=>`<span class="chip">${esc(p.class)}</span>`+(p.cls?`<span class="chip">${esc(p.cls)}</span>`:'');
 
 /* ---------- GitHub storage ---------- */
 const API=()=>`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`;
@@ -127,7 +128,7 @@ async function doLogin(){const e=$('err');e.textContent='Checking…';
 
 /* ---------- views ---------- */
 function view(){applyMode();if(!cfg.token)tab='board';
- $('tabs').innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
+ $('tabs').innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
  let h='';
  if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat);
   h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
@@ -140,8 +141,9 @@ function view(){applyMode();if(!cfg.token)tab='board';
   <div class="qs">${db.quizzes.map(x=>`<button class="qc ${x.id===quizId?'on':''}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join('')}</div>
   ${n<6?`<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n+1}"><input id="qm" type="number" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>`:''}
   ${quizId?'<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>':''}`}
- if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><select id="pc" style="flex:1 1 150px;width:auto"><option value="">Choose prep…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><button class="btn" data-a="add">＋ Add person</button></div>
+ if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><input id="pk" placeholder="Class (type it)"><select id="pc" style="flex:1 1 150px;width:auto"><option value="">Choose prep…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><button class="btn" data-a="add">＋ Add person</button></div>
   <div class="sub" style="margin-top:8px">${db.people.length} people</div>`}
+ if(tab==='bonus')h='<div class="sub">Tap ＋ to give one bonus point at a time. Tap − to take one back.</div>';
  $('top').innerHTML=h;$('q').value=q;list()}
 
 function list(){const L=$('list');
@@ -151,14 +153,15 @@ function list(){const L=$('list');
  if(tab==='board'){const oth=db.people.some(p=>!PREPS.includes(p.class));
   [...PREPS,...(oth?['Other']:[])].forEach(g=>{
    const all=db.people.filter(p=>g==='Other'?!PREPS.includes(p.class):p.class===g).map(p=>({p,s:score(p)})).sort((a,b)=>b.s.t-a.s.t||a.p.name.localeCompare(b.p.name)).map((o,i,arr)=>({...o,i,r:1+arr.filter(z=>z.s.t>o.s.t).length}));
-   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b><div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 🎶 Hymns ${s.h} · 📝 Quizzes ${n1(s.z)}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
+   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b>${p.cls?'<span class="chip">'+esc(p.cls)+'</span>':''}<div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 🎶 Hymns ${s.h} · 📝 Quizzes ${n1(s.z)} · ⭐ Bonus ${s.o}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
  else{const ps=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).filter(match);
   const x=db.quizzes.find(z=>z.id===quizId);
   if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
-  ps.forEach(p=>{const who=`<div class="who"><b>${esc(p.name)}</b><span class="chip">${esc(p.class)}</span></div>`;
+  ps.forEach(p=>{const who=`<div class="who"><b>${esc(p.name)}</b>${tag(p)}</div>`;
    if(tab==='att'){const r=(db.attendance[sat]||{})[p.id]||{},day=r.s==='P'?10+(r.b?5:0)+(r.h?5:0):0;
     h+=`<div class="row" data-id="${p.id}">${who}<button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>🎶 درس الألحان</button><div class="pts">+${day}</div></div>`}
    if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row" data-id="${p.id}">${who}<input class="sc" type="number" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div>`}
+   if(tab==='bonus'){const v=db.bonus?.[p.id]||0;h+=`<div class="row">${who}<button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div>`}
    if(tab==='people')h+=`<div class="row">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`})}
  L.innerHTML=h||'<div class="empty">No match. Try another name or class.</div>'}
 
@@ -178,16 +181,17 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data
  if(a==='logout'){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
  if(needLogin())return;
  if(a==='P'||a==='X'||a==='B'||a==='H')return mark(id,a);
+ if(a==='bp'||a==='bm'){const b=(db.bonus??={});b[id]=Math.max(0,(b[id]||0)+(a==='bp'?1:-1));changed();return list()}
  if(a==='add')return addPerson();
  if(a==='del'){const p=db.people.find(x=>x.id===id);if(!confirm(`Remove ${p.name}? Their attendance and quiz marks will be deleted.`))return;
-  db.people=db.people.filter(x=>x.id!==id);for(const d in db.attendance)delete db.attendance[d][id];db.quizzes.forEach(x=>delete x.scores[id]);changed();view()}
+  db.people=db.people.filter(x=>x.id!==id);for(const d in db.attendance)delete db.attendance[d][id];db.quizzes.forEach(x=>delete x.scores[id]);if(db.bonus)delete db.bonus[id];changed();view()}
  if(a==='addq'){const m=+$('qm').value;if(!(m>0))return alert('Enter what the quiz is out of, for example 10 or 20.');
   const n={id:'q'+Date.now().toString(36),title:$('qt').value.trim()||'Quiz '+(db.quizzes.length+1),max:m,scores:{}};db.quizzes.push(n);quizId=n.id;changed();view()}
  if(a==='delq'){const x=db.quizzes.find(z=>z.id===quizId);if(!confirm(`Delete "${x.title}" and all its marks?`))return;
   db.quizzes=db.quizzes.filter(z=>z.id!==quizId);quizId=db.quizzes[0]?.id||null;changed();view()}
 });
-function addPerson(){const n=$('pn').value.trim(),c=$('pc').value.trim();if(!n||!c)return alert('Type both a name and a class.');
- db.people.push({id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c});changed();view();$('pn').focus()}
+function addPerson(){const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').value.trim();if(!n||!c)return alert('Type a name and choose 1st Prep or 2nd Prep.');
+ db.people.push({id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k});changed();view();$('pc').value=c;$('pk').value=k;$('pn').focus()}
 document.addEventListener('change',e=>{const t=e.target;
  if(t.id==='sat'){sat=t.value;view()}
  if(t.id==='cx'){if(needLogin()){t.checked=!t.checked;return}
@@ -197,7 +201,7 @@ document.addEventListener('change',e=>{const t=e.target;
   if(v==='')delete x.scores[t.dataset.id];else{v=Math.min(Math.max(+v,0),x.max);x.scores[t.dataset.id]=v;t.value=v}
   t.closest('.row').querySelector('.pts').textContent=qPts(x.scores[t.dataset.id],x.max)+' pts';changed()}});
 $('q').addEventListener('input',e=>{q=e.target.value;list()});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pc'))addPerson()});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pk'))addPerson()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pw')doLogin()});
 view();load();
 </script></body></html>

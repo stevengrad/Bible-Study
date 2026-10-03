@@ -39,14 +39,14 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const n1=x=>+(+x).toFixed(1),PREPS=['1st Prep','2nd Prep'],M=['🥇','🥈','🥉'];
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
 function score(db,p){let t=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P')t+=10+(r.b?5:0)+(r.h?5:0)}
- db.quizzes.forEach(x=>t+=qPts(x.scores[p.id],x.max));return n1(t)}
+ db.quizzes.forEach(x=>t+=qPts(x.scores[p.id],x.max));t+=+(db.bonus?.[p.id])||0;return n1(t)}
 function draw(db){
  $('m').innerHTML=PREPS.map(g=>{
   const all=db.people.filter(p=>p.class===g).map(p=>({p,t:score(db,p)})).sort((a,b)=>b.t-a.t||a.p.name.localeCompare(b.p.name)).map((o,i,arr)=>({...o,r:1+arr.filter(z=>z.t>o.t).length}));
   const top=all.slice(0,3),rest=all.slice(3,10);
-  const pod=[1,0,2].map(i=>{const o=top[i];return o?`<div class="pd p${i}"><div class="medal">${M[o.r-1]}</div><b>${esc(o.p.name)}</b><div class="blk">${o.t}<small>points</small></div></div>`:'<div class="pd"></div>'}).join('');
+  const pod=[1,0,2].map(i=>{const o=top[i];return o?`<div class="pd p${i}"><div class="medal">${M[o.r-1]}</div><b>${esc(o.p.name)}</b><div class="c">${esc(o.p.cls||'')}</div><div class="blk">${o.t}<small>points</small></div></div>`:'<div class="pd"></div>'}).join('');
   return `<section class="card"><h2>${g}</h2>${all.length?`<div class="podium">${pod}</div>`:'<div class="empty">No students yet</div>'}
-  ${rest.length?`<h3>Ranks 4 to 10</h3>`+rest.map(o=>`<div class="row"><div class="rk">${o.r}</div><b>${esc(o.p.name)}</b><div class="pts">${o.t}</div></div>`).join(''):''}</section>`}).join('')}
+  ${rest.length?`<h3>Ranks 4 to 10</h3>`+rest.map(o=>`<div class="row"><div class="rk">${o.r}</div><b>${esc(o.p.name)}${o.p.cls?' <small style="color:#5a6488">('+esc(o.p.cls)+')</small>':''}</b><div class="pts">${o.t}</div></div>`).join(''):''}</section>`}).join('')}
 const $=id=>document.getElementById(id);
 async function go(){try{const r=await fetch('data.json?'+Date.now(),{cache:'no-store'});draw({people:[],attendance:{},canceled:[],quizzes:[],...await r.json()})}catch(e){$('m').innerHTML='<div class="card empty">Could not load the scores. Try again in a moment.</div>'}}
 go();setInterval(go,60000);
