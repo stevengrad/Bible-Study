@@ -1,5 +1,18 @@
 {
-  "attendance": {},
+  "attendance": {
+    "2026-10-03": {
+      "pmusjz0h7shl": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusk5wxu2xl": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      }
+    }
+  },
   "bonus": {},
   "people": [
     {
@@ -206,11 +219,25 @@
       "name": "جاد نادر"
     },
     {
+      "class": "1st Prep",
+      "cls": "هوشع النبي",
       "code": "487",
       "id": "pmusk9gi9oma",
-      "name": "Joseph John",
+      "name": "Joseph John"
+    },
+    {
       "class": "1st Prep",
-      "cls": "هوشع النبي"
+      "cls": "اشعياء النبي",
+      "code": "870",
+      "id": "pmusk9r49g1m",
+      "name": "كريستوفر سامر"
+    },
+    {
+      "class": "2nd Prep",
+      "cls": "ارميا النبي",
+      "code": "593",
+      "id": "pmuska4ujv3a",
+      "name": "كيرلس يوسف"
     }
   ],
   "canceled": [],
