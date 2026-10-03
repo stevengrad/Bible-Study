@@ -9,8 +9,6 @@
   "attendance": {
     "2026-10-03": {}
   },
-  "canceled": [
-    "2026-10-03"
-  ],
+  "canceled": [],
   "quizzes": []
 }
