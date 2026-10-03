@@ -1,60 +1,14 @@
 {
-  "attendance": {
-    "2026-10-03": {
-      "pmusblu0s1ld": {
-        "b": true,
-        "h": false,
-        "s": "P"
-      },
-      "pmusd3nt1u8x": {
-        "b": true,
-        "h": true,
-        "s": "P"
-      },
-      "pmusdngboixf": {
-        "s": "P",
-        "b": true,
-        "h": true
-      }
-    }
-  },
-  "bonus": {
-    "pmusblu0s1ld": 10,
-    "pmusd3nt1u8x": 10,
-    "pmusdngboixf": 21
-  },
-  "people": [
-    {
-      "class": "2nd Prep",
-      "cls": "موسي النبي",
-      "code": "268",
-      "id": "pmusblu0s1ld",
-      "name": "Steven Botros"
-    },
-    {
-      "class": "2nd Prep",
-      "cls": "حزقيال",
-      "code": "179",
-      "id": "pmusd3nt1u8x",
-      "name": "thomas micheal"
-    },
-    {
-      "class": "1st Prep",
-      "cls": "اليشع النبي",
-      "code": "491",
-      "id": "pmusdngboixf",
-      "name": "Shady Sherif"
-    }
-  ],
+  "attendance": {},
+  "bonus": {},
   "quizzes": [
     {
       "id": "qmus9tb9w",
       "max": 30,
       "title": "q1",
-      "scores": {
-        "pmusdngboixf": 20
-      }
+      "scores": {}
     }
   ],
+  "people": [],
   "canceled": []
 }
