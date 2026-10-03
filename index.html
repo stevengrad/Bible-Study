@@ -99,9 +99,19 @@ const enc=s=>{let b='';for(const x of new TextEncoder().encode(s))b+=String.from
 const dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
 let st,tm,busy=false,dirty=false;
 function setStatus(t,ms){const e=$('status');e.textContent=t;e.classList.add('show');clearTimeout(st);if(ms)st=setTimeout(()=>e.classList.remove('show'),ms)}
+const OWN=location.hostname.endsWith('github.io')?location.hostname.split('.')[0]:'',REP=location.pathname.split('/')[1]||'';let rl=0;
+/* read straight from the repo (fresh), fall back to the Pages copy if GitHub rate-limits us */
+const off={raw:0,api:0};
+async function fetchDB(){
+ if(OWN&&REP){
+  if(Date.now()>off.raw){try{const r=await fetch(`https://raw.githubusercontent.com/${OWN}/${REP}/HEAD/data.json?t=${Date.now()}`,{cache:'no-store'});
+   if(r.ok)return await r.json();off.raw=Date.now()+(r.status===429?12e4:3e5)}catch(e){off.raw=Date.now()+3e5}}
+  if(Date.now()>off.api){try{const r=await fetch(`https://api.github.com/repos/${OWN}/${REP}/contents/data.json`,{cache:'no-cache',headers:{Accept:'application/vnd.github.raw+json'}});
+   if(r.ok)return await r.json();off.api=Date.now()+6e5}catch(e){off.api=Date.now()+6e5}}}
+ return (await fetch('data.json?'+Date.now(),{cache:'no-store'})).json()}
 async function load(){let j=null;
  try{if(cfg.token){const r=await fetch(API(),{headers:H(),cache:'no-store'});if(r.ok)j=JSON.parse(dec((await r.json()).content));else setStatus('⚠ Token or repo name is wrong',4000)}
-  if(!j){const r=await fetch('data.json?'+Date.now(),{cache:'no-store'});j=await r.json()}}
+  if(!j)j=await fetchDB()}
  catch(e){setStatus('⚠ Could not load data.json',4000)}
  if(j)db={people:[],attendance:{},canceled:[],quizzes:[],...j};
  if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;view()}
@@ -111,7 +121,7 @@ async function save(){setStatus('Saving to GitHub…');
   if(!r.ok)throw new Error((await r.json()).message);setStatus('Saved ✓',2500)}
  catch(e){setStatus('⚠ Not saved: '+e.message)}}
 async function run(){if(busy){dirty=true;return}busy=true;await save();busy=false;if(dirty){dirty=false;run()}}
-const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);tm=setTimeout(run,1200)};
+const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);tm=setTimeout(run,600)};
 const needLogin=()=>{if(cfg.token)return false;openDlg();return true};
 function openDlg(){$('un').value='';$('pw').value='';$('err').textContent='';$('dlg').showModal()}
 function applyMode(){document.body.classList.toggle('ro',!cfg.token);$('lk').textContent=cfg.token?'🔓 Teacher mode':'🔐 Teacher login'}
@@ -203,5 +213,8 @@ document.addEventListener('change',e=>{const t=e.target;
 $('q').addEventListener('input',e=>{q=e.target.value;list()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pk'))addPerson()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pw')doLogin()});
+const norm=j=>({people:[],attendance:{},canceled:[],quizzes:[],...j});
+async function poll(){if(cfg.token||document.hidden)return;try{const j=norm(await fetchDB());if(JSON.stringify(j)!==JSON.stringify(db)){db=j;list()}}catch(e){}}
+setInterval(poll,5000);document.addEventListener('visibilitychange',poll);
 view();load();
 </script></body></html>
