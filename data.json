@@ -1,5 +1,11 @@
 {
-  "people": [],
+  "people": [
+    {
+      "id": "pmus9ihi0cyw",
+      "name": "Steven Botros",
+      "class": "2nd Prep"
+    }
+  ],
   "attendance": {},
   "canceled": [],
   "quizzes": []
