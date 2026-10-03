@@ -1,12 +1,4 @@
 {
-  "people": [
-    {
-      "id": "pmusblu0s1ld",
-      "name": "Steven Botros",
-      "class": "2nd Prep",
-      "cls": "موسي النبي"
-    }
-  ],
   "attendance": {
     "2026-10-03": {
       "pmusblu0s1ld": {
@@ -16,6 +8,17 @@
       }
     }
   },
+  "bonus": {
+    "pmusblu0s1ld": 5
+  },
+  "people": [
+    {
+      "id": "pmusblu0s1ld",
+      "name": "Steven Botros",
+      "class": "2nd Prep",
+      "cls": "موسي النبي"
+    }
+  ],
   "canceled": [],
   "quizzes": [
     {
@@ -24,8 +27,5 @@
       "max": 30,
       "scores": {}
     }
-  ],
-  "bonus": {
-    "pmusblu0s1ld": 0
-  }
+  ]
 }
