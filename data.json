@@ -20,20 +20,5 @@
     }
   },
   "canceled": [],
-  "quizzes": [
-    {
-      "id": "qmus9ki0c",
-      "title": "q1",
-      "max": 30,
-      "scores": {
-        "pmus9ihi0cyw": 20
-      }
-    },
-    {
-      "id": "qmus9n67b",
-      "title": "wq",
-      "max": 20,
-      "scores": {}
-    }
-  ]
+  "quizzes": []
 }
