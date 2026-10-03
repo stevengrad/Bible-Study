@@ -15,5 +15,12 @@
     }
   },
   "canceled": [],
-  "quizzes": []
+  "quizzes": [
+    {
+      "id": "qmus9ki0c",
+      "title": "q1",
+      "max": 30,
+      "scores": {}
+    }
+  ]
 }
