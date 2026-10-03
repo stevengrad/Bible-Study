@@ -38,7 +38,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outl
 .who{flex:1 1 170px;min-width:150px}.who b{font-size:17px}
 .st,.bib{min-height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--ink)}
 .st.okon{background:var(--ok);border-color:var(--ok);color:#fff}.st.noon{background:var(--no);border-color:var(--no);color:#fff}
-.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}
+.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}.hym.on{background:#8fb4ff;border-color:#8fb4ff;color:#0c1f4d}
 .pts{min-width:56px;text-align:center;font-weight:800;font-size:19px;color:var(--blue)}.big{font-size:26px;font-family:'Playfair Display',serif}
 .rk{width:40px;text-align:center;font-size:26px;font-weight:800;color:var(--navy)}.t0{background:#fff6d9;border-color:var(--gold)}.t1{background:#f3f6fb}.t2{background:#fdf1e6}
 .qs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.qc{min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--navy)}.qc.on{background:var(--navy);color:#fff;border-color:var(--gold)}
@@ -87,8 +87,8 @@ const today=new Date().toLocaleDateString('en-CA');sat=[...SATS].reverse().find(
 
 /* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
-function score(p){let a=0,b=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P'){a+=10;if(r.b)b+=5}}
-db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));return{a,b,z,t:n1(a+b+z)}}
+function score(p){let a=0,b=0,h=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P'){a+=10;if(r.b)b+=5;if(r.h)h+=5}}
+db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));return{a,b,h,z,t:n1(a+b+h+z)}}
 const match=p=>(p.name+' '+p.class).toLowerCase().includes(q.trim().toLowerCase());
 
 /* ---------- GitHub storage ---------- */
@@ -116,13 +116,13 @@ function openDlg(){$('tk').value='';$('ow').value=cfg.owner||'';$('rp').value=cf
 function applyMode(){document.body.classList.toggle('ro',!cfg.token);$('lk').textContent=cfg.token?'🔓 Teacher mode':'🔐 Teacher login'}
 
 /* ---------- views ---------- */
-function view(){applyMode();
- $('tabs').innerHTML=[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['people','👥 People']].map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
+function view(){applyMode();if(!cfg.token)tab='board';
+ $('tabs').innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
  let h='';
  if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat);
   h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
   <div class="sub" style="margin-top:6px">Saturday ${i+1} of ${SATS.length}</div>
-  <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>Quiz full mark +50</span></div>
+  <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>درس الألحان +5</span><span>Quiz full mark +50</span></div>
   <label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''}> This Saturday is canceled</label>
   ${c?'<div class="banner">✝ Bible study is canceled this Saturday</div>':''}`}
  if(tab==='quiz'){const n=db.quizzes.length;
@@ -135,27 +135,27 @@ function view(){applyMode();
  $('top').innerHTML=h;$('q').value=q;list()}
 
 function list(){const L=$('list');
- if(!db.people.length){L.innerHTML='<div class="empty">No one here yet ✝<br>Log in as teacher, open People, and add the first student.</div>';return}
+ if(!db.people.length){L.innerHTML=cfg.token?'<div class="empty">No one here yet ✝<br>Open People and add the first student.</div>':'<div class="empty">No scores yet ✝<br>Check back soon.</div>';return}
  if(tab==='att'&&db.canceled.includes(sat)){L.innerHTML='';return}
  let h='';
  if(tab==='board'){const oth=db.people.some(p=>!PREPS.includes(p.class));
   [...PREPS,...(oth?['Other']:[])].forEach(g=>{
    const all=db.people.filter(p=>g==='Other'?!PREPS.includes(p.class):p.class===g).map(p=>({p,s:score(p)})).sort((a,b)=>b.s.t-a.s.t||a.p.name.localeCompare(b.p.name)).map((o,i,arr)=>({...o,i,r:1+arr.filter(z=>z.s.t>o.s.t).length}));
-   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b><div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 📝 Quizzes ${n1(s.z)}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
+   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b><div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 🎶 Hymns ${s.h} · 📝 Quizzes ${n1(s.z)}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
  else{const ps=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).filter(match);
   const x=db.quizzes.find(z=>z.id===quizId);
   if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
   ps.forEach(p=>{const who=`<div class="who"><b>${esc(p.name)}</b><span class="chip">${esc(p.class)}</span></div>`;
-   if(tab==='att'){const r=(db.attendance[sat]||{})[p.id]||{},day=r.s==='P'?10+(r.b?5:0):0;
-    h+=`<div class="row" data-id="${p.id}">${who}<button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><div class="pts">+${day}</div></div>`}
+   if(tab==='att'){const r=(db.attendance[sat]||{})[p.id]||{},day=r.s==='P'?10+(r.b?5:0)+(r.h?5:0):0;
+    h+=`<div class="row" data-id="${p.id}">${who}<button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>🎶 درس الألحان</button><div class="pts">+${day}</div></div>`}
    if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row" data-id="${p.id}">${who}<input class="sc" type="number" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div>`}
    if(tab==='people')h+=`<div class="row">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`})}
  L.innerHTML=h||'<div class="empty">No match. Try another name or class.</div>'}
 
 /* ---------- actions ---------- */
 function mark(id,v){const r=(db.attendance[sat]??={}),c=r[id]||{};
- if(v==='B'){if(c.s!=='P')return;r[id]={s:'P',b:!c.b}}
- else if(c.s===v)delete r[id];else r[id]={s:v,b:v==='P'?!!c.b:false};
+ if(v==='B'||v==='H'){if(c.s!=='P')return;const k=v.toLowerCase();r[id]={...c,[k]:!c[k]}}
+ else if(c.s===v)delete r[id];else r[id]={s:v,b:v==='P'&&!!c.b,h:v==='P'&&!!c.h};
  changed();list()}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-a]');if(!t)return;
  if(t.dataset.tab){tab=t.dataset.tab;q='';view();return}
@@ -164,10 +164,10 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data
  if(a==='prev'||a==='next'){const s=SATS[SATS.indexOf(sat)+(a==='next'?1:-1)];if(s){sat=s;view()}return}
  if(a==='pick'){quizId=id;view();return}
  if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));l.download='data.json';l.click();return}
- if(a==='login'){cfg={token:$('tk').value.trim(),owner:$('ow').value.trim(),repo:$('rp').value.trim()};localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
+ if(a==='login'){tab='att';cfg={token:$('tk').value.trim(),owner:$('ow').value.trim(),repo:$('rp').value.trim()};localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
  if(a==='logout'){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
  if(needLogin())return;
- if(a==='P'||a==='X'||a==='B')return mark(id,a);
+ if(a==='P'||a==='X'||a==='B'||a==='H')return mark(id,a);
  if(a==='add')return addPerson();
  if(a==='del'){const p=db.people.find(x=>x.id===id);if(!confirm(`Remove ${p.name}? Their attendance and quiz marks will be deleted.`))return;
   db.people=db.people.filter(x=>x.id!==id);for(const d in db.attendance)delete db.attendance[d][id];db.quizzes.forEach(x=>delete x.scores[id]);changed();view()}
