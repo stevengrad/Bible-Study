@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teacher login setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@400;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Nunito,system-ui,sans-serif;background:#eaf2ff;color:#1c2442;display:grid;place-items:center;min-height:100vh;padding:16px}
+.c{background:#fffcf4;border:3px solid #d9a53a;border-radius:22px;padding:22px;max-width:480px;width:100%}
+h1{font-family:'Playfair Display',serif;color:#14306b;margin:0 0 6px}p,label{font-size:14px;color:#5a6488}
+input,textarea{width:100%;min-height:46px;border:2px solid #eadfc4;border-radius:12px;padding:10px 12px;margin-top:8px;font:inherit;background:#fff}
+button{margin-top:12px;min-height:46px;padding:0 18px;border-radius:12px;border:2px solid #d9a53a;background:#d9a53a;color:#3b2a00;font:800 16px Nunito,sans-serif;cursor:pointer}
+#msg{color:#d6455d;font-weight:800;margin-top:8px}#res{display:none}
+</style></head><body><div class="c">
+<h1>✝ Teacher login setup</h1>
+<p>Open this file on your own computer. Nothing is sent anywhere. It builds <b>auth.json</b>, where your GitHub token is locked with your password.</p>
+<input id="un" placeholder="Choose a username" autocomplete="off">
+<input id="pw" type="password" placeholder="Choose a password (10+ characters)" autocomplete="new-password">
+<input id="tk" type="password" placeholder="GitHub token (github_pat_…)" autocomplete="off">
+<input id="ow" placeholder="GitHub username">
+<input id="rp" placeholder="Repository name">
+<button id="go">Create auth.json</button><div id="msg"></div>
+<div id="res"><p>Upload this file to the repo root, next to index.html. To change the username or password later, run this page again and replace the file.</p>
+<textarea id="out" rows="6" readonly></textarea><button id="dl">⬇ Download auth.json</button></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const b64e=u=>{let s='';u.forEach(x=>s+=String.fromCharCode(x));return btoa(s)};
+async function key(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt'])}
+$('go').onclick=async()=>{const un=$('un').value.trim(),pw=$('pw').value,tk=$('tk').value.trim(),ow=$('ow').value.trim(),rp=$('rp').value.trim();
+ if(!un||!tk||!ow||!rp)return $('msg').textContent='Fill in every box.';
+ if(pw.length<10)return $('msg').textContent='The password needs at least 10 characters.';
+ $('msg').textContent='';
+ const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+ const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await key(pw,salt),new TextEncoder().encode(JSON.stringify({token:tk,owner:ow,repo:rp}))));
+ $('out').value=JSON.stringify({username:un,salt:b64e(salt),iv:b64e(iv),data:b64e(ct)},null,2);$('res').style.display='block'};
+$('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([$('out').value],{type:'application/json'}));a.download='auth.json';a.click()};
+</script></body></html>

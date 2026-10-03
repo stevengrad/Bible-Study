@@ -71,9 +71,9 @@ footer{text-align:center;color:#5a6488;font-size:13px;padding-bottom:30px}
 <div id="status"></div>
 
 <dialog id="dlg"><h3 style="margin:0 0 6px">🔐 Teacher login</h3>
-<p class="sub">Everyone can view the scores. To edit, paste your GitHub token. It stays only in this browser.</p>
-<input id="tk" type="password" placeholder="GitHub token"><input id="ow" placeholder="GitHub username"><input id="rp" placeholder="Repository name">
-<div class="dbtns"><button class="btn" data-a="login">Save and unlock</button><button class="btn ghost" data-a="logout">Log out</button><button class="btn ghost" data-a="dl">⬇ Download JSON</button><button class="btn ghost" data-a="close">Close</button></div></dialog>
+<p class="sub">Everyone can view the scores. Teachers log in to edit.</p>
+<input id="un" placeholder="Username" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><div id="err" class="sub" style="color:var(--no);font-weight:800"></div>
+<div class="dbtns"><button class="btn" data-a="login">Log in</button><button class="btn ghost" data-a="logout">Log out</button><button class="btn ghost" data-a="dl">⬇ Download JSON</button><button class="btn ghost" data-a="close">Close</button></div></dialog>
 
 <script>
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -112,8 +112,18 @@ async function save(){setStatus('Saving to GitHub…');
 async function run(){if(busy){dirty=true;return}busy=true;await save();busy=false;if(dirty){dirty=false;run()}}
 const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);tm=setTimeout(run,1200)};
 const needLogin=()=>{if(cfg.token)return false;openDlg();return true};
-function openDlg(){$('tk').value='';$('ow').value=cfg.owner||'';$('rp').value=cfg.repo||'';$('dlg').showModal()}
+function openDlg(){$('un').value='';$('pw').value='';$('err').textContent='';$('dlg').showModal()}
 function applyMode(){document.body.classList.toggle('ro',!cfg.token);$('lk').textContent=cfg.token?'🔓 Teacher mode':'🔐 Teacher login'}
+
+/* ---------- teacher login: auth.json holds the GitHub token encrypted with the password ---------- */
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function key(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt'])}
+async function doLogin(){const e=$('err');e.textContent='Checking…';
+ try{const r=await fetch('auth.json?'+Date.now(),{cache:'no-store'});if(!r.ok){e.textContent='auth.json was not found in the repo. Run setup.html first.';return}
+  const A=await r.json();if($('un').value.trim()!==A.username)throw 0;
+  const o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(A.iv)},await key($('pw').value,b64d(A.salt)),b64d(A.data))));
+  cfg={token:o.token,owner:o.owner,repo:o.repo};localStorage.setItem('bs_cfg',JSON.stringify(cfg));tab='att';$('pw').value='';$('dlg').close();load()}
+ catch(x){e.textContent='Wrong username or password.'}}
 
 /* ---------- views ---------- */
 function view(){applyMode();if(!cfg.token)tab='board';
@@ -164,7 +174,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data
  if(a==='prev'||a==='next'){const s=SATS[SATS.indexOf(sat)+(a==='next'?1:-1)];if(s){sat=s;view()}return}
  if(a==='pick'){quizId=id;view();return}
  if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));l.download='data.json';l.click();return}
- if(a==='login'){tab='att';cfg={token:$('tk').value.trim(),owner:$('ow').value.trim(),repo:$('rp').value.trim()};localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
+ if(a==='login')return doLogin();
  if(a==='logout'){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));$('dlg').close();load();return}
  if(needLogin())return;
  if(a==='P'||a==='X'||a==='B'||a==='H')return mark(id,a);
@@ -188,5 +198,6 @@ document.addEventListener('change',e=>{const t=e.target;
   t.closest('.row').querySelector('.pts').textContent=qPts(x.scores[t.dataset.id],x.max)+' pts';changed()}});
 $('q').addEventListener('input',e=>{q=e.target.value;list()});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pc'))addPerson()});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pw')doLogin()});
 view();load();
 </script></body></html>
