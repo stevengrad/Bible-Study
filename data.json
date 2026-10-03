@@ -130,13 +130,6 @@
     },
     {
       "class": "1st Prep",
-      "cls": "يونان النبي",
-      "code": "744",
-      "id": "pmusk2oacjnu",
-      "name": "Mark Ramy"
-    },
-    {
-      "class": "1st Prep",
       "cls": "اشعياء النبي",
       "code": "939",
       "id": "pmusk2pcj7v3",
@@ -164,13 +157,6 @@
       "name": "جوليان نادر"
     },
     {
-      "class": "1st Prep",
-      "cls": "صموئيل النبي",
-      "code": "761",
-      "id": "pmusk3rowx8g",
-      "name": "يوسف السبع"
-    },
-    {
       "class": "2nd Prep",
       "cls": "ايليا النبي",
       "code": "578",
@@ -185,25 +171,18 @@
       "name": "ماجد وسام"
     },
     {
-      "class": "1st Prep",
-      "cls": "هوشع النبي",
       "code": "680",
       "id": "pmusk66pdjdt",
-      "name": "Kirolos Sameh"
+      "name": "Kirolos Sameh",
+      "class": "1st Prep",
+      "cls": "هوشع النبي"
     },
     {
-      "class": "1st Prep",
-      "cls": "اشعياء النبي",
       "code": "190",
       "id": "pmusk75mxoig",
-      "name": "Jeevan Joesph"
-    },
-    {
-      "code": "541",
-      "id": "pmusk8etgqgo",
-      "name": "Kerollos michael",
-      "class": "2nd Prep",
-      "cls": "دانيال النبي"
+      "name": "Jeevan Joesph",
+      "class": "1st Prep",
+      "cls": "اشعياء النبي"
     }
   ],
   "canceled": [],
