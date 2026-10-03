@@ -10,5 +10,12 @@
     "2026-10-03": {}
   },
   "canceled": [],
-  "quizzes": []
+  "quizzes": [
+    {
+      "id": "qmus9tb9w",
+      "title": "q1",
+      "max": 30,
+      "scores": {}
+    }
+  ]
 }
