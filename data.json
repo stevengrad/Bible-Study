@@ -178,11 +178,18 @@
       "name": "Gabriel John"
     },
     {
+      "class": "1st Prep",
+      "cls": "صموئيل النبي",
       "code": "146",
       "id": "pmusk61vqfwa",
-      "name": "ماجد وسام",
+      "name": "ماجد وسام"
+    },
+    {
+      "code": "680",
+      "id": "pmusk66pdjdt",
+      "name": "Kirolos Sameh",
       "class": "1st Prep",
-      "cls": "صموئيل النبي"
+      "cls": "هوشع النبي"
     }
   ],
   "canceled": [],
