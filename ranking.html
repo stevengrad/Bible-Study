@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14306b">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bible Study">
 <title>Top 10 · Bible Study</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%9F%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&family=Cairo:wght@600;800&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#14306b;--blue:#2457b8;--gold:#d9a53a;--gold2:#f6d77a;--sky:#eaf2ff;--ivory:#fffcf4;--ink:#1c2442;--line:#eadfc4}
 *{box-sizing:border-box}
-body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E")}
+body{margin:0;font-family:Nunito,Cairo,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E")}
 .hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:20px 16px 80px;background:linear-gradient(rgba(12,28,70,.55),rgba(12,28,70,.9)),url(images/hero.jpg) center/cover,linear-gradient(135deg,#14306b,#2f67d0)}
-.hero:before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% -8%,rgba(246,215,122,.16) 0 5deg,transparent 5deg 10deg)}
+.hero:before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-conic-gradient(from 0deg at 50% -8%,rgba(246,215,122,.16) 0 5deg,transparent 5deg 10deg)}
 .hero>*{position:relative}.back{float:left;color:#fff;text-decoration:none;border:2px solid var(--gold2);border-radius:99px;padding:8px 16px;font-weight:800;background:rgba(255,255,255,.12)}
 .cross{width:46px;height:60px;filter:drop-shadow(0 0 14px rgba(246,215,122,.9));margin-top:14px}
 h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5.4vw,48px);margin:4px 0}.hero p{margin:0;opacity:.92}
@@ -28,12 +33,21 @@ h3{margin:18px 0 0;color:var(--navy);font-size:16px;padding-bottom:6px;border-bo
 .rk{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800}
 .row b{flex:1;min-width:0;word-break:break-word}.pts{font-weight:800;color:var(--blue);font-size:18px}
 .empty{text-align:center;padding:24px 8px;color:#5a6488;font-weight:700}
+:root{color-scheme:light}html{-webkit-text-size-adjust:100%}
+button{-webkit-appearance:none;appearance:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.hero{padding-top:calc(64px + env(safe-area-inset-top))}
+main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+.back{position:absolute;top:calc(14px + env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));float:none}
+@media(hover:hover){.back:hover{filter:brightness(1.15)}}
+@media(max-width:560px){.hero{padding-bottom:70px}h2{font-size:24px}.card{padding:14px}}
+@media(min-width:1300px){main{max-width:1240px}h2{font-size:36px}.pd b{font-size:19px}.row{font-size:19px}.pts{font-size:22px}.blk{font-size:32px}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#d9a53a"/></linearGradient></defs>
 <symbol id="cross" viewBox="0 0 60 78"><rect x="24" y="2" width="12" height="74" rx="3" fill="url(#g)"/><rect x="6" y="20" width="48" height="12" rx="3" fill="url(#g)"/><circle cx="30" cy="26" r="5" fill="#fff8d6"/></symbol></svg>
-<header class="hero"><a class="back" href="index.html">← Scoreboard</a><br>
+<header class="hero"><a class="back" href="index.html">← Scoreboard</a>
 <svg class="cross"><use href="#cross"/></svg><h1>Our Top Students</h1><p>Updates live</p></header>
 <main id="m"></main>
+<script>try{new Function('var a;a??=1;a?.b')}catch(e){document.addEventListener('DOMContentLoaded',function(){document.body.innerHTML='<p style="font:18px sans-serif;padding:40px 20px;text-align:center">Please update your browser (iOS 14.5+ or a recent Chrome, Edge, Safari or Firefox) to open this page.</p>'})}</script>
 <script src="config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>

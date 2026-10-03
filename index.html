@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14306b">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bible Study">
 <title>Bible Study Scoreboard</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%9D%EF%B8%8F%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&family=Cairo:wght@600;800&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#14306b;--blue:#2457b8;--gold:#d9a53a;--gold2:#f6d77a;--sky:#eaf2ff;--ivory:#fffcf4;--ink:#1c2442;--ok:#2e9d5b;--no:#d6455d;--line:#eadfc4}
 *{box-sizing:border-box}
-body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E")}
+body{margin:0;font-family:Nunito,Cairo,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E")}
 button,input,select{font:inherit}button{cursor:pointer}
 .hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:22px 16px 74px;background:linear-gradient(rgba(12,28,70,.55),rgba(12,28,70,.9)),url(images/hero.jpg) center/cover,linear-gradient(135deg,#14306b,#2f67d0)}
-.hero:before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% -8%,rgba(246,215,122,.16) 0 5deg,transparent 5deg 10deg)}
+.hero:before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-conic-gradient(from 0deg at 50% -8%,rgba(246,215,122,.16) 0 5deg,transparent 5deg 10deg)}
 .hero-in{position:relative;display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;max-width:920px;margin:20px auto 0}
 .portrait{width:112px;height:112px;border-radius:50%;object-fit:cover;border:4px solid var(--gold);box-shadow:0 0 0 7px rgba(246,215,122,.25)}
 .cross{width:54px;height:70px;filter:drop-shadow(0 0 14px rgba(246,215,122,.9))}.bible{width:150px;height:105px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
@@ -48,6 +53,17 @@ a.tab{display:flex;align-items:center;text-decoration:none}.gh{font-family:'Play
 #status{position:fixed;right:12px;bottom:12px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:99px;font-weight:800;opacity:0;transition:opacity .25s;pointer-events:none}#status.show{opacity:1}
 dialog{border:3px solid var(--gold);border-radius:20px;max-width:380px;width:92%;background:var(--ivory)}dialog input{margin-top:8px}.dbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 footer{text-align:center;color:#5a6488;font-size:13px;padding-bottom:30px}
+:root{color-scheme:light}html{-webkit-text-size-adjust:100%}
+button{-webkit-appearance:none;appearance:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.hero{padding-top:calc(64px + env(safe-area-inset-top))}
+main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+.lockbtn{position:absolute;top:calc(14px + env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));float:none}
+#status{bottom:calc(12px + env(safe-area-inset-bottom))}footer{padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+#tabs{scrollbar-width:none;-webkit-overflow-scrolling:touch}#tabs::-webkit-scrollbar{display:none}
+dialog{max-height:calc(100% - 32px);overflow:auto}dialog::backdrop{background:rgba(12,28,70,.55)}
+@media(hover:hover){.btn:hover,.tab:hover,.st:hover,.qc:hover,.ic:hover,.bib:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}}
+@media(max-width:560px){.hero{padding-bottom:70px}.portrait{width:84px;height:84px}.bible{width:112px;height:78px}.cross{width:42px;height:54px}.lockbtn{padding:7px 12px;font-size:14px}
+.att .who{order:0;flex:1 1 calc(100% - 76px);min-width:0}.att .pts{order:1;flex:0 0 64px}.att .st,.att .bib{order:2;flex:1 1 calc(50% - 5px);padding:0 8px}.form .btn{flex:1 1 100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#d9a53a"/></linearGradient></defs>
@@ -68,13 +84,14 @@ footer{text-align:center;color:#5a6488;font-size:13px;padding-bottom:30px}
 <section class="card"><div id="top"></div><input id="q" placeholder="🔍 Search by name or class"><div id="list"></div></section>
 </main>
 <footer>✝ Every Saturday · 3 Oct 2026 to 18 Sep 2027</footer>
-<div id="status"></div>
+<div id="status" role="status" aria-live="polite"></div>
 
 <dialog id="dlg"><h3 style="margin:0 0 6px">🔐 Teacher login</h3>
 <p class="sub">Everyone can view the scores. Teachers log in to edit.</p>
 <input id="un" placeholder="Username" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><div id="err" class="sub" style="color:var(--no);font-weight:800"></div>
 <div class="dbtns"><button class="btn" data-a="login">Log in</button><button class="btn ghost" data-a="logout">Log out</button><button class="btn ghost" data-a="dl">⬇ Download JSON</button><button class="btn ghost" data-a="close">Close</button></div></dialog>
 
+<script>try{new Function('var a;a??=1;a?.b')}catch(e){document.addEventListener('DOMContentLoaded',function(){document.body.innerHTML='<p style="font:18px sans-serif;padding:40px 20px;text-align:center">Please update your browser (iOS 14.5+ or a recent Chrome, Edge, Safari or Firefox) to open this page.</p>'})}</script>
 <script src="config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -168,7 +185,7 @@ function view(){applyMode();if(!cfg.token)tab='board';
  if(tab==='quiz'){const n=db.quizzes.length;
   h=`<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
   <div class="qs">${db.quizzes.map(x=>`<button class="qc ${x.id===quizId?'on':''}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join('')}</div>
-  ${n<6?`<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n+1}"><input id="qm" type="number" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>`:''}
+  ${n<6?`<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n+1}"><input id="qm" type="number" inputmode="numeric" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>`:''}
   ${quizId?'<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>':''}`}
  if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><input id="pk" placeholder="Class (type it)"><select id="pc" style="flex:1 1 150px;width:auto"><option value="">Choose prep…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><button class="btn" data-a="add">＋ Add person</button></div>
   <div class="sub" style="margin-top:8px">${db.people.length} people</div>`}
@@ -188,8 +205,8 @@ function list(){const L=$('list');
   if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
   ps.forEach(p=>{const who=`<div class="who"><b>${esc(p.name)}</b>${tag(p)}</div>`;
    if(tab==='att'){const r=(db.attendance[sat]||{})[p.id]||{},day=r.s==='P'?10+(r.b?5:0)+(r.h?5:0):0;
-    h+=`<div class="row" data-id="${p.id}">${who}<button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>🎶 درس الألحان</button><div class="pts">+${day}</div></div>`}
-   if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row" data-id="${p.id}">${who}<input class="sc" type="number" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div>`}
+    h+=`<div class="row att" data-id="${p.id}">${who}<button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>🎶 درس الألحان</button><div class="pts">+${day}</div></div>`}
+   if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row" data-id="${p.id}">${who}<input class="sc" type="number" inputmode="decimal" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div>`}
    if(tab==='bonus'){const v=db.bonus?.[p.id]||0;h+=`<div class="row">${who}<button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div>`}
    if(tab==='people')h+=`<div class="row">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`})}
  L.innerHTML=h||'<div class="empty">No match. Try another name or class.</div>'}
