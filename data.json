@@ -21,11 +21,6 @@
         "h": true,
         "s": "P"
       },
-      "pmusjxiism4f": {
-        "b": false,
-        "h": true,
-        "s": "P"
-      },
       "pmusjy6o2bvj": {
         "b": false,
         "h": true,
@@ -162,9 +157,9 @@
         "s": "P"
       },
       "pmuskn7vucz1": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       }
     }
   },
@@ -402,11 +397,11 @@
       "name": "مايكل باسم"
     },
     {
+      "class": "2nd Prep",
+      "cls": "موسى النبي",
       "code": "448",
       "id": "pmuskn7vucz1",
-      "name": "Bavly boles",
-      "class": "2nd Prep",
-      "cls": "موسى النبي"
+      "name": "Bavly boles"
     }
   ],
   "canceled": [],
