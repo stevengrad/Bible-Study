@@ -31,7 +31,7 @@ main{position:relative;max-width:900px;margin:-44px auto 0;padding:0 12px 80px}
 .bar{display:flex;gap:8px;align-items:center}.bar select{flex:1;min-width:0}
 select,input{min-height:46px;border:2px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;color:var(--ink);width:100%}
 input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
-#q{margin-top:12px}.form{display:flex;gap:8px;flex-wrap:wrap}.form input{flex:1 1 150px;width:auto}
+#q{margin-top:12px}.form{display:flex;gap:8px;flex-wrap:wrap}.form input,.form select{flex:1 1 150px;width:auto}
 .ic{width:48px;min-height:46px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:#fff;font-size:22px}
 .btn{min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--gold);background:var(--gold);color:#3b2a00;font-weight:800}
 .btn.ghost{background:#fff;border-color:var(--line);color:var(--navy)}.btn.danger{background:#fff;border-color:var(--no);color:var(--no)}
@@ -43,7 +43,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outl
 .who{flex:1 1 170px;min-width:150px}.who b{font-size:17px}
 .st,.bib{min-height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--ink)}
 .st.okon{background:var(--ok);border-color:var(--ok);color:#fff}.st.noon{background:var(--no);border-color:var(--no);color:#fff}
-.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}.hym.on{background:#8fb4ff;border-color:#8fb4ff;color:#0c1f4d}.ic.mi{background:#fff;color:var(--navy)}
+.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}.hym.on{background:#8fb4ff;border-color:#8fb4ff;color:#0c1f4d}.ic.mi{background:#fff;color:var(--navy)}.chip.code{background:var(--navy);color:#fff}
 .pts{min-width:56px;text-align:center;font-weight:800;font-size:19px;color:var(--blue)}.big{font-size:26px;font-family:'Playfair Display',serif}
 .rk{width:40px;text-align:center;font-size:26px;font-weight:800;color:var(--navy)}.t0{background:#fff6d9;border-color:var(--gold)}.t1{background:#f3f6fb}.t2{background:#fdf1e6}
 .qs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.qc{min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--navy)}.qc.on{background:var(--navy);color:#fff;border-color:var(--gold)}
@@ -81,7 +81,7 @@ dialog{max-height:calc(100% - 32px);overflow:auto}dialog::backdrop{background:rg
 
 <main>
 <nav id="tabs"></nav>
-<section class="card"><div id="top"></div><input id="q" placeholder="🔍 Search by name or class"><div id="list"></div></section>
+<section class="card"><div id="top"></div><input id="q" placeholder="🔍 Search by name, class or 3-digit number"><div id="list"></div></section>
 </main>
 <footer>✝ Every Saturday · 3 Oct 2026 to 18 Sep 2027</footer>
 <div id="status" role="status" aria-live="polite"></div>
@@ -100,7 +100,7 @@ dialog{max-height:calc(100% - 32px);overflow:auto}dialog::backdrop{background:rg
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const SATS=[];for(let d=Date.UTC(2026,9,3);d<=Date.UTC(2027,8,18);d+=6048e5)SATS.push(new Date(d).toISOString().slice(0,10));
 const fmt=s=>new Date(s+'T00:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
-const n1=x=>+(+x).toFixed(1),PREPS=['1st Prep','2nd Prep'];
+const n1=x=>+(+x).toFixed(1),CLASSES={'1st Prep':['يوحنا المعمدان','صموئيل النبي','يونان النبي','هوشع النبي','اشعياء النبي','داود النبي','اليشع النبي'],'2nd Prep':['ايليا النبي','ارميا النبي','موسى النبي','حزقيال النبي','دانيال النبي']},PREPS=Object.keys(CLASSES);
 let db={people:[],attendance:{},canceled:[],quizzes:[]},cfg={},tab='att',q='',quizId=null,sat=SATS[0];
 try{cfg=JSON.parse(localStorage.getItem('bs_cfg')||'{}')}catch(e){}
 if(!cfg.owner&&location.hostname.endsWith('github.io')){cfg.owner=location.hostname.split('.')[0];cfg.repo=location.pathname.split('/')[1]||''}
@@ -110,8 +110,8 @@ const today=new Date().toLocaleDateString('en-CA');sat=[...SATS].reverse().find(
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
 function score(p){let a=0,b=0,h=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P'){a+=10;if(r.b)b+=5;if(r.h)h+=5}}
 db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));const o=+(db.bonus?.[p.id])||0;return{a,b,h,z,o,t:n1(a+b+h+z+o)}}
-const match=p=>(p.name+' '+p.class+' '+(p.cls||'')).toLowerCase().includes(q.trim().toLowerCase());
-const tag=p=>`<span class="chip">${esc(p.class)}</span>`+(p.cls?`<span class="chip">${esc(p.cls)}</span>`:'');
+const match=p=>(p.name+' '+p.class+' '+(p.cls||'')+' '+(p.code||'')).toLowerCase().includes(q.trim().toLowerCase());
+const tag=p=>(p.code?`<span class="chip code">#${esc(p.code)}</span>`:'')+`<span class="chip">${esc(p.class)}</span>`+(p.cls?`<span class="chip">${esc(p.cls)}</span>`:'');
 
 /* ---------- GitHub storage ---------- */
 const API=()=>`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`;
@@ -134,7 +134,7 @@ async function load(){let j=null;
  try{if(cfg.token){const r=await fetch(API(),{headers:H(),cache:'no-store'});if(r.ok)j=JSON.parse(dec((await r.json()).content));else setStatus('⚠ Token or repo name is wrong',4000)}
   if(!j)j=await fetchDB()}
  catch(e){setStatus('⚠ Could not load data.json',4000)}
- if(j&&!fbGot)db=norm(j);
+ if(j&&!fbGot)db=norm(j);ensureCodes();
  if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;view();loaded=true;if(pendingSeed&&cfg.token){pendingSeed=false;fbSave()}}
 async function save(){setStatus('Saving to GitHub…');
  try{let r=await fetch(API(),{headers:H(),cache:'no-store'}),cur=r.ok?await r.json():{};
@@ -159,7 +159,11 @@ function fbStart(){if(!FB)return;firebase.initializeApp(FB);fbRef=firebase.datab
  fbRef.on('value',s=>{const v=s.val();
   if(v==null){if(cfg.token&&loaded)fbSave();else pendingSeed=true;return}
   fbGot=true;const n=norm(v);
-  if(canon(n)!==canon(db)){db=n;if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;list()}})}
+  if(canon(n)!==canon(db)){db=n;ensureCodes();if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;list()}})}
+
+function newCode(){const used=new Set(db.people.map(p=>p.code));let c;do{c=String(100+Math.floor(Math.random()*900))}while(used.has(c)&&used.size<900);return c}
+function ensureCodes(){if(!cfg.token)return;let n=0;db.people.forEach(p=>{if(!p.code){p.code=newCode();n++}});if(n)changed()}
+function fillClasses(){$('pk').innerHTML='<option value="">Choose class…</option>'+(CLASSES[$('pc').value]||[]).map(c=>`<option>${c}</option>`).join('');$('pk').disabled=!$('pc').value}
 
 /* ---------- teacher login: auth.json holds the GitHub token encrypted with the password ---------- */
 const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
@@ -174,7 +178,7 @@ async function doLogin(){const e=$('err');e.textContent='Checking…';
 
 /* ---------- views ---------- */
 function view(){applyMode();if(!cfg.token)tab='board';
- $('tabs').innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 10 page</a>';
+ $('tabs').innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 3</a>';
  let h='';
  if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat);
   h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
@@ -187,7 +191,7 @@ function view(){applyMode();if(!cfg.token)tab='board';
   <div class="qs">${db.quizzes.map(x=>`<button class="qc ${x.id===quizId?'on':''}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join('')}</div>
   ${n<6?`<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n+1}"><input id="qm" type="number" inputmode="numeric" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>`:''}
   ${quizId?'<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>':''}`}
- if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><input id="pk" placeholder="Class (type it)"><select id="pc" style="flex:1 1 150px;width:auto"><option value="">Choose prep…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><button class="btn" data-a="add">＋ Add person</button></div>
+ if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><select id="pc"><option value="">Choose prep first…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><select id="pk" disabled><option value="">Then choose class…</option></select><button class="btn" data-a="add">＋ Add person</button></div>
   <div class="sub" style="margin-top:8px">${db.people.length} people</div>`}
  if(tab==='bonus')h='<div class="sub">Tap ＋ to give one bonus point at a time. Tap − to take one back.</div>';
  $('top').innerHTML=h;$('q').value=q;list()}
@@ -199,7 +203,7 @@ function list(){const L=$('list');
  if(tab==='board'){const oth=db.people.some(p=>!PREPS.includes(p.class));
   [...PREPS,...(oth?['Other']:[])].forEach(g=>{
    const all=db.people.filter(p=>g==='Other'?!PREPS.includes(p.class):p.class===g).map(p=>({p,s:score(p)})).sort((a,b)=>b.s.t-a.s.t||a.p.name.localeCompare(b.p.name)).map((o,i,arr)=>({...o,i,r:1+arr.filter(z=>z.s.t>o.s.t).length}));
-   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b>${p.cls?'<span class="chip">'+esc(p.cls)+'</span>':''}<div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 🎶 Hymns ${s.h} · 📝 Quizzes ${n1(s.z)} · ⭐ Bonus ${s.o}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
+   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b>${esc(p.name)}</b>${p.code?'<span class="chip code">#'+esc(p.code)+'</span>':''}${p.cls?'<span class="chip">'+esc(p.cls)+'</span>':''}<div class="sub">🙏 Attendance ${s.a} · 📖 Bible ${s.b} · 🎶 Hymns ${s.h} · 📝 Quizzes ${n1(s.z)} · ⭐ Bonus ${s.o}</div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
  else{const ps=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).filter(match);
   const x=db.quizzes.find(z=>z.id===quizId);
   if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
@@ -236,9 +240,10 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data
  if(a==='delq'){const x=db.quizzes.find(z=>z.id===quizId);if(!confirm(`Delete "${x.title}" and all its marks?`))return;
   db.quizzes=db.quizzes.filter(z=>z.id!==quizId);quizId=db.quizzes[0]?.id||null;changed();view()}
 });
-function addPerson(){const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').value.trim();if(!n||!c)return alert('Type a name and choose 1st Prep or 2nd Prep.');
- db.people.push({id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k});changed();view();$('pc').value=c;$('pk').value=k;$('pn').focus()}
+function addPerson(){const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').value;if(!n||!c||!k)return alert('Type a name, then choose the prep and the class.');
+ const code=newCode();db.people.push({code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k});changed();setStatus('Added '+n+' · number #'+code,4000);view();$('pc').value=c;fillClasses();$('pk').value=k;$('pn').focus()}
 document.addEventListener('change',e=>{const t=e.target;
+ if(t.id==='pc')fillClasses();
  if(t.id==='sat'){sat=t.value;view()}
  if(t.id==='cx'){if(needLogin()){t.checked=!t.checked;return}
   db.canceled=t.checked?[...new Set([...db.canceled,sat])]:db.canceled.filter(d=>d!==sat);changed();view()}
