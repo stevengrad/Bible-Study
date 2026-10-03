@@ -171,11 +171,18 @@
       "name": "يوسف السبع"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "578",
       "id": "pmusk5wxu2xl",
-      "name": "Gabriel John",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "Gabriel John"
+    },
+    {
+      "code": "146",
+      "id": "pmusk61vqfwa",
+      "name": "ماجد وسام",
+      "class": "1st Prep",
+      "cls": "صموئيل النبي"
     }
   ],
   "canceled": [],
