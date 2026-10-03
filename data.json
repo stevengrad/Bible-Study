@@ -10,12 +10,18 @@
         "b": true,
         "h": true,
         "s": "P"
+      },
+      "pmusdngboixf": {
+        "s": "P",
+        "b": false,
+        "h": false
       }
     }
   },
   "bonus": {
     "pmusblu0s1ld": 10,
-    "pmusd3nt1u8x": 10
+    "pmusd3nt1u8x": 10,
+    "pmusdngboixf": 15
   },
   "people": [
     {
@@ -31,6 +37,13 @@
       "code": "179",
       "id": "pmusd3nt1u8x",
       "name": "thomas micheal"
+    },
+    {
+      "class": "1st Prep",
+      "cls": "اليشع النبي",
+      "code": "491",
+      "id": "pmusdngboixf",
+      "name": "Shady Sherif"
     }
   ],
   "quizzes": [
