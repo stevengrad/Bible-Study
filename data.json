@@ -1,5 +1,12 @@
 {
-  "people": [],
+  "people": [
+    {
+      "id": "pmusblu0s1ld",
+      "name": "Steven Botros",
+      "class": "2nd Prep",
+      "cls": "موسي النبي"
+    }
+  ],
   "attendance": {
     "2026-10-03": {}
   },
