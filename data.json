@@ -13,8 +13,8 @@
       },
       "pmusdngboixf": {
         "s": "P",
-        "b": false,
-        "h": false
+        "b": true,
+        "h": true
       }
     }
   },
