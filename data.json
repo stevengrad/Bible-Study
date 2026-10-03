@@ -2,30 +2,48 @@
   "attendance": {
     "2026-10-03": {
       "pmusblu0s1ld": {
-        "s": "P",
         "b": true,
-        "h": false
+        "h": false,
+        "s": "P"
+      },
+      "pmusd3nt1u8x": {
+        "b": true,
+        "h": true,
+        "s": "P"
       }
     }
   },
   "bonus": {
-    "pmusblu0s1ld": 5
+    "pmusblu0s1ld": 10,
+    "pmusd3nt1u8x": 10
   },
   "people": [
     {
-      "id": "pmusblu0s1ld",
-      "name": "Steven Botros",
       "class": "2nd Prep",
-      "cls": "موسي النبي"
+      "cls": "موسي النبي",
+      "id": "pmusblu0s1ld",
+      "name": "Steven Botros"
+    },
+    {
+      "class": "2nd Prep",
+      "cls": "حزقيال",
+      "id": "pmusd3nt1u8x",
+      "name": "thomas micheal"
+    },
+    {
+      "id": "pmusd4thhrn0",
+      "name": "Andrew Samir",
+      "class": "2nd Prep",
+      "cls": "اشعياء النبي"
     }
   ],
-  "canceled": [],
   "quizzes": [
     {
       "id": "qmus9tb9w",
-      "title": "q1",
       "max": 30,
+      "title": "q1",
       "scores": {}
     }
-  ]
+  ],
+  "canceled": []
 }
