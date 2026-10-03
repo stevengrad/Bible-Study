@@ -12,7 +12,7 @@
       "pmusblu0s1ld": {
         "s": "P",
         "b": true,
-        "h": true
+        "h": false
       }
     }
   },
