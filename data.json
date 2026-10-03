@@ -171,18 +171,32 @@
       "name": "ماجد وسام"
     },
     {
+      "class": "1st Prep",
+      "cls": "هوشع النبي",
       "code": "680",
       "id": "pmusk66pdjdt",
-      "name": "Kirolos Sameh",
-      "class": "1st Prep",
-      "cls": "هوشع النبي"
+      "name": "Kirolos Sameh"
     },
     {
+      "class": "1st Prep",
+      "cls": "اشعياء النبي",
       "code": "190",
       "id": "pmusk75mxoig",
-      "name": "Jeevan Joesph",
-      "class": "1st Prep",
-      "cls": "اشعياء النبي"
+      "name": "Jeevan Joesph"
+    },
+    {
+      "code": "318",
+      "id": "pmusk8td3spi",
+      "name": "يوسف رفيق",
+      "class": "2nd Prep",
+      "cls": "دانيال النبي"
+    },
+    {
+      "code": "442",
+      "id": "pmusk8y8b0zd",
+      "name": "توني هاني",
+      "class": "2nd Prep",
+      "cls": "دانيال النبي"
     }
   ],
   "canceled": [],
