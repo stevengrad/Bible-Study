@@ -188,8 +188,8 @@ function view(){applyMode();if(!cfg.token)tab='board';
  if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat),lk=isLocked(),dn=!!(db.done&&db.done[sat]);
   h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
   <div class="sub" style="margin-top:6px">Saturday ${i+1} of ${SATS.length}</div>
-  <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>
-  <label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''} ${lk?'disabled':''}> This Saturday is canceled</label>
+  ${lk?'':`<div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>`}
+  ${lk?'':`<label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''}> This Saturday is canceled</label>`}
   ${c?'':`<div class="donebar edit">${dn?(lk?'<span class="doneb">✅ Done and locked</span><button class="btn ghost" data-a="unlock">✏️ Edit (fix a mistake)</button>':'<span class="sub">✏️ Editing a finished Saturday</span><button class="btn" data-a="relock">🔒 Lock again</button>'):'<button class="btn" data-a="done">✔ Mark this Saturday as done</button>'}</div>`}
   ${c?'<div class="banner">✝ Bible study is canceled this Saturday</div>':''}`}
  if(tab==='quiz'){const n=db.quizzes.length;
@@ -200,11 +200,11 @@ function view(){applyMode();if(!cfg.token)tab='board';
  if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><select id="pc"><option value="">Choose prep first…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><select id="pk" disabled><option value="">Then choose class…</option></select><button class="btn" data-a="add">＋ Add person</button></div>
   <div class="sub" style="margin-top:8px">${db.people.length} people</div>`}
  if(tab==='bonus')h='<div class="sub">Tap ＋ to give one bonus point at a time. Tap − to take one back.</div>';
- $('top').innerHTML=h;$('q').value=q;list()}
+ $('top').innerHTML=h;$('q').style.display=tab==='att'&&isLocked()?'none':'';$('q').value=q;list()}
 
 function list(){const L=$('list');
  if(!db.people.length){L.innerHTML=cfg.token?'<div class="empty">No one here yet ✝<br>Open People and add the first student.</div>':'<div class="empty">No scores yet ✝<br>Check back soon.</div>';return}
- if(tab==='att'&&db.canceled.includes(sat)){L.innerHTML='';return}
+ if(tab==='att'&&(db.canceled.includes(sat)||isLocked())){L.innerHTML='';return}
  let h='';
  if(tab==='board'){const oth=db.people.some(p=>!PREPS.includes(p.class));
   [...PREPS,...(oth?['Other']:[])].forEach(g=>{
