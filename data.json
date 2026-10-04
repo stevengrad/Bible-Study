@@ -162,13 +162,16 @@
         "s": "P"
       },
       "pmusm538tmz2": {
-        "s": "P",
         "b": true,
-        "h": false
+        "h": false,
+        "s": "P"
       }
     }
   },
   "bonus": {},
+  "done": {
+    "2026-10-03": true
+  },
   "people": [
     {
       "class": "1st Prep",
@@ -409,16 +412,13 @@
       "name": "Bavly boles"
     },
     {
+      "class": "1st Prep",
+      "cls": "اليشع النبي",
       "code": "115",
       "id": "pmusm538tmz2",
-      "name": "Rafe John",
-      "class": "1st Prep",
-      "cls": "اليشع النبي"
+      "name": "Rafe John"
     }
   ],
   "canceled": [],
-  "quizzes": [],
-  "done": {
-    "2026-10-03": true
-  }
+  "quizzes": []
 }
