@@ -417,5 +417,8 @@
     }
   ],
   "canceled": [],
-  "quizzes": []
+  "quizzes": [],
+  "done": {
+    "2026-10-03": true
+  }
 }
