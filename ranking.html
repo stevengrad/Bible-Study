@@ -58,7 +58,7 @@ const norm=j=>({attendance:{},bonus:{},...j,people:arr(j.people),canceled:arr(j.
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const n1=x=>+(+x).toFixed(1),PREPS=['1st Prep','2nd Prep'],M=['🥇','🥈','🥉'];
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
-function score(db,p){let t=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P')t+=10+(r.b?5:0)+(r.h?5:0)}
+function score(db,p){let t=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r){if(r.s==='P')t+=10+(r.b?5:0);if(r.h)t+=5}}
  db.quizzes.forEach(x=>t+=qPts(x.scores[p.id],x.max));t+=+(db.bonus?.[p.id])||0;return n1(t)}
 function draw(db){
  $('m').innerHTML=PREPS.map(g=>{

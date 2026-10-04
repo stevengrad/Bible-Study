@@ -64,6 +64,7 @@ dialog{max-height:calc(100% - 32px);overflow:auto;color:var(--ink);padding:18px}
 @media(hover:hover){.btn:hover,.tab:hover,.st:hover,.qc:hover,.ic:hover,.bib:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}}
 @media(max-width:560px){.hero{padding-bottom:70px}.portrait{width:84px;height:84px}.bible{width:112px;height:78px}.cross{width:42px;height:54px}.lockbtn{padding:7px 12px;font-size:14px}
 .abtns .st,.abtns .bib{font-size:15px}.form .btn{flex:1 1 100%}}@media(max-width:350px){.abtns .st,.abtns .bib{font-size:13px;padding:6px 4px}.tab{padding:0 14px}.row{padding:10px}}@media(min-width:640px){.abtns{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.donebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.doneb{font-weight:800;color:var(--ok)}.donebar .btn{flex:0 0 auto}.st:disabled{opacity:.55;cursor:not-allowed}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#d9a53a"/></linearGradient></defs>
@@ -108,7 +109,7 @@ const today=new Date().toLocaleDateString('en-CA');sat=[...SATS].reverse().find(
 
 /* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
 const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
-function score(p){let a=0,b=0,h=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r&&r.s==='P'){a+=10;if(r.b)b+=5;if(r.h)h+=5}}
+function score(p){let a=0,b=0,h=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r){if(r.s==='P'){a+=10;if(r.b)b+=5}if(r.h)h+=5}}
 db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));const o=+(db.bonus?.[p.id])||0;return{a,b,h,z,o,t:n1(a+b+h+z+o)}}
 const match=p=>(p.name+' '+p.class+' '+(p.cls||'')+' '+(p.code||'')).toLowerCase().includes(q.trim().toLowerCase());
 const tag=(p,all=1)=>'<div class="tags">'+(p.code?`<span class="chip code">#${esc(p.code)}</span>`:'')+(all?`<span class="chip">${esc(p.class)}</span>`:'')+(p.cls?`<span class="chip" dir="auto">${esc(p.cls)}</span>`:'')+'</div>';
@@ -184,11 +185,12 @@ function view(){applyMode();if(!cfg.token)tab='board';
  const tb=$('tabs');tb.innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 3</a>';
   {const on=tb.querySelector('.tab.on');if(on)tb.scrollLeft=Math.max(0,on.offsetLeft-(tb.clientWidth-on.offsetWidth)/2);tabFade()}
  let h='';
- if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat);
+ if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat),lk=isLocked(),dn=!!(db.done&&db.done[sat]);
   h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
   <div class="sub" style="margin-top:6px">Saturday ${i+1} of ${SATS.length}</div>
   <div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>
-  <label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''}> This Saturday is canceled</label>
+  <label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''} ${lk?'disabled':''}> This Saturday is canceled</label>
+  ${c?'':`<div class="donebar edit">${dn?(lk?'<span class="doneb">✅ Done and locked</span><button class="btn ghost" data-a="unlock">✏️ Edit (fix a mistake)</button>':'<span class="sub">✏️ Editing a finished Saturday</span><button class="btn" data-a="relock">🔒 Lock again</button>'):'<button class="btn" data-a="done">✔ Mark this Saturday as done</button>'}</div>`}
   ${c?'<div class="banner">✝ Bible study is canceled this Saturday</div>':''}`}
  if(tab==='quiz'){const n=db.quizzes.length;
   h=`<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
@@ -212,28 +214,37 @@ function list(){const L=$('list');
   const x=db.quizzes.find(z=>z.id===quizId);
   if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
   ps.forEach(p=>{const who=`<div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div>`;
-   if(tab==='att'){const r=(db.attendance[sat]||{})[p.id]||{},day=r.s==='P'?10+(r.b?5:0)+(r.h?5:0):0;
-    h+=`<div class="row att" data-id="${p.id}">${who}<div class="pts">+${day}</div><div class="abtns"><button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}">✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}">❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${r.s==='P'?'':'disabled'}>🎶 <bdi>درس الألحان</bdi></button></div></div>`}
+   if(tab==='att'){const lk=isLocked(),r=(db.attendance[sat]||{})[p.id]||{},day=(r.s==='P'?10+(r.b?5:0):0)+(r.h?5:0);
+    h+=`<div class="row att" data-id="${p.id}">${who}<div class="pts">+${day}</div><div class="abtns"><button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}" ${lk?'disabled':''}>✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}" ${lk?'disabled':''}>❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'&&!lk?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${lk?'disabled':''}>🎶 <bdi>درس الألحان</bdi></button></div></div>`}
    if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row qz" data-id="${p.id}">${who}<div class="ctl"><input class="sc" type="number" inputmode="decimal" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div></div>`}
    if(tab==='bonus'){const v=db.bonus?.[p.id]||0;h+=`<div class="row bn">${who}<div class="ctl"><button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div></div>`}
    if(tab==='people')h+=`<div class="row pp">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`})}
  L.innerHTML=h||'<div class="empty">No match. Try another name or class.</div>'}
 
 /* ---------- actions ---------- */
-function mark(id,v){const r=(db.attendance[sat]??={}),c=r[id]||{};
- if(v==='B'||v==='H'){if(c.s!=='P')return;const k=v.toLowerCase();r[id]={...c,[k]:!c[k]}}
- else if(c.s===v)delete r[id];else r[id]={s:v,b:v==='P'&&!!c.b,h:v==='P'&&!!c.h};
+let unlocked=null;
+function isLocked(){return !!(db.done&&db.done[sat])&&unlocked!==sat}
+function mark(id,v){if(isLocked())return setStatus('This Saturday is marked done. Tap Edit to fix a mistake.',3500);
+ const r=(db.attendance[sat]??={}),c=r[id]||{};let n;
+ if(v==='H')n={...c,h:!c.h};
+ else if(v==='B'){if(c.s!=='P')return;n={...c,b:!c.b}}
+ else if(c.s===v)n={h:!!c.h};
+ else n={s:v,b:v==='P'&&!!c.b,h:!!c.h};
+ if(!n.s&&!n.h)delete r[id];else r[id]=n;
  changed();list()}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-a]');if(!t)return;
  if(t.dataset.tab){tab=t.dataset.tab;q='';view();return}
  const a=t.dataset.a,id=t.dataset.id;
  if(a==='lock')return openDlg();if(a==='close')return dlgClose();
- if(a==='prev'||a==='next'){const s=SATS[SATS.indexOf(sat)+(a==='next'?1:-1)];if(s){sat=s;view()}return}
+ if(a==='prev'||a==='next'){const s=SATS[SATS.indexOf(sat)+(a==='next'?1:-1)];if(s){sat=s;unlocked=null;view()}return}
  if(a==='pick'){quizId=id;view();return}
  if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));l.download='data.json';l.click();return}
  if(a==='login')return doLogin();
  if(a==='logout'){if(FB)firebase.auth().signOut();cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));dlgClose();load();return}
  if(needLogin())return;
+ if(a==='done'){(db.done??={})[sat]=true;unlocked=null;changed();view();return}
+ if(a==='unlock'){if(!confirm('Unlock this Saturday to fix a wrong entry?\nIt locks again when you tap Lock again, change Saturday, or reload.'))return;unlocked=sat;view();return}
+ if(a==='relock'){unlocked=null;view();return}
  if(a==='P'||a==='X'||a==='B'||a==='H')return mark(id,a);
  if(a==='bp'||a==='bm'){const b=(db.bonus??={});b[id]=Math.max(0,(b[id]||0)+(a==='bp'?1:-1));changed();return list()}
  if(a==='add')return addPerson();
@@ -248,7 +259,7 @@ function addPerson(){const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').valu
  const code=newCode();db.people.push({code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k});changed();setStatus('Added '+n+' · number #'+code,4000);view();$('pc').value=c;fillClasses();$('pk').value=k;$('pn').focus()}
 document.addEventListener('change',e=>{const t=e.target;
  if(t.id==='pc')fillClasses();
- if(t.id==='sat'){sat=t.value;view()}
+ if(t.id==='sat'){sat=t.value;unlocked=null;view()}
  if(t.id==='cx'){if(needLogin()){t.checked=!t.checked;return}
   db.canceled=t.checked?[...new Set([...db.canceled,sat])]:db.canceled.filter(d=>d!==sat);changed();view()}
  if(t.classList.contains('sc')){if(needLogin()){view();return}
