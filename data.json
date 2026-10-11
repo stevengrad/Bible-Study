@@ -170,8 +170,8 @@
     "2026-10-10": {
       "pmusk75mxoig": {
         "s": "P",
-        "b": false,
-        "h": false
+        "b": true,
+        "h": true
       }
     }
   },
