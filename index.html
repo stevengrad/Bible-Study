@@ -724,6 +724,10 @@
 .wchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 10px}
 .wchip{font:inherit;font-size:14px;padding:9px 4px;border:2px solid var(--gold);border-radius:12px;background:#fff;color:inherit;cursor:pointer}
 .wchip.on{background:#25d366;border-color:#25d366;color:#fff;font-weight:700}
+.qli.qe{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:10px;margin-top:8px;border:2px solid var(--line);border-radius:14px;background:#fff}
+.qeh{display:flex;align-items:center;gap:8px}.qeh .ic{margin-left:auto}
+.qe summary{cursor:pointer;color:var(--navy);font-weight:700;font-size:13px;padding:4px 0}
+.crow{display:flex;gap:8px;margin-top:8px}.crow .btn{display:block;line-height:46px;padding-top:0;padding-bottom:0;text-decoration:none;text-align:center}.crow .wa{flex:1}
 .btn.wa{display:block;text-align:center;text-decoration:none;line-height:46px;background:#25d366;border-color:#25d366;color:#fff}
 body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
 </style>
@@ -847,17 +851,22 @@ body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
 const TEACHER_EMAIL='teacher@bible.study',SD='@students.bible.study',WA_NUMS=['01201567333','01203034812','01200933953','01270728855'],PH=/^01[0125]\d{8}$/;
 const waFrom=()=>{try{const v=localStorage.getItem('waFrom');if(WA_NUMS.includes(v))return v}catch(e){}return WA_NUMS[0]},
 waPick=n=>{try{localStorage.setItem('waFrom',n)}catch(e){}document.querySelectorAll('#wd .wchip').forEach(b=>b.classList.toggle('on',b.dataset.n===n));const h=$('wfromtxt');if(h)h.textContent=n};
+const CT={quiz:['📝 Quiz','الكويز'],board:['🏆 Leaderboard','الليدر بورد (ترتيب النقاط)'],top3:['🌟 Top 3','أفضل ٣ (Top 3)']};let cTp='quiz';
+const cLink=n=>{const p=myP()||{name:'',code:me||''};return 'https://wa.me/20'+n.slice(1)+'?text='+encodeURIComponent('أهلاً، أنا '+p.name+' (اسم المستخدم: '+(p.code||me||'')+').\nعندي مشكلة في '+CT[cTp][1]+':\n')};
+function cSet(k){cTp=k;document.querySelectorAll('.cchip').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('.cwa').forEach(a=>a.href=cLink(a.dataset.n))}
+function contactHTML(){return `<div class="sub">Is there a problem in the quizzes, the leaderboard or the Top 3? Choose what it is about, then tap a number to write to us on WhatsApp.</div><div class="sub" style="margin-top:10px"><b>The problem is about:</b></div><div class="wchips" style="grid-template-columns:repeat(auto-fit,minmax(105px,1fr))">${Object.entries(CT).map(([k,v])=>`<button type="button" class="wchip cchip${k===cTp?' on':''}" data-k="${k}" onclick="cSet('${k}')">${v[0]}</button>`).join('')}</div><div class="sub"><b>Contact us:</b></div>${WA_NUMS.map(n=>`<div class="crow"><a class="btn wa cwa" target="_blank" rel="noopener" data-n="${n}" href="${cLink(n)}">💬 ${n}</a><a class="btn ghost" href="tel:+20${n.slice(1)}" aria-label="Call ${n}">📞</a></div>`).join('')}<div class="sub" style="margin-top:10px">Your name and username are added to the message for you. You can write the details before you send it.</div>`}
 const QT={mcq:'Multiple choice',tf:'True / False',fill:'Complete',rank:'Rank (put in order)'};
 let role=null,me=null,mk={},QZ={},qsel=null,qd=null,qrun=null,qres=null,srvOff=0,qzOn=false,qtimer=null;
 const fdb=()=>firebase.database(),svNow=()=>Date.now()+srvOff,n2=x=>+(+x).toFixed(2),rnd6=()=>String(100000+Math.floor(Math.random()*900000));
-const mkPts=p=>{let z=0;for(const i in mk){const m=mk[i]&&mk[i][p.code];if(m!=null)z+=m>=10?50:Math.min(49,Math.round(+m/10*50))}return z};
+const qpts=i=>{const v=+((db.qpts&&db.qpts[i])||(QZ[i]&&QZ[i].pts));return v>0?v:50};
+const mkPts=p=>{let z=0;for(const i in mk){const m=mk[i]&&mk[i][p.code];if(m!=null){const P=qpts(i);z+=m>=10?P:Math.min(Math.max(P-1,0),Math.round(+m/10*P))}}return z};
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const nz=s=>String(s).trim().toLowerCase().replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ');
 function cairoAt(d,h){const [y,m,dd]=d.split('-').map(Number),u=Date.UTC(y,m-1,dd,h),f=new Intl.DateTimeFormat('en-US',{timeZone:'Africa/Cairo',hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}),o=t=>{const p={};f.formatToParts(new Date(t)).forEach(x=>p[x.type]=x.value);return Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-t};let t=u-o(u);t=u-o(t);return t}
 const addDays=(d,n)=>new Date(Date.parse(d+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
 const qWin=w=>({due:cairoAt(addDays(w,7),19),gone:cairoAt(addDays(w,28),19)});
 const fdt=t=>new Date(t).toLocaleString('en-GB',{timeZone:'Africa/Cairo',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-const TABS=()=>role==='teacher'?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['qb','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:role==='student'?[['sq','📝 Quizzes'],['board','🏆 Leaderboard']]:[];
+const TABS=()=>role==='teacher'?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['qb','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:role==='student'?[['sq','📝 Quizzes'],['board','🏆 Leaderboard'],['contact','📞 Contact']]:[];
 const myP=()=>db.people.find(p=>p.code===me);
 function applyMode(){document.body.classList.toggle('ro',role!=='teacher');document.body.classList.toggle('quizing',!!(qrun||qres));$('lk').textContent=role==='teacher'?'🔓 Teacher':role==='student'?'👤 '+((myP()||{name:'Student'}).name.split(' ')[0]):'🔐 Log in'}
 function fbExtra(){fdb().ref('.info/serverTimeOffset').on('value',s=>srvOff=s.val()||0);fdb().ref('marks').on('value',s=>{mk=s.val()||{};if(role)list()})}
@@ -882,7 +891,7 @@ async function doLogin(){const e=$('err'),un=$('un').value.trim(),pw=$('pw').val
  catch(x){e.textContent='Wrong username or password.'}}
 function viewExtra(h){
  if(!role)return '<div class="welcome"><div class="bigx">✝</div><h2>Welcome</h2><p class="sub">Log in with the username and password you received on WhatsApp.</p><button class="btn" data-a="lock">🔐 Log in</button></div>';
- return tab==='qb'?qbHead():tab==='sq'?sqHead():h}
+ return tab==='qb'?qbHead():tab==='sq'?sqHead():tab==='contact'&&role==='student'?contactHTML():h}
 
 /* ----- people: phone + WhatsApp login ----- */
 async function mkAcct(code,pw){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:code+SD,password:pw,returnSecureToken:false})}),j=await r.json();if(j.error)throw new Error(j.error.message)}
@@ -909,42 +918,72 @@ async function addPerson(){
 function rmRemote(p){if(!FB)return;const up={['secrets/'+p.code]:null};Object.keys(QZ).forEach(i=>{up['marks/'+i+'/'+p.code]=null;up['qz/sub/'+p.code+'/'+i]=null;up['qz/start/'+p.code+'/'+i]=null});fdb().ref().update(up).catch(()=>{})}
 
 /* ----- teacher: quiz builder ----- */
+function qEditRow(x,i,rm){
+ const ans=x.t==='mcq'?`<input id="ea${i}" type="number" inputmode="numeric" min="1" placeholder="New number of the correct choice (empty = keep)" value="${esc(x.na||'')}">`
+  :x.t==='tf'?`<select id="ea${i}"><option value="">Correct answer: keep it</option><option value="true" ${x.na==='true'?'selected':''}>Change to True</option><option value="false" ${x.na==='false'?'selected':''}>Change to False</option></select>`
+  :x.t==='fill'?`<input id="ea${i}" dir="auto" placeholder="New correct answer (other answers after a | ) - empty = keep" value="${esc(x.na||'')}">`
+  :`<textarea id="er${i}" rows="3" dir="auto" placeholder="Type the items in the CORRECT order (empty = keep)">${esc(x.nr||'')}</textarea>`;
+ return `<div class="qli qe"><div class="qeh"><b>${i+1}.</b><span class="chip">${QT[x.t]}</span>${rm?`<button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button>`:''}</div><input id="eq${i}" dir="auto" value="${esc(x.q)}"><input id="em${i}" type="number" inputmode="decimal" step="0.25" min="0.25" value="${esc(x.m)}" aria-label="Mark">${x.o?`<div class="sub">${x.t==='rank'?'Items (as the students see them)':'Choices'}</div><textarea id="eo${i}" rows="${Math.min(6,x.o.length+1)}" dir="auto">${esc(x.o.join('\n'))}</textarea>`:''}<details><summary>Change the correct answer</summary>${ans}</details></div>`}
+function qSync(){if(!qd)return;const g=id=>{const e=$(id);return e?e.value:null};
+ const w=g('qw');if(w!=null)qd.week=w;const t=g('qtl');if(t!=null)qd.title=t.trim();const p=g('qpt');if(p!=null)qd.pts=p;const pb=$('qpub');if(pb)qd.pub=pb.checked;
+ qd.qs.forEach((x,i)=>{if(!x.old)return;const a=g('eq'+i);if(a!=null)x.q=a;const m=g('em'+i);if(m!=null)x.m=+m;const o=g('eo'+i);if(o!=null)x.o=o.split('\n').map(s=>s.trim()).filter(Boolean);const na=g('ea'+i);if(na!=null)x.na=na;const nr=g('er'+i);if(nr!=null)x.nr=nr})}
 function qbHead(){
  const ids=Object.keys(QZ).sort((a,b)=>QZ[b].week.localeCompare(QZ[a].week));
  let h=`<div class="qbar">${ids.map(i=>`<button class="qc ${i===qsel&&!qd?'on':''}" data-a="qopen" data-id="${i}">${fmt(QZ[i].week).slice(5)}${QZ[i].pub?'':' (hidden)'}</button>`).join('')}<button class="btn" data-a="qnew">＋ New quiz</button></div>`;
- if(qd){const tot=qd.qs.reduce((s,x)=>s+x.m,0),T=qd.nt||'mcq';
-  h+=`<div class="qed"><h3>New quiz</h3><div class="sub">Choose the week (Saturday)</div><select id="qw">${SATS.map(d=>`<option value="${d}" ${d===qd.week?'selected':''}>${fmt(d)}</option>`).join('')}</select>
+ if(qd){const tot=qd.qs.reduce((s,x)=>s+(+x.m||0),0),T=qd.nt||'mcq',E=!!qd.eid;
+  h+=`<div class="qed"><h3>${E?'Edit quiz':'New quiz'}</h3><div class="sub">Choose the week (Saturday)</div><select id="qw">${SATS.includes(qd.week)?'':`<option value="${qd.week}" selected>${fmt(qd.week)}</option>`}${SATS.map(d=>`<option value="${d}" ${d===qd.week?'selected':''}>${fmt(d)}</option>`).join('')}</select>
   <input id="qtl" placeholder="Title (optional)" value="${esc(qd.title)}">
+  <div class="sub" style="margin-top:8px"><b>Points for a full mark</b> (this is what the quiz adds to the leaderboard)</div>
+  <input id="qpt" type="number" inputmode="numeric" min="1" step="1" placeholder="Write the points, e.g. 50" value="${esc(qd.pts)}">
   <div class="sub" style="margin-top:8px"><b>Total ${n2(tot)} / 10</b> ${tot<10?'· add up to 10 so a full mark is 10':''}</div>
-  ${qd.qs.map((x,i)=>`<div class="qli"><b>${i+1}.</b><span dir="auto">${esc(x.q)}</span><span class="chip">${QT[x.t]} · ${x.m}</span><button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button></div>`).join('')}
-  <div class="qnew"><select id="qty">${Object.entries(QT).map(([k,v])=>`<option value="${k}" ${k===T?'selected':''}>${v}</option>`).join('')}</select><input id="qq" placeholder="Question" value="${esc(qd.dq||'')}">
+  ${E?'<div class="sub">Marks that students already got are not changed. Your changes count for new answers.</div>':''}
+  ${qd.qs.map((x,i)=>{const rm=!x.old||i===qd.qs.length-1;return x.old?qEditRow(x,i,rm):`<div class="qli"><b>${i+1}.</b><span dir="auto">${esc(x.q)}</span><span class="chip">${QT[x.t]} · ${x.m}</span>${rm?`<button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button>`:''}</div>`}).join('')}
+  <div class="qnew"><select id="qty">${Object.entries(QT).map(([k,v])=>`<option value="${k}" ${k===T?'selected':''}>${v}</option>`).join('')}</select><input id="qq" placeholder="${E?'Add a new question':'Question'}" value="${esc(qd.dq||'')}">
   ${T==='mcq'||T==='rank'?`<textarea id="qo" rows="4" placeholder="${T==='rank'?'Items, one per line, in the CORRECT order':'Choices, one per line'}"></textarea>`:''}
   ${T==='mcq'?'<input id="qa" type="number" inputmode="numeric" min="1" placeholder="Number of the correct choice (1 = first line)">':''}
   ${T==='tf'?'<select id="qa"><option value="true">Correct answer: True</option><option value="false">Correct answer: False</option></select>':''}
   ${T==='fill'?'<input id="qa" placeholder="Correct answer (add other accepted answers after a | )">':''}
   <input id="qm2" type="number" inputmode="decimal" step="0.25" min="0.25" placeholder="Mark for this question, e.g. 2.5" value="${esc(qd.dm||'')}"><button class="btn" data-a="qadd">＋ Add question</button></div>
-  <label class="cancel"><input type="checkbox" id="qpub" ${qd.pub?'checked':''}> Publish to students now</label>
-  <div class="form"><button class="btn" data-a="qsave">💾 Save quiz</button><button class="btn ghost" data-a="qcancel">Cancel</button></div></div>`}
+  <label class="cancel"><input type="checkbox" id="qpub" ${qd.pub?'checked':''}> Publish to students ${E?'':'now'}</label>
+  <div class="form"><button class="btn" data-a="qsave">💾 ${E?'Save changes':'Save quiz'}</button><button class="btn ghost" data-a="qcancel">Cancel</button></div></div>`}
  else if(qsel&&QZ[qsel]){const z=QZ[qsel];
-  h+=`<div class="qed"><h3>${fmt(z.week)} ${esc(z.title||'')}</h3><div class="sub">${z.qs.length} questions · ${n2(z.qs.reduce((s,x)=>s+x.m,0))} marks · full marks until ${fdt(qWin(z.week).due)}</div><div class="form"><button class="btn" data-a="qtog" data-id="${qsel}">${z.pub?'🙈 Hide from students':'📣 Publish to students'}</button><button class="btn danger" data-a="qdel" data-id="${qsel}">🗑 Delete quiz</button></div></div>`}
+  h+=`<div class="qed"><h3>${fmt(z.week)} ${esc(z.title||'')}</h3><div class="sub">${z.qs.length} questions · ${n2(z.qs.reduce((s,x)=>s+x.m,0))} marks · <b>${qpts(qsel)} points</b> for a full mark · full marks until ${fdt(qWin(z.week).due)}</div><div class="form"><button class="btn" data-a="qedit" data-id="${qsel}">✏️ Edit quiz</button><button class="btn" data-a="qtog" data-id="${qsel}">${z.pub?'🙈 Hide from students':'📣 Publish to students'}</button><button class="btn danger" data-a="qdel" data-id="${qsel}">🗑 Delete quiz</button></div></div>`}
  return h}
 function qbList(){const L=$('list');
  if(qd){L.innerHTML='';return}
  if(!qsel||!QZ[qsel]){L.innerHTML='<div class="empty">Pick a quiz above, or tap New quiz.</div>';return}
  const r=mk[qsel]||{};
  L.innerHTML=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).map(p=>{const m=r[p.code];return `<div class="row qz"><div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div><div class="ctl"><span class="pts">${m==null?'—':n2(m)+' / 10'}</span>${m==null?'':`<button class="btn ghost" data-a="qreset" data-id="${p.code}">↺ Reset</button>`}</div></div>`}).join('')||'<div class="empty">No students yet.</div>'}
+async function qKey(qid,i,x){const s=qid+i;let o=x.o,ks;
+ if(x.t==='mcq'||x.t==='tf')ks=[await sha(s+'|'+x.a)];
+ else if(x.t==='fill')ks=await Promise.all(x.a.map(a=>sha(s+'|'+nz(a))));
+ else{const n=o.length;let sh;do{sh=[...Array(n).keys()].sort(()=>Math.random()-.5)}while(sh.every((v,j)=>v===j));const items=o;o=sh.map(j=>items[j]);ks=[await sha(s+'|'+items.map((_,j)=>sh.indexOf(j)).join(','))]}
+ return {t:x.t,q:x.q,m:x.m,...(o?{o}:{}),ks}}
 async function qSave(){
- qd.week=$('qw').value;qd.title=$('qtl').value.trim();qd.pub=$('qpub').checked;
- const tot=qd.qs.reduce((s,x)=>s+x.m,0);
- if(!qd.qs.length)return alert('Add at least one question.');if(tot>10.0001)return alert('The total can not be more than 10 marks.');
- const qid='z'+Date.now().toString(36),out=[];
- for(let i=0;i<qd.qs.length;i++){const x=qd.qs[i],s=qid+i;let o=x.o,ks;
-  if(x.t==='mcq'||x.t==='tf')ks=[await sha(s+'|'+x.a)];
-  else if(x.t==='fill')ks=await Promise.all(x.a.map(a=>sha(s+'|'+nz(a))));
-  else{const n=o.length;let sh;do{sh=[...Array(n).keys()].sort(()=>Math.random()-.5)}while(sh.every((v,j)=>v===j));const items=o;o=sh.map(j=>items[j]);ks=[await sha(s+'|'+items.map((_,j)=>sh.indexOf(j)).join(','))]}
-  out.push({t:x.t,q:x.q,m:x.m,...(o?{o}:{}),ks})}
- try{await fdb().ref('qz/q/'+qid).set({week:qd.week,title:qd.title,pub:qd.pub,qs:out,at:Date.now()});qsel=qid;qd=null;setStatus('Quiz saved ✓',2500);view()}catch(e){alert('Could not save: '+e.message)}}
+ qSync();
+ const P=Math.round(+qd.pts),tot=qd.qs.reduce((s,x)=>s+(+x.m||0),0);
+ if(!qd.qs.length)return alert('Add at least one question.');
+ if(!(P>0))return alert('Write the points that a full mark gives, for example 50.');
+ if(n2(tot)>10)return alert('The total can not be more than 10 marks.');
+ const qid=qd.eid||'z'+Date.now().toString(36),out=[];
+ for(let i=0;i<qd.qs.length;i++){const x=qd.qs[i];
+  if(!x.old){out.push(await qKey(qid,i,x));continue}
+  const q=String(x.q).trim(),m=+x.m,no='Question '+(i+1)+': ';
+  if(!q||!(m>0))return alert(no+'type the question and a mark above 0.');
+  let y={t:x.t,q,m,o:x.o},re=false;
+  if(x.t==='mcq'&&x.na){const a=+x.na;if(!(a>=1&&a<=x.o.length))return alert(no+'type the number of the correct choice.');y.a=a-1;re=true}
+  else if(x.t==='tf'&&x.na){y.a=x.na==='true';re=true}
+  else if(x.t==='fill'&&x.na.trim()){y.a=x.na.split('|').map(s=>s.trim()).filter(Boolean);if(!y.a.length)return alert(no+'type the correct answer.');re=true}
+  else if(x.t==='rank'&&x.nr&&x.nr.trim()){const it=x.nr.split('\n').map(s=>s.trim()).filter(Boolean);if(it.length<2)return alert(no+'write at least 2 items.');y.o=it;re=true}
+  if(re){out.push(await qKey(qid,i,y));continue}
+  if(x.o&&x.o.length!==x.oc)return alert(no+'keep the same number of choices ('+x.oc+'), or type a new correct answer.');
+  out.push({t:x.t,q,m,...(x.o?{o:x.o}:{}),ks:x.ks})}
+ const body={week:qd.week,title:qd.title,pub:qd.pub,qs:out};
+ try{const ref=fdb().ref('qz/q/'+qid);if(qd.eid)await ref.update(body);else await ref.set({...body,at:Date.now()});
+  (db.qpts=db.qpts||{})[qid]=P;changed();
+  qsel=qid;qd=null;setStatus('Quiz saved ✓',2500);view()}catch(e){alert('Could not save: '+e.message)}}
 function qAddQ(){
+ qSync();
  const t=qd.nt||'mcq',qt=$('qq').value.trim(),m=+$('qm2').value;
  if(!qt||!(m>0))return alert('Type the question and its mark.');
  if(n2(qd.qs.reduce((s,x)=>s+x.m,0)+m)>10)return alert('The total can not be more than 10 marks.');
@@ -955,8 +994,8 @@ function qAddQ(){
  if(t==='fill'){x.a=$('qa').value.split('|').map(s=>s.trim()).filter(Boolean);if(!x.a.length)return alert('Type the correct answer.')}
  qd.qs.push(x);qd.dq='';qd.dm='';view()}
 function qChange(t){if(role!=='teacher'||!qd)return 0;
- if(t.id==='qty'){qd.dq=$('qq').value;qd.dm=$('qm2').value;qd.nt=t.value;view();return 1}
- if(t.id==='qw'){qd.week=t.value;return 1}if(t.id==='qtl'){qd.title=t.value;return 1}if(t.id==='qpub'){qd.pub=t.checked;return 1}return 0}
+ if(t.id==='qty'){qSync();qd.dq=$('qq').value;qd.dm=$('qm2').value;qd.nt=t.value;view();return 1}
+ if(t.id==='qw'||t.id==='qtl'||t.id==='qpt'||t.id==='qpub'||/^(eq|em|eo|ea|er)\d+$/.test(t.id)){qSync();return 1}return 0}
 
 /* ----- student: quizzes ----- */
 const saveDraft=()=>localStorage.setItem('bs_d_'+me+'_'+qrun.id,JSON.stringify(qrun.ans));
@@ -964,7 +1003,7 @@ function sqHead(){return qrun?qrunHTML():qres?qresHTML():'<div class="sub">Every
 function sqList(){const L=$('list');if(qrun||qres){L.innerHTML='';return}
  const now=svNow(),ids=Object.keys(QZ).filter(i=>QZ[i].pub).sort((a,b)=>QZ[b].week.localeCompare(QZ[a].week));
  L.innerHTML=ids.map(i=>{const z=QZ[i],w=qWin(z.week),m=mk[i]&&mk[i][me];if(m==null&&now>w.gone)return '';
-  return `<div class="row"><div class="who"><b dir="auto">${esc(z.title||'Quiz')}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions</div><div class="sub">${m!=null?'✓ Finished':now>w.due?'Late: the highest mark is 5':'Open until '+fdt(w.due)}</div></div>${m!=null?`<div class="pts big">${n2(m)}<small>/10</small></div>`:`<button class="btn" data-a="qstart" data-id="${i}">▶ Start (10 min)</button>`}</div>`}).join('')||'<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>'}
+  return `<div class="row"><div class="who"><b dir="auto">${esc(z.title||'Quiz')}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m!=null?'✓ Finished':now>w.due?'Late: the highest mark is 5':'Open until '+fdt(w.due)}</div></div>${m!=null?`<div class="pts big">${n2(m)}<small>/10</small></div>`:`<button class="btn" data-a="qstart" data-id="${i}">▶ Start (10 min)</button>`}</div>`}).join('')||'<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>'}
 async function qStart(id){const z=QZ[id];if(!z)return;const ref=fdb().ref(`qz/start/${me}/${id}`);
  try{let s=(await ref.get()).val();if(!s){await ref.set(firebase.database.ServerValue.TIMESTAMP);s=(await ref.get()).val()}
   qrun={id,i:0,ans:JSON.parse(localStorage.getItem(`bs_d_${me}_${id}`)||'{}'),end:s+6e5,z};
@@ -993,14 +1032,15 @@ function qAct(a,id){
   if(a==='qfin'){if(confirm('Finish and send your answers?'))qSubmit();return 1}}
  if(role==='student'){if(a==='qstart'){qStart(id);return 1}if(a==='qdone'){qres=null;view();return 1}}
  if(role!=='teacher')return 0;
- if(a==='qnew'){qd={week:sat,title:'',pub:false,qs:[],nt:'mcq'};view();return 1}
+ if(a==='qnew'){qd={week:sat,title:'',pub:false,qs:[],nt:'mcq',pts:'50'};view();return 1}
+ if(a==='qedit'){const z=QZ[id];if(!z)return 1;qd={eid:id,week:z.week,title:z.title||'',pub:!!z.pub,pts:String(qpts(id)),nt:'mcq',qs:z.qs.map(x=>({...x,old:1,oc:x.o?x.o.length:0}))};view();return 1}
  if(a==='qcancel'){qd=null;view();return 1}
  if(a==='qopen'){qsel=id;qd=null;view();return 1}
  if(a==='qadd'){qAddQ();return 1}
- if(a==='qrm'){qd.qs.splice(+id,1);view();return 1}
+ if(a==='qrm'){qSync();qd.qs.splice(+id,1);view();return 1}
  if(a==='qsave'){qSave();return 1}
  if(a==='qtog'){fdb().ref('qz/q/'+id+'/pub').set(!QZ[id].pub);return 1}
- if(a==='qdel'){if(confirm('Delete this quiz and all its marks?')){const up={['qz/q/'+id]:null,['marks/'+id]:null};db.people.forEach(p=>{up['qz/sub/'+p.code+'/'+id]=null;up['qz/start/'+p.code+'/'+id]=null});fdb().ref().update(up);qsel=null}return 1}
+ if(a==='qdel'){if(confirm('Delete this quiz and all its marks?')){if(db.qpts&&db.qpts[id]!=null){delete db.qpts[id];changed()}const up={['qz/q/'+id]:null,['marks/'+id]:null};db.people.forEach(p=>{up['qz/sub/'+p.code+'/'+id]=null;up['qz/start/'+p.code+'/'+id]=null});fdb().ref().update(up);qsel=null}return 1}
  if(a==='qreset'){if(confirm('Let this student take the quiz again?'))fdb().ref().update({['marks/'+qsel+'/'+id]:null,['qz/sub/'+id+'/'+qsel]:null,['qz/start/'+id+'/'+qsel]:null});return 1}
  if(a==='plogin'){const p=db.people.find(x=>x.id===id);if(p)loginFor(p);return 1}
  return 0}
@@ -1385,8 +1425,8 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
       }
       function view() {
         applyMode();
-        if (role !== "teacher" && tab !== "sq") tab = "board";
-        if (role === "teacher" && (tab === "sq" || tab === "quiz")) tab = "att";
+        if (role !== "teacher" && tab !== "sq" && tab !== "contact") tab = "board";
+        if (role === "teacher" && (tab === "sq" || tab === "quiz" || tab === "contact")) tab = "att";
         const tb = $("tabs");
         tb.innerHTML =
           (TABS())
@@ -1412,7 +1452,7 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
             dn = !!(db.done && db.done[sat]);
           h = `<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map((d) => `<option value="${d}" ${d === sat ? "selected" : ""}>${fmt(d)}${db.canceled.includes(d) ? " (canceled)" : ""}</option>`).join("")}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
   <div class="sub" style="margin-top:6px">Saturday ${i + 1} of ${SATS.length}</div>
-  ${lk ? "" : `<div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>`}
+  ${lk ? "" : `<div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz: points set for each quiz</span></div>`}
   ${lk ? "" : `<label class="cancel edit"><input type="checkbox" id="cx" ${c ? "checked" : ""}> This Saturday is canceled</label>`}
   ${c ? "" : `<div class="donebar edit">${dn ? (lk ? '<span class="doneb">✅ Done and locked</span><button class="btn ghost" data-a="unlock">✏️ Edit (fix a mistake)</button>' : '<span class="sub">✏️ Editing a finished Saturday</span><button class="btn" data-a="relock">🔒 Lock again</button>') : '<button class="btn" data-a="done">✔ Mark this Saturday as done</button>'}</div>`}
   ${c ? '<div class="banner">✝ Bible study is canceled this Saturday</div>' : ""}`;
@@ -1433,7 +1473,7 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
             '<div class="sub">Tap ＋ to give one bonus point at a time. Tap − to take one back.</div>';
         $("top").innerHTML = viewExtra(h);
         $("q").style.display =
-          !role || tab === "qb" || tab === "sq" || (tab === "att" && isLocked()) ? "none" : "";
+          !role || tab === "qb" || tab === "sq" || tab === "contact" || (tab === "att" && isLocked()) ? "none" : "";
         $("q").value = q;
         list();
       }
@@ -1443,6 +1483,7 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
         if (!role) { L.innerHTML = ""; return; }
         if (tab === "qb") { qbList(); return; }
         if (tab === "sq") { sqList(); return; }
+        if (tab === "contact") { L.innerHTML = ""; return; }
         if (!db.people.length) {
           L.innerHTML = cfg.token
             ? '<div class="empty">No one here yet ✝<br>Open People and add the first student.</div>'

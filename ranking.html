@@ -372,7 +372,10 @@
         t += +db.bonus?.[p.id] || 0;
       for (const i in MK) {
         const m = MK[i] && MK[i][p.code];
-        if (m != null) t += m >= 10 ? 50 : Math.min(49, Math.round((+m / 10) * 50));
+        if (m != null) {
+          const v = +(db.qpts && db.qpts[i]), P = v > 0 ? v : 50;
+          t += m >= 10 ? P : Math.min(Math.max(P - 1, 0), Math.round((+m / 10) * P));
+        }
       }
         return n1(t);
       }
