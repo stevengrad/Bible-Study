@@ -168,75 +168,75 @@
       }
     },
     "2026-10-10": {
-      "pmusk75mxoig": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjyuv9brj": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
       "pmusjup3ojyi": {
-        "s": "P",
         "b": false,
-        "h": true
-      },
-      "pmusjznvz2ex": {
-        "s": "P",
-        "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmusjxiism4f": {
-        "s": "P",
         "b": true,
-        "h": true
-      },
-      "pmusjyml8yqh": {
-        "s": "P",
-        "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmusjy6o2bvj": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmusm538tmz2": {
-        "s": "X",
+      "pmusjyml8yqh": {
         "b": false,
-        "h": false
+        "h": true,
+        "s": "P"
+      },
+      "pmusjyuv9brj": {
+        "b": false,
+        "h": true,
+        "s": "P"
       },
       "pmusjzc2y6l7": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmusk2pcj7v3": {
-        "s": "X",
+      "pmusjznvz2ex": {
         "b": false,
-        "h": false
-      },
-      "pmusk2v572r0": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk8y8b0zd": {
-        "s": "P",
-        "b": false,
-        "h": false
+        "h": true,
+        "s": "P"
       },
       "pmusk2bkk4yj": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
+      },
+      "pmusk2pcj7v3": {
+        "b": false,
+        "h": false,
+        "s": "X"
+      },
+      "pmusk2v572r0": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk75mxoig": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk8y8b0zd": {
+        "b": false,
+        "h": false,
+        "s": "P"
       },
       "pmuskcgnu3fn": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
+      },
+      "pmusm538tmz2": {
+        "b": false,
+        "h": false,
+        "s": "X"
       }
     }
   },
@@ -493,8 +493,5 @@
     }
   ],
   "canceled": [],
-  "quizzes": [],
-  "qpts": {
-    "zmv8olpj7": 30
-  }
+  "quizzes": []
 }
