@@ -1,277 +1,1727 @@
-<!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#14306b">
-<meta name="color-scheme" content="light">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Bible Study">
-<title>Bible Study Scoreboard</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%9D%EF%B8%8F%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&family=Cairo:wght@600;800&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#14306b;--blue:#2457b8;--gold:#d9a53a;--gold2:#f6d77a;--sky:#eaf2ff;--ivory:#fffcf4;--ink:#1c2442;--ok:#2e9d5b;--no:#d6455d;--line:#eadfc4}
-*{box-sizing:border-box}
-body{margin:0;font-family:Nunito,Cairo,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--sky) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E")}
-button,input,select{font:inherit}button{cursor:pointer}
-.hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:22px 16px 74px;background:linear-gradient(rgba(12,28,70,.55),rgba(12,28,70,.9)),url(images/hero.jpg) center/cover,linear-gradient(135deg,#14306b,#2f67d0)}
-.hero:before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-conic-gradient(from 0deg at 50% -8%,rgba(246,215,122,.16) 0 5deg,transparent 5deg 10deg)}
-.hero-in{position:relative;display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;max-width:920px;margin:20px auto 0}
-.portrait{width:112px;height:112px;border-radius:50%;object-fit:cover;border:4px solid var(--gold);box-shadow:0 0 0 7px rgba(246,215,122,.25)}
-.cross{width:54px;height:70px;filter:drop-shadow(0 0 14px rgba(246,215,122,.9))}.bible{width:150px;height:105px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
-h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5.4vw,46px);margin:4px 0 6px;letter-spacing:.3px}
-.verse{margin:0;font-size:15px;opacity:.92;max-width:420px}
-.lockbtn{position:relative;float:right;border:2px solid var(--gold2);background:rgba(255,255,255,.12);color:#fff;border-radius:99px;padding:8px 16px;font-weight:800}
-main{position:relative;max-width:900px;margin:-44px auto 0;padding:0 12px 80px}
-#tabs{position:relative;display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px}#tabs.fl{-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px);mask-image:linear-gradient(90deg,transparent,#000 24px)}#tabs.fr{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}#tabs.fl.fr{-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
-.tab{flex:1 0 auto;min-height:48px;padding:0 18px;border-radius:14px;border:2px solid #fff;background:#fff;color:var(--navy);font-weight:800;box-shadow:0 4px 12px rgba(20,48,107,.12)}
-.tab.on{background:var(--navy);border-color:var(--gold);color:#fff}
-.card{background:var(--ivory);border:2px solid var(--line);border-radius:22px;box-shadow:0 10px 30px rgba(20,48,107,.14);padding:16px}
-.bar{display:flex;gap:8px;align-items:center}.bar select{flex:1;min-width:0}
-select,input{min-height:46px;border:2px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;color:var(--ink);width:100%}
-input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:1px}input:not([type=checkbox]),select{-webkit-appearance:none;appearance:none}select{padding-right:36px;text-overflow:ellipsis;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1.5 1.5 7 7l5.5-5.5' fill='none' stroke='%2314306b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center/14px 9px}input::placeholder{text-overflow:ellipsis;color:#7a82a3;opacity:1}.cancel input{accent-color:var(--navy)}
-#q{margin-top:12px}.form{display:flex;gap:8px;flex-wrap:wrap}.form input,.form select{flex:1 1 150px;width:auto}
-.ic{width:48px;min-height:46px;border-radius:12px;border:2px solid var(--navy);background:var(--navy);color:#fff;font-size:22px}
-.btn{min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--gold);background:var(--gold);color:#3b2a00;font-weight:800}
-.btn.ghost{background:#fff;border-color:var(--line);color:var(--navy)}.btn.danger{background:#fff;border-color:var(--no);color:var(--no)}
-.sub{font-size:13px;color:#5a6488;margin-top:3px}.rules{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
-.rules span,.chip{padding:3px 11px;border-radius:99px;background:#e3ecff;color:var(--navy);font-size:13px;font-weight:800}
-.chip{font-size:12px;line-height:1.5;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}.cancel{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700}.cancel input{width:22px;min-height:22px}
-.banner{margin-top:12px;padding:16px;border-radius:14px;background:#fff2d6;border:2px dashed var(--gold);text-align:center;font-weight:800;color:#7a5200}
-.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;margin-top:10px;border:2px solid var(--line);border-radius:16px;background:#fff}
-.who{flex:1 1 180px;min-width:0}.who b{display:block;font-size:17px;line-height:1.25;overflow-wrap:anywhere}.brk span{display:inline-block;white-space:nowrap;margin-right:12px}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.who .sub{margin-top:6px}
-.st,.bib{min-height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--ink)}
-.st.okon{background:var(--ok);border-color:var(--ok);color:#fff}.st.noon{background:var(--no);border-color:var(--no);color:#fff}
-.bib.on{background:var(--gold);border-color:var(--gold);color:#3b2a00}.bib:disabled{opacity:.4;cursor:not-allowed}.hym.on{background:#8fb4ff;border-color:#8fb4ff;color:#0c1f4d}.ic.mi{background:#fff;color:var(--navy)}.chip.code{background:var(--navy);color:#fff}
-.pts{flex:0 0 auto;min-width:56px;text-align:center;font-weight:800;font-size:19px;color:var(--blue)}.ctl{display:flex;align-items:center;gap:10px;margin-left:auto}.ctl .sub{margin:0}.ctl .ic{flex:0 0 auto}.row.lb{flex-wrap:nowrap}.row.lb .who{flex:1 1 0}.row.pp .btn{margin-left:auto}.row.att .who{flex:1 1 0}.row.att .pts{min-width:48px;text-align:right}.abtns{flex:0 0 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.abtns .st,.abtns .bib{width:100%;padding:6px 8px;line-height:1.25;white-space:normal;align-self:stretch}.big{font-size:26px;font-family:'Playfair Display',serif}
-.rk{width:40px;text-align:center;font-size:26px;font-weight:800;color:var(--navy)}.t0{background:#fff6d9;border-color:var(--gold)}.t1{background:#f3f6fb}.t2{background:#fdf1e6}
-.qs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.qc{min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:#fff;font-weight:800;color:var(--navy)}.qc.on{background:var(--navy);color:#fff;border-color:var(--gold)}
-.sc{width:84px;text-align:center;font-weight:800}.empty{text-align:center;padding:30px 10px;color:#5a6488;font-weight:700}
-body.ro .edit{display:none!important}
-a.tab{display:flex;align-items:center;text-decoration:none}.gh{font-family:'Playfair Display',serif;color:var(--navy);margin:20px 0 0;padding-bottom:6px;border-bottom:3px solid var(--gold)}
-#status{position:fixed;right:12px;bottom:12px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:99px;font-weight:800;opacity:0;transition:opacity .25s;pointer-events:none}#status.show{opacity:1}
-dialog{border:3px solid var(--gold);border-radius:20px;max-width:380px;width:92%;background:var(--ivory)}dialog input{margin-top:8px}.dbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-footer{text-align:center;color:#5a6488;font-size:13px;padding-bottom:30px}
-:root{color-scheme:light}html{-webkit-text-size-adjust:100%}
-button{-webkit-appearance:none;appearance:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.hero{padding-top:calc(64px + env(safe-area-inset-top))}
-main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
-.lockbtn{position:absolute;top:calc(14px + env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));float:none}
-#status{bottom:calc(12px + env(safe-area-inset-bottom))}footer{padding-bottom:calc(30px + env(safe-area-inset-bottom))}
-#tabs{scrollbar-width:none;-webkit-overflow-scrolling:touch}#tabs::-webkit-scrollbar{display:none}
-dialog{max-height:calc(100% - 32px);overflow:auto;color:var(--ink);padding:18px}dialog::backdrop{background:rgba(12,28,70,.55)}dialog:not([open]){display:none}.dbtns .btn{flex:1 1 auto}.nodlg dialog[open]{display:block;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;max-height:calc(100vh - 32px);box-shadow:0 0 0 100vmax rgba(12,28,70,.55)}
-@media(hover:hover){.btn:hover,.tab:hover,.st:hover,.qc:hover,.ic:hover,.bib:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}}
-@media(max-width:560px){.hero{padding-bottom:70px}.portrait{width:84px;height:84px}.bible{width:112px;height:78px}.cross{width:42px;height:54px}.lockbtn{padding:7px 12px;font-size:14px}
-.abtns .st,.abtns .bib{font-size:15px}.form .btn{flex:1 1 100%}}@media(max-width:350px){.abtns .st,.abtns .bib{font-size:13px;padding:6px 4px}.tab{padding:0 14px}.row{padding:10px}}@media(min-width:640px){.abtns{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.donebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.doneb{font-weight:800;color:var(--ok)}.donebar .btn{flex:0 0 auto}.st:disabled{opacity:.55;cursor:not-allowed}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
-</style></head><body>
-<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#d9a53a"/></linearGradient></defs>
-<symbol id="cross" viewBox="0 0 60 78"><rect x="24" y="2" width="12" height="74" rx="3" fill="url(#g)"/><rect x="6" y="20" width="48" height="12" rx="3" fill="url(#g)"/><circle cx="30" cy="26" r="5" fill="#fff8d6"/></symbol>
-<symbol id="bible" viewBox="0 0 140 100"><path d="M70 16C54 6 30 6 6 12v72c24-6 48-6 64 4z" fill="#fff8e6" stroke="#d9a53a" stroke-width="3"/><path d="M70 16c16-10 40-10 64-4v72c-24-6-48-6-64 4z" fill="#fff8e6" stroke="#d9a53a" stroke-width="3"/><path d="M16 28c16-3 34-2 46 4M16 40c16-3 34-2 46 4M16 52c16-3 34-2 46 4M124 28c-16-3-34-2-46 4M124 40c-16-3-34-2-46 4M124 52c-16-3-34-2-46 4" stroke="#c9b27a" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M96 62h6v18h-6zM90 68h18v6H90z" fill="#d9a53a"/><path d="M70 16v72" stroke="#d9a53a" stroke-width="3"/></symbol></svg>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#14306b" />
+    <meta name="color-scheme" content="light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Bible Study" />
+    <title>Bible Study Scoreboard</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%9D%EF%B8%8F%3C/text%3E%3C/svg%3E"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Nunito:wght@400;600;800&family=Cairo:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --navy: #14306b;
+        --blue: #2457b8;
+        --gold: #d9a53a;
+        --gold2: #f6d77a;
+        --sky: #eaf2ff;
+        --ivory: #fffcf4;
+        --ink: #1c2442;
+        --ok: #2e9d5b;
+        --no: #d6455d;
+        --line: #eadfc4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          Nunito,
+          Cairo,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        color: var(--ink);
+        background: var(--sky)
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cpath d='M43 30h4v12h12v4H47v14h-4V46H31v-4h12z' fill='%23d9a53a' fill-opacity='.13'/%3E%3C/svg%3E");
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .hero {
+        position: relative;
+        overflow: hidden;
+        color: #fff;
+        text-align: center;
+        padding: 22px 16px 74px;
+        background:
+          linear-gradient(rgba(12, 28, 70, 0.55), rgba(12, 28, 70, 0.9)),
+          url(images/hero.jpg) center/cover,
+          linear-gradient(135deg, #14306b, #2f67d0);
+      }
+      .hero:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-conic-gradient(
+          from 0deg at 50% -8%,
+          rgba(246, 215, 122, 0.16) 0 5deg,
+          transparent 5deg 10deg
+        );
+      }
+      .hero-in {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        max-width: 920px;
+        margin: 20px auto 0;
+      }
+      .portrait {
+        width: 112px;
+        height: 112px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--gold);
+        box-shadow: 0 0 0 7px rgba(246, 215, 122, 0.25);
+      }
+      .cross {
+        width: 54px;
+        height: 70px;
+        filter: drop-shadow(0 0 14px rgba(246, 215, 122, 0.9));
+      }
+      .bible {
+        width: 150px;
+        height: 105px;
+        filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+      }
+      h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(28px, 5.4vw, 46px);
+        margin: 4px 0 6px;
+        letter-spacing: 0.3px;
+      }
+      .verse {
+        margin: 0;
+        font-size: 15px;
+        opacity: 0.92;
+        max-width: 420px;
+      }
+      .lockbtn {
+        position: relative;
+        float: right;
+        border: 2px solid var(--gold2);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        border-radius: 99px;
+        padding: 8px 16px;
+        font-weight: 800;
+      }
+      main {
+        position: relative;
+        max-width: 900px;
+        margin: -44px auto 0;
+        padding: 0 12px 80px;
+      }
+      #tabs {
+        position: relative;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 2px 12px;
+      }
+      #tabs.fl {
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px);
+        mask-image: linear-gradient(90deg, transparent, #000 24px);
+      }
+      #tabs.fr {
+        -webkit-mask-image: linear-gradient(
+          90deg,
+          #000 calc(100% - 24px),
+          transparent
+        );
+        mask-image: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+      }
+      #tabs.fl.fr {
+        -webkit-mask-image: linear-gradient(
+          90deg,
+          transparent,
+          #000 24px,
+          #000 calc(100% - 24px),
+          transparent
+        );
+        mask-image: linear-gradient(
+          90deg,
+          transparent,
+          #000 24px,
+          #000 calc(100% - 24px),
+          transparent
+        );
+      }
+      .tab {
+        flex: 1 0 auto;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 14px;
+        border: 2px solid #fff;
+        background: #fff;
+        color: var(--navy);
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(20, 48, 107, 0.12);
+      }
+      .tab.on {
+        background: var(--navy);
+        border-color: var(--gold);
+        color: #fff;
+      }
+      .card {
+        background: var(--ivory);
+        border: 2px solid var(--line);
+        border-radius: 22px;
+        box-shadow: 0 10px 30px rgba(20, 48, 107, 0.14);
+        padding: 16px;
+      }
+      .bar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .bar select {
+        flex: 1;
+        min-width: 0;
+      }
+      select,
+      input {
+        min-height: 46px;
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        padding: 0 12px;
+        background: #fff;
+        color: var(--ink);
+        width: 100%;
+      }
+      input:focus,
+      select:focus,
+      button:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 1px;
+      }
+      input:not([type="checkbox"]),
+      select {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      select {
+        padding-right: 36px;
+        text-overflow: ellipsis;
+        background: #fff
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1.5 1.5 7 7l5.5-5.5' fill='none' stroke='%2314306b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+          no-repeat right 14px center/14px 9px;
+      }
+      input::placeholder {
+        text-overflow: ellipsis;
+        color: #7a82a3;
+        opacity: 1;
+      }
+      .cancel input {
+        accent-color: var(--navy);
+      }
+      #q {
+        margin-top: 12px;
+      }
+      .form {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .form input,
+      .form select {
+        flex: 1 1 150px;
+        width: auto;
+      }
+      .ic {
+        width: 48px;
+        min-height: 46px;
+        border-radius: 12px;
+        border: 2px solid var(--navy);
+        background: var(--navy);
+        color: #fff;
+        font-size: 22px;
+      }
+      .btn {
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 12px;
+        border: 2px solid var(--gold);
+        background: var(--gold);
+        color: #3b2a00;
+        font-weight: 800;
+      }
+      .btn.ghost {
+        background: #fff;
+        border-color: var(--line);
+        color: var(--navy);
+      }
+      .btn.danger {
+        background: #fff;
+        border-color: var(--no);
+        color: var(--no);
+      }
+      .sub {
+        font-size: 13px;
+        color: #5a6488;
+        margin-top: 3px;
+      }
+      .rules {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0 0;
+      }
+      .rules span,
+      .chip {
+        padding: 3px 11px;
+        border-radius: 99px;
+        background: #e3ecff;
+        color: var(--navy);
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .chip {
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: nowrap;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .cancel {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        font-weight: 700;
+      }
+      .cancel input {
+        width: 22px;
+        min-height: 22px;
+      }
+      .banner {
+        margin-top: 12px;
+        padding: 16px;
+        border-radius: 14px;
+        background: #fff2d6;
+        border: 2px dashed var(--gold);
+        text-align: center;
+        font-weight: 800;
+        color: #7a5200;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 12px;
+        margin-top: 10px;
+        border: 2px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+      }
+      .who {
+        flex: 1 1 180px;
+        min-width: 0;
+      }
+      .who b {
+        display: block;
+        font-size: 17px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+      .brk span {
+        display: inline-block;
+        white-space: nowrap;
+        margin-right: 12px;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .who .sub {
+        margin-top: 6px;
+      }
+      .st,
+      .bib {
+        min-height: 46px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 2px solid var(--line);
+        background: #fff;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .st.okon {
+        background: var(--ok);
+        border-color: var(--ok);
+        color: #fff;
+      }
+      .st.noon {
+        background: var(--no);
+        border-color: var(--no);
+        color: #fff;
+      }
+      .bib.on {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: #3b2a00;
+      }
+      .bib:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .hym.on {
+        background: #8fb4ff;
+        border-color: #8fb4ff;
+        color: #0c1f4d;
+      }
+      .ic.mi {
+        background: #fff;
+        color: var(--navy);
+      }
+      .chip.code {
+        background: var(--navy);
+        color: #fff;
+      }
+      .pts {
+        flex: 0 0 auto;
+        min-width: 56px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 19px;
+        color: var(--blue);
+      }
+      .ctl {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+      }
+      .ctl .sub {
+        margin: 0;
+      }
+      .ctl .ic {
+        flex: 0 0 auto;
+      }
+      .row.lb {
+        flex-wrap: nowrap;
+      }
+      .row.lb .who {
+        flex: 1 1 0;
+      }
+      .row.pp .btn {
+        margin-left: auto;
+      }
+      .row.att .who {
+        flex: 1 1 0;
+      }
+      .row.att .pts {
+        min-width: 48px;
+        text-align: right;
+      }
+      .abtns {
+        flex: 0 0 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .abtns .st,
+      .abtns .bib {
+        width: 100%;
+        padding: 6px 8px;
+        line-height: 1.25;
+        white-space: normal;
+        align-self: stretch;
+      }
+      .big {
+        font-size: 26px;
+        font-family: "Playfair Display", serif;
+      }
+      .rk {
+        width: 40px;
+        text-align: center;
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .t0 {
+        background: #fff6d9;
+        border-color: var(--gold);
+      }
+      .t1 {
+        background: #f3f6fb;
+      }
+      .t2 {
+        background: #fdf1e6;
+      }
+      .qs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      .qc {
+        min-height: 44px;
+        padding: 0 16px;
+        border-radius: 99px;
+        border: 2px solid var(--line);
+        background: #fff;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .qc.on {
+        background: var(--navy);
+        color: #fff;
+        border-color: var(--gold);
+      }
+      .sc {
+        width: 84px;
+        text-align: center;
+        font-weight: 800;
+      }
+      .empty {
+        text-align: center;
+        padding: 30px 10px;
+        color: #5a6488;
+        font-weight: 700;
+      }
+      body.ro .edit {
+        display: none !important;
+      }
+      a.tab {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+      .gh {
+        font-family: "Playfair Display", serif;
+        color: var(--navy);
+        margin: 20px 0 0;
+        padding-bottom: 6px;
+        border-bottom: 3px solid var(--gold);
+      }
+      #status {
+        position: fixed;
+        right: 12px;
+        bottom: 12px;
+        background: var(--navy);
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 99px;
+        font-weight: 800;
+        opacity: 0;
+        transition: opacity 0.25s;
+        pointer-events: none;
+      }
+      #status.show {
+        opacity: 1;
+      }
+      dialog {
+        border: 3px solid var(--gold);
+        border-radius: 20px;
+        max-width: 380px;
+        width: 92%;
+        background: var(--ivory);
+      }
+      dialog input {
+        margin-top: 8px;
+      }
+      .dbtns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      footer {
+        text-align: center;
+        color: #5a6488;
+        font-size: 13px;
+        padding-bottom: 30px;
+      }
+      :root {
+        color-scheme: light;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      button {
+        -webkit-appearance: none;
+        appearance: none;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .hero {
+        padding-top: calc(64px + env(safe-area-inset-top));
+      }
+      main {
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+      }
+      .lockbtn {
+        position: absolute;
+        top: calc(14px + env(safe-area-inset-top));
+        right: max(14px, env(safe-area-inset-right));
+        float: none;
+      }
+      #status {
+        bottom: calc(12px + env(safe-area-inset-bottom));
+      }
+      footer {
+        padding-bottom: calc(30px + env(safe-area-inset-bottom));
+      }
+      #tabs {
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      #tabs::-webkit-scrollbar {
+        display: none;
+      }
+      dialog {
+        max-height: calc(100% - 32px);
+        overflow: auto;
+        color: var(--ink);
+        padding: 18px;
+      }
+      dialog::backdrop {
+        background: rgba(12, 28, 70, 0.55);
+      }
+      dialog:not([open]) {
+        display: none;
+      }
+      .dbtns .btn {
+        flex: 1 1 auto;
+      }
+      .nodlg dialog[open] {
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 50;
+        max-height: calc(100vh - 32px);
+        box-shadow: 0 0 0 100vmax rgba(12, 28, 70, 0.55);
+      }
+      @media (hover: hover) {
+        .btn:hover,
+        .tab:hover,
+        .st:hover,
+        .qc:hover,
+        .ic:hover,
+        .bib:hover:not(:disabled) {
+          filter: brightness(1.07);
+          transform: translateY(-1px);
+        }
+      }
+      @media (max-width: 560px) {
+        .hero {
+          padding-bottom: 70px;
+        }
+        .portrait {
+          width: 84px;
+          height: 84px;
+        }
+        .bible {
+          width: 112px;
+          height: 78px;
+        }
+        .cross {
+          width: 42px;
+          height: 54px;
+        }
+        .lockbtn {
+          padding: 7px 12px;
+          font-size: 14px;
+        }
+        .abtns .st,
+        .abtns .bib {
+          font-size: 15px;
+        }
+        .form .btn {
+          flex: 1 1 100%;
+        }
+      }
+      @media (max-width: 350px) {
+        .abtns .st,
+        .abtns .bib {
+          font-size: 13px;
+          padding: 6px 4px;
+        }
+        .tab {
+          padding: 0 14px;
+        }
+        .row {
+          padding: 10px;
+        }
+      }
+      @media (min-width: 640px) {
+        .abtns {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+      .donebar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+      .doneb {
+        font-weight: 800;
+        color: var(--ok);
+      }
+      .donebar .btn {
+        flex: 0 0 auto;
+      }
+      .st:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    textarea{width:100%;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font:inherit;color:var(--ink);resize:vertical}
+.welcome,.qres{text-align:center;padding:26px 8px}.bigx{font-size:54px}
+.qbar,.qnew{display:flex;gap:8px;flex-wrap:wrap}.qnew{flex-direction:column;margin-top:12px;padding:12px;border:2px dashed var(--line);border-radius:16px}
+.qed h3{margin:14px 0 6px;color:var(--navy)}.qli{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}.qli>span:nth-child(2){flex:1;min-width:0}.qli .ic{width:40px;min-height:40px}
+.pill{background:var(--navy);color:#fff;padding:8px 16px;border-radius:99px;font-weight:800}.qtop{display:flex;justify-content:space-between;align-items:center}
+.prog{height:10px;border-radius:9px;background:#e3ecff;margin:12px 0;overflow:hidden}.prog div{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:9px;transition:width .3s}
+.qtxt{font-family:'Playfair Display',Cairo,serif;font-size:22px;line-height:1.5;margin:14px 0;color:var(--navy)}.qbody{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 14px;border:2px solid var(--line);border-radius:16px;background:#fff;font-weight:700;text-align:start;color:var(--ink)}
+.opt i{flex:0 0 36px;height:36px;border-radius:50%;background:#e3ecff;color:var(--navy);display:grid;place-items:center;font-style:normal;font-weight:800}
+.opt.on{background:var(--navy);border-color:var(--gold);color:#fff}.opt.on i{background:var(--gold);color:#3b2a00}.fill{min-height:56px;font-size:18px}
+.rkrow{display:flex;align-items:center;gap:8px;padding:8px;border:2px solid var(--line);border-radius:14px;background:#fff}.rkn{flex:0 0 30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800}.rkt{flex:1;font-weight:700;min-width:0}
+.rkrow .ic{width:44px;min-height:44px;font-size:16px}.rkrow .ic:disabled{opacity:.3}
+.mark{font-family:'Playfair Display',serif;font-size:64px;color:var(--navy);margin:8px 0}.mark small{font-size:24px}
+.qrun .form{margin-top:18px}.qrun .form .btn{flex:1}
+#wd{border:3px solid var(--gold);border-radius:20px;max-width:420px;width:92%;background:var(--ivory)}#wd pre{white-space:pre-wrap;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
+.btn.wa{display:block;text-align:center;text-decoration:none;line-height:46px;background:#25d366;border-color:#25d366;color:#fff}
+body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
+</style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff2b8" />
+          <stop offset="1" stop-color="#d9a53a" />
+        </linearGradient>
+      </defs>
+      <symbol id="cross" viewBox="0 0 60 78">
+        <rect x="24" y="2" width="12" height="74" rx="3" fill="url(#g)" />
+        <rect x="6" y="20" width="48" height="12" rx="3" fill="url(#g)" />
+        <circle cx="30" cy="26" r="5" fill="#fff8d6" />
+      </symbol>
+      <symbol id="bible" viewBox="0 0 140 100">
+        <path
+          d="M70 16C54 6 30 6 6 12v72c24-6 48-6 64 4z"
+          fill="#fff8e6"
+          stroke="#d9a53a"
+          stroke-width="3"
+        />
+        <path
+          d="M70 16c16-10 40-10 64-4v72c-24-6-48-6-64 4z"
+          fill="#fff8e6"
+          stroke="#d9a53a"
+          stroke-width="3"
+        />
+        <path
+          d="M16 28c16-3 34-2 46 4M16 40c16-3 34-2 46 4M16 52c16-3 34-2 46 4M124 28c-16-3-34-2-46 4M124 40c-16-3-34-2-46 4M124 52c-16-3-34-2-46 4"
+          stroke="#c9b27a"
+          stroke-width="2.5"
+          fill="none"
+          stroke-linecap="round"
+        />
+        <path d="M96 62h6v18h-6zM90 68h18v6H90z" fill="#d9a53a" />
+        <path d="M70 16v72" stroke="#d9a53a" stroke-width="3" />
+      </symbol>
+    </svg>
 
-<header class="hero">
-<button class="lockbtn" id="lk" data-a="lock"></button>
-<div class="hero-in">
-<img class="portrait" src="images/jesus.jpg" alt="" onerror="this.remove()">
-<svg class="cross"><use href="#cross"/></svg>
-<div><h1>Bible Study Scoreboard</h1><p class="verse">“Your word is a lamp to my feet and a light to my path.” — Psalm 119:105</p></div>
-<svg class="bible"><use href="#bible"/></svg>
-</div></header>
+    <header class="hero">
+      <button class="lockbtn" id="lk" data-a="lock"></button>
+      <div class="hero-in">
+        <img
+          class="portrait"
+          src="images/jesus.jpg"
+          alt=""
+          onerror="this.remove()"
+        />
+        <svg class="cross"><use href="#cross" /></svg>
+        <div>
+          <h1>Bible Study Scoreboard</h1>
+          <p class="verse">
+            “Your word is a lamp to my feet and a light to my path.” — Psalm
+            119:105
+          </p>
+        </div>
+        <svg class="bible"><use href="#bible" /></svg>
+      </div>
+    </header>
 
-<main>
-<nav id="tabs"></nav>
-<section class="card"><div id="top"></div><input id="q" placeholder="🔍 Search name, class or number" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><div id="list"></div></section>
-</main>
-<footer>✝ Every Saturday · 3 Oct 2026 to 18 Sep 2027</footer>
-<div id="status" role="status" aria-live="polite"></div>
+    <main>
+      <nav id="tabs"></nav>
+      <section class="card">
+        <div id="top"></div>
+        <input
+          id="q"
+          placeholder="🔍 Search name, class or number"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          enterkeyhint="search"
+        />
+        <div id="list"></div>
+      </section>
+    </main>
+    <footer>✝ Every Saturday · 3 Oct 2026 to 18 Sep 2027</footer>
+    <div id="status" role="status" aria-live="polite"></div>
 
-<dialog id="dlg"><h3 style="margin:0 0 6px">🔐 Teacher login</h3>
-<p class="sub">Everyone can view the scores. Teachers log in to edit.</p>
-<input id="un" placeholder="Username" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><div id="err" class="sub" style="color:var(--no);font-weight:800"></div>
-<div class="dbtns"><button class="btn" data-a="login">Log in</button><button class="btn ghost" data-a="logout">Log out</button><button class="btn ghost" data-a="dl">⬇ Download JSON</button><button class="btn ghost" data-a="close">Close</button></div></dialog>
+    <dialog id="dlg">
+      <h3 style="margin: 0 0 6px">🔐 Log in</h3>
+      <p class="sub">Log in with your username and password.</p>
+      <input id="un" placeholder="Username" autocomplete="username" /><input
+        id="pw"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      />
+      <div
+        id="err"
+        class="sub"
+        style="color: var(--no); font-weight: 800"
+      ></div>
+      <div class="dbtns">
+        <button class="btn" data-a="login">Log in</button
+        ><button class="btn ghost" data-a="logout">Log out</button
+        ><button class="btn ghost edit" data-a="dl">⬇ Download JSON</button
+        ><button class="btn ghost" data-a="close">Close</button>
+      </div>
+    </dialog>
+<dialog id="wd"><h3 style="margin:0 0 8px">📲 Send the login on WhatsApp</h3><div id="wbody"></div><div class="dbtns"><button class="btn ghost" data-a="wclose">Close</button></div></dialog>
 
-<script>try{new Function('var a;a??=1;a?.b')}catch(e){document.addEventListener('DOMContentLoaded',function(){document.body.innerHTML='<p style="font:18px sans-serif;padding:40px 20px;text-align:center">Please update your browser (iOS 14.5+ or a recent Chrome, Edge, Safari or Firefox) to open this page.</p>'})}</script>
-<script src="config.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script>
-const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const SATS=[];for(let d=Date.UTC(2026,9,3);d<=Date.UTC(2027,8,18);d+=6048e5)SATS.push(new Date(d).toISOString().slice(0,10));
-const fmt=s=>new Date(s+'T00:00:00Z').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
-const n1=x=>+(+x).toFixed(1),CLASSES={'1st Prep':['يوحنا المعمدان','صموئيل النبي','يونان النبي','هوشع النبي','اشعياء النبي','داود النبي','اليشع النبي'],'2nd Prep':['ايليا النبي','ارميا النبي','موسى النبي','حزقيال النبي','دانيال النبي']},PREPS=Object.keys(CLASSES);
-let db={people:[],attendance:{},canceled:[],quizzes:[]},cfg={},tab='att',q='',quizId=null,sat=SATS[0];
-try{cfg=JSON.parse(localStorage.getItem('bs_cfg')||'{}')}catch(e){}
-if(!cfg.owner&&location.hostname.endsWith('github.io')){cfg.owner=location.hostname.split('.')[0];cfg.repo=location.pathname.split('/')[1]||''}
-const today=new Date().toLocaleDateString('en-CA');sat=[...SATS].reverse().find(d=>d<=today)||SATS[0];
-
-/* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
-const qPts=(s,m)=>s==null||s===''?0:(+s>=m?50:Math.min(49,Math.round(+s/m*50)));
-function score(p){let a=0,b=0,h=0,z=0;for(const d in db.attendance){if(db.canceled.includes(d))continue;const r=db.attendance[d][p.id];if(r){if(r.s==='P'){a+=10;if(r.b)b+=5}if(r.h)h+=5}}
-db.quizzes.forEach(x=>z+=qPts(x.scores[p.id],x.max));const o=+(db.bonus?.[p.id])||0;return{a,b,h,z,o,t:n1(a+b+h+z+o)}}
-const match=p=>(p.name+' '+p.class+' '+(p.cls||'')+' '+(p.code||'')).toLowerCase().includes(q.trim().toLowerCase());
-const tag=(p,all=1)=>'<div class="tags">'+(p.code?`<span class="chip code">#${esc(p.code)}</span>`:'')+(all?`<span class="chip">${esc(p.class)}</span>`:'')+(p.cls?`<span class="chip" dir="auto">${esc(p.cls)}</span>`:'')+'</div>';
-
-/* ---------- GitHub storage ---------- */
-const API=()=>`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`;
-const H=()=>({Authorization:'Bearer '+cfg.token,Accept:'application/vnd.github+json'});
-const enc=s=>{let b='';for(const x of new TextEncoder().encode(s))b+=String.fromCharCode(x);return btoa(b)};
-const dec=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,'')),c=>c.charCodeAt(0)));
-let st,tm,busy=false,dirty=false;
-function setStatus(t,ms){const e=$('status');e.textContent=t;e.classList.add('show');clearTimeout(st);if(ms)st=setTimeout(()=>e.classList.remove('show'),ms)}
-const OWN=location.hostname.endsWith('github.io')?location.hostname.split('.')[0]:'',REP=location.pathname.split('/')[1]||'';let rl=0;
-/* read straight from the repo (fresh), fall back to the Pages copy if GitHub rate-limits us */
-const off={raw:0,api:0};
-async function fetchDB(){
- if(OWN&&REP){
-  if(Date.now()>off.raw){try{const r=await fetch(`https://raw.githubusercontent.com/${OWN}/${REP}/HEAD/data.json?t=${Date.now()}`,{cache:'no-store'});
-   if(r.ok)return await r.json();off.raw=Date.now()+(r.status===429?12e4:3e5)}catch(e){off.raw=Date.now()+3e5}}
-  if(Date.now()>off.api){try{const r=await fetch(`https://api.github.com/repos/${OWN}/${REP}/contents/data.json`,{cache:'no-cache',headers:{Accept:'application/vnd.github.raw+json'}});
-   if(r.ok)return await r.json();off.api=Date.now()+6e5}catch(e){off.api=Date.now()+6e5}}}
- return (await fetch('data.json?'+Date.now(),{cache:'no-store'})).json()}
-async function load(){let j=null;
- try{if(cfg.token){const r=await fetch(API(),{headers:H(),cache:'no-store'});if(r.ok)j=JSON.parse(dec((await r.json()).content));else setStatus('⚠ Token or repo name is wrong',4000)}
-  if(!j)j=await fetchDB()}
- catch(e){setStatus('⚠ Could not load data.json',4000)}
- if(j&&!fbGot)db=norm(j);ensureCodes();
- if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;view();loaded=true;if(pendingSeed&&cfg.token){pendingSeed=false;fbSave()}}
-async function save(){setStatus('Saving to GitHub…');
- try{let r=await fetch(API(),{headers:H(),cache:'no-store'}),cur=r.ok?await r.json():{};
-  r=await fetch(API(),{method:'PUT',headers:{...H(),'Content-Type':'application/json'},body:JSON.stringify({message:'Update scores '+new Date().toISOString(),content:enc(JSON.stringify(db,null,2)),sha:cur.sha})});
-  if(!r.ok)throw new Error((await r.json()).message);setStatus('Saved ✓',2500)}
- catch(e){setStatus('⚠ Not saved: '+e.message)}}
-async function run(){if(busy){dirty=true;return}busy=true;await save();busy=false;if(dirty){dirty=false;run()}}
-const changed=()=>{setStatus('Unsaved changes…');clearTimeout(tm);clearTimeout(tg);if(FB)tm=setTimeout(fbSave,250);tg=setTimeout(run,FB?4000:600)};
-const needLogin=()=>{if(cfg.token)return false;openDlg();return true};
-if(typeof HTMLDialogElement!=='function')document.documentElement.classList.add('nodlg');
-const dlgClose=()=>{const d=$('dlg');typeof d.close==='function'?d.close():d.removeAttribute('open')};
-function openDlg(){$('un').value='';$('pw').value='';$('err').textContent='';const d=$('dlg');typeof d.showModal==='function'?d.showModal():d.setAttribute('open','')}
-function applyMode(){document.body.classList.toggle('ro',!cfg.token);$('lk').textContent=cfg.token?'🔓 Teacher mode':'🔐 Teacher login'}
-
-/* ---------- live database (Firebase): everyone gets changes instantly; GitHub keeps the backup ---------- */
-const FB=window.FBCFG&&FBCFG.databaseURL&&window.firebase?FBCFG:null;
-let fbRef=null,fbGot=false,loaded=false,pendingSeed=false,tg;
-const arr=x=>Array.isArray(x)?x:Object.values(x||{});
-const norm=j=>{const n={attendance:{},bonus:{},...j,people:arr(j.people),canceled:arr(j.canceled),quizzes:arr(j.quizzes)};n.quizzes.forEach(x=>x.scores??={});return n};
-const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a<b?-1:1)):v);
-function fbSave(){if(!FB||!fbRef)return;fbRef.set(JSON.parse(JSON.stringify(db))).then(()=>setStatus('Saved live ✓',2000)).catch(e=>setStatus('⚠ Live save failed: '+e.message,6000))}
-function fbStart(){if(!FB)return;firebase.initializeApp(FB);fbRef=firebase.database().ref('data');
- firebase.auth().onAuthStateChanged(u=>{if(!u&&cfg.token){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));load();setStatus('Please log in again to turn on live saving.',7000);openDlg()}});
- fbRef.on('value',s=>{const v=s.val();
-  if(v==null){if(cfg.token&&loaded)fbSave();else pendingSeed=true;return}
-  fbGot=true;const n=norm(v);
-  if(canon(n)!==canon(db)){db=n;ensureCodes();if(!db.quizzes.find(x=>x.id===quizId))quizId=db.quizzes[0]?.id||null;list()}})}
-
-function newCode(){const used=new Set(db.people.map(p=>p.code));let c;do{c=String(100+Math.floor(Math.random()*900))}while(used.has(c)&&used.size<900);return c}
-function ensureCodes(){if(!cfg.token)return;let n=0;db.people.forEach(p=>{if(!p.code){p.code=newCode();n++}});if(n)changed()}
-function fillClasses(){$('pk').innerHTML='<option value="">Choose class…</option>'+(CLASSES[$('pc').value]||[]).map(c=>`<option>${c}</option>`).join('');$('pk').disabled=!$('pc').value}
-
-/* ---------- teacher login: auth.json holds the GitHub token encrypted with the password ---------- */
-const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-async function key(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt'])}
-async function doLogin(){const e=$('err');e.textContent='Checking…';
- try{const r=await fetch('auth.json?'+Date.now(),{cache:'no-store'});if(!r.ok){e.textContent='auth.json was not found in the repo. Run setup.html first.';return}
-  const A=await r.json();if($('un').value.trim()!==A.username)throw 0;
-  const o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(A.iv)},await key($('pw').value,b64d(A.salt)),b64d(A.data))));
-  if(FB)try{await firebase.auth().signInWithEmailAndPassword('teacher@bible.study',$('pw').value)}catch(x){e.textContent='Live database login failed. Check that the user teacher@bible.study exists in Firebase Authentication with this same password.';return}
-  cfg={token:o.token,owner:o.owner,repo:o.repo};localStorage.setItem('bs_cfg',JSON.stringify(cfg));tab='att';$('pw').value='';dlgClose();load()}
+    <script>
+      try {
+        new Function("var a;a??=1;a?.b");
+      } catch (e) {
+        document.addEventListener("DOMContentLoaded", function () {
+          document.body.innerHTML =
+            '<p style="font:18px sans-serif;padding:40px 20px;text-align:center">Please update your browser (iOS 14.5+ or a recent Chrome, Edge, Safari or Firefox) to open this page.</p>';
+        });
+      }
+    </script>
+    <script src="config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script>
+/* ===== global login, WhatsApp credentials, weekly quizzes ===== */
+const TEACHER_EMAIL='teacher@bible.study',SD='@students.bible.study',WA_FROM='01201567333',PH=/^01[0125]\d{8}$/;
+const QT={mcq:'Multiple choice',tf:'True / False',fill:'Complete',rank:'Rank (put in order)'};
+let role=null,me=null,mk={},QZ={},qsel=null,qd=null,qrun=null,qres=null,srvOff=0,qzOn=false,qtimer=null;
+const fdb=()=>firebase.database(),svNow=()=>Date.now()+srvOff,n2=x=>+(+x).toFixed(2),rnd6=()=>String(100000+Math.floor(Math.random()*900000));
+const mkPts=p=>{let z=0;for(const i in mk){const m=mk[i]&&mk[i][p.code];if(m!=null)z+=m>=10?50:Math.min(49,Math.round(+m/10*50))}return z};
+const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
+const nz=s=>String(s).trim().toLowerCase().replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ');
+function cairoAt(d,h){const [y,m,dd]=d.split('-').map(Number),u=Date.UTC(y,m-1,dd,h),f=new Intl.DateTimeFormat('en-US',{timeZone:'Africa/Cairo',hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}),o=t=>{const p={};f.formatToParts(new Date(t)).forEach(x=>p[x.type]=x.value);return Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second)-t};let t=u-o(u);t=u-o(t);return t}
+const addDays=(d,n)=>new Date(Date.parse(d+'T00:00:00Z')+n*864e5).toISOString().slice(0,10);
+const qWin=w=>({due:cairoAt(addDays(w,7),19),gone:cairoAt(addDays(w,28),19)});
+const fdt=t=>new Date(t).toLocaleString('en-GB',{timeZone:'Africa/Cairo',weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const TABS=()=>role==='teacher'?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['qb','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:role==='student'?[['sq','📝 Quizzes'],['board','🏆 Leaderboard']]:[];
+const myP=()=>db.people.find(p=>p.code===me);
+function applyMode(){document.body.classList.toggle('ro',role!=='teacher');document.body.classList.toggle('quizing',!!(qrun||qres));$('lk').textContent=role==='teacher'?'🔓 Teacher':role==='student'?'👤 '+((myP()||{name:'Student'}).name.split(' ')[0]):'🔐 Log in'}
+function fbExtra(){fdb().ref('.info/serverTimeOffset').on('value',s=>srvOff=s.val()||0);fdb().ref('marks').on('value',s=>{mk=s.val()||{};if(role)list()})}
+function qzListen(){if(qzOn||!role)return;qzOn=true;fdb().ref('qz/q').on('value',s=>{QZ=s.val()||{};Object.values(QZ).forEach(z=>{z.qs=arr(z.qs).map(x=>({...x,o:x.o?arr(x.o):undefined,ks:arr(x.ks)}))});if(tab==='qb'||tab==='sq')view()},()=>{qzOn=false})}
+function authChanged(u){const em=(u&&u.email)||'',clr=()=>{if(cfg.token){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg))}};
+ if(em===TEACHER_EMAIL&&cfg.token){role='teacher';me=null}
+ else if(em.endsWith(SD)){role='student';me=em.slice(0,-SD.length);clr();tab='sq'}
+ else{role=null;me=null;clr();if(u)firebase.auth().signOut()}
+ if(role)qzListen();view();if(!role)openDlg()}
+async function doLogin(){const e=$('err'),un=$('un').value.trim(),pw=$('pw').value;
+ if(!FB){e.textContent='The live database is not set up yet (config.js).';return}
+ if(!un||!pw){e.textContent='Type your username and password.';return}e.textContent='Checking…';
+ let A=null;try{const r=await fetch('auth.json?'+Date.now(),{cache:'no-store'});if(r.ok)A=await r.json()}catch(_){}
+ try{
+  if(A&&un===A.username){
+   const o=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(A.iv)},await key(pw,b64d(A.salt)),b64d(A.data))));
+   cfg={token:o.token,owner:o.owner,repo:o.repo};localStorage.setItem('bs_cfg',JSON.stringify(cfg));
+   try{await firebase.auth().signInWithEmailAndPassword(TEACHER_EMAIL,pw)}catch(x){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));e.textContent='Live database login failed. Check that the user teacher@bible.study in Firebase Authentication uses this same password.';return}
+   tab='att'}
+  else await firebase.auth().signInWithEmailAndPassword(un+SD,pw);
+  $('pw').value='';dlgClose();load()}
  catch(x){e.textContent='Wrong username or password.'}}
+function viewExtra(h){
+ if(!role)return '<div class="welcome"><div class="bigx">✝</div><h2>Welcome</h2><p class="sub">Log in with the username and password you received on WhatsApp.</p><button class="btn" data-a="lock">🔐 Log in</button></div>';
+ return tab==='qb'?qbHead():tab==='sq'?sqHead():h}
 
-/* ---------- views ---------- */
-function tabFade(){const t=$('tabs');t.classList.toggle('fl',t.scrollLeft>4);t.classList.toggle('fr',t.scrollLeft+t.clientWidth<t.scrollWidth-4)}
-function view(){applyMode();if(!cfg.token)tab='board';
- const tb=$('tabs');tb.innerHTML=(cfg.token?[['att','📅 Attendance'],['board','🏆 Leaderboard'],['quiz','📝 Quizzes'],['bonus','⭐ Bonus'],['people','👥 People']]:[['board','🏆 Leaderboard']]).map(([k,t])=>`<button class="tab ${tab===k?'on':''}" data-tab="${k}">${t}</button>`).join('')+'<a class="tab" href="ranking.html">🌟 Top 3</a>';
-  {const on=tb.querySelector('.tab.on');if(on)tb.scrollLeft=Math.max(0,on.offsetLeft-(tb.clientWidth-on.offsetWidth)/2);tabFade()}
- let h='';
- if(tab==='att'){const i=SATS.indexOf(sat),c=db.canceled.includes(sat),lk=isLocked(),dn=!!(db.done&&db.done[sat]);
-  h=`<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map(d=>`<option value="${d}" ${d===sat?'selected':''}>${fmt(d)}${db.canceled.includes(d)?' (canceled)':''}</option>`).join('')}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
-  <div class="sub" style="margin-top:6px">Saturday ${i+1} of ${SATS.length}</div>
-  ${lk?'':`<div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>`}
-  ${lk?'':`<label class="cancel edit"><input type="checkbox" id="cx" ${c?'checked':''}> This Saturday is canceled</label>`}
-  ${c?'':`<div class="donebar edit">${dn?(lk?'<span class="doneb">✅ Done and locked</span><button class="btn ghost" data-a="unlock">✏️ Edit (fix a mistake)</button>':'<span class="sub">✏️ Editing a finished Saturday</span><button class="btn" data-a="relock">🔒 Lock again</button>'):'<button class="btn" data-a="done">✔ Mark this Saturday as done</button>'}</div>`}
-  ${c?'<div class="banner">✝ Bible study is canceled this Saturday</div>':''}`}
- if(tab==='quiz'){const n=db.quizzes.length;
-  h=`<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
-  <div class="qs">${db.quizzes.map(x=>`<button class="qc ${x.id===quizId?'on':''}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join('')}</div>
-  ${n<6?`<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n+1}"><input id="qm" type="number" inputmode="numeric" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>`:''}
-  ${quizId?'<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>':''}`}
- if(tab==='people'){h=`<div class="form edit"><input id="pn" placeholder="Name"><select id="pc"><option value="">Choose prep first…</option>${PREPS.map(g=>`<option>${g}</option>`).join('')}</select><select id="pk" disabled><option value="">Then choose class…</option></select><button class="btn" data-a="add">＋ Add person</button></div>
-  <div class="sub" style="margin-top:8px">${db.people.length} people</div>`}
- if(tab==='bonus')h='<div class="sub">Tap ＋ to give one bonus point at a time. Tap − to take one back.</div>';
- $('top').innerHTML=h;$('q').style.display=tab==='att'&&isLocked()?'none':'';$('q').value=q;list()}
+/* ----- people: phone + WhatsApp login ----- */
+async function mkAcct(code,pw){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:code+SD,password:pw,returnSecureToken:false})}),j=await r.json();if(j.error)throw new Error(j.error.message)}
+function showWA(p,s){const url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name} ✝️\nبيانات الدخول لموقع نقاط اجتماع الكتاب المقدس:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
+ $('wbody').innerHTML=`<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg)}">💬 Open WhatsApp</a><div class="sub">Tap Send in WhatsApp on the phone that has the number <b>${WA_FROM}</b>.</div>`;
+ const d=$('wd');typeof d.showModal==='function'?d.showModal():d.setAttribute('open','')}
+async function loginFor(p,ph){
+ let s=(await fdb().ref('secrets/'+p.code).get()).val();
+ if(!s){ph=ph||prompt('Student mobile number (11 digits, starts with 010, 011, 012 or 015)')||'';if(!PH.test(ph))return alert('The number must be 11 digits and start with 010, 011, 012 or 015.');
+  s={p:rnd6(),ph};try{await mkAcct(p.code,s.p)}catch(e){return alert('Could not create the login: '+e.message)}
+  await fdb().ref('secrets/'+p.code).set(s)}
+ showWA(p,s)}
+async function addPerson(){
+ const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').value,ph=$('ph').value.trim();
+ if(!n||!c||!k)return alert('Type a name, then choose the prep and the class.');
+ if(!PH.test(ph))return alert('The mobile number must be 11 digits and start with 010, 011, 012 or 015.');
+ let code,pw=rnd6(),ok=false;
+ for(let i=0;i<8&&!ok;i++){code=newCode();try{await mkAcct(code,pw);ok=true}catch(e){if(!/EMAIL_EXISTS/.test(e.message))return alert('Could not create the login: '+e.message)}}
+ if(!ok)return alert('Could not find a free number. Try again.');
+ const p={code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k};
+ db.people.push(p);changed();
+ await fdb().ref('secrets/'+code).set({p:pw,ph});
+ view();$('pc').value=c;fillClasses();$('pk').value=k;$('pn').focus();showWA(p,{p:pw,ph})}
+function rmRemote(p){if(!FB)return;const up={['secrets/'+p.code]:null};Object.keys(QZ).forEach(i=>{up['marks/'+i+'/'+p.code]=null;up['qz/sub/'+p.code+'/'+i]=null;up['qz/start/'+p.code+'/'+i]=null});fdb().ref().update(up).catch(()=>{})}
 
-function list(){const L=$('list');
- if(!db.people.length){L.innerHTML=cfg.token?'<div class="empty">No one here yet ✝<br>Open People and add the first student.</div>':'<div class="empty">No scores yet ✝<br>Check back soon.</div>';return}
- if(tab==='att'&&(db.canceled.includes(sat)||isLocked())){L.innerHTML='';return}
- let h='';
- if(tab==='board'){const oth=db.people.some(p=>!PREPS.includes(p.class));
-  [...PREPS,...(oth?['Other']:[])].forEach(g=>{
-   const all=db.people.filter(p=>g==='Other'?!PREPS.includes(p.class):p.class===g).map(p=>({p,s:score(p)})).sort((a,b)=>b.s.t-a.s.t||a.p.name.localeCompare(b.p.name)).map((o,i,arr)=>({...o,i,r:1+arr.filter(z=>z.s.t>o.s.t).length}));
-   h+=`<h2 class="gh">${g}</h2>`+(all.filter(o=>match(o.p)).map(({p,s,r})=>`<div class="row lb ${r<=3?'t'+(r-1):''}"><div class="rk">${['🥇','🥈','🥉'][r-1]||r}</div><div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p,0)}<div class="sub brk"><span>🙏 Attendance ${s.a}</span><span>📖 Bible ${s.b}</span><span>🎶 Hymns ${s.h}</span><span>📝 Quizzes ${n1(s.z)}</span><span>⭐ Bonus ${s.o}</span></div></div><div class="pts big">${s.t}</div></div>`).join('')||'<div class="empty">No students</div>')})}
- else{const ps=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).filter(match);
-  const x=db.quizzes.find(z=>z.id===quizId);
-  if(tab==='quiz'&&!x){L.innerHTML='<div class="empty">Add a quiz to start entering marks.</div>';return}
-  ps.forEach(p=>{const who=`<div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div>`;
-   if(tab==='att'){const lk=isLocked(),r=(db.attendance[sat]||{})[p.id]||{},day=(r.s==='P'?10+(r.b?5:0):0)+(r.h?5:0);
-    h+=`<div class="row att" data-id="${p.id}">${who}<div class="pts">+${day}</div><div class="abtns"><button class="st ${r.s==='P'?'okon':''}" data-a="P" data-id="${p.id}" ${lk?'disabled':''}>✅ Attended</button><button class="st ${r.s==='X'?'noon':''}" data-a="X" data-id="${p.id}" ${lk?'disabled':''}>❌ Absent</button><button class="bib ${r.b?'on':''}" data-a="B" data-id="${p.id}" ${r.s==='P'&&!lk?'':'disabled'}>📖 Has Bible</button><button class="bib hym ${r.h?'on':''}" data-a="H" data-id="${p.id}" ${lk?'disabled':''}>🎶 <bdi>درس الألحان</bdi></button></div></div>`}
-   if(tab==='quiz'){const v=x.scores[p.id];h+=`<div class="row qz" data-id="${p.id}">${who}<div class="ctl"><input class="sc" type="number" inputmode="decimal" min="0" max="${x.max}" step="0.5" value="${v??''}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v,x.max)} pts</div></div></div>`}
-   if(tab==='bonus'){const v=db.bonus?.[p.id]||0;h+=`<div class="row bn">${who}<div class="ctl"><button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div></div>`}
-   if(tab==='people')h+=`<div class="row pp">${who}<button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`})}
- L.innerHTML=h||'<div class="empty">No match. Try another name or class.</div>'}
+/* ----- teacher: quiz builder ----- */
+function qbHead(){
+ const ids=Object.keys(QZ).sort((a,b)=>QZ[b].week.localeCompare(QZ[a].week));
+ let h=`<div class="qbar">${ids.map(i=>`<button class="qc ${i===qsel&&!qd?'on':''}" data-a="qopen" data-id="${i}">${fmt(QZ[i].week).slice(5)}${QZ[i].pub?'':' (hidden)'}</button>`).join('')}<button class="btn" data-a="qnew">＋ New quiz</button></div>`;
+ if(qd){const tot=qd.qs.reduce((s,x)=>s+x.m,0),T=qd.nt||'mcq';
+  h+=`<div class="qed"><h3>New quiz</h3><div class="sub">Choose the week (Saturday)</div><select id="qw">${SATS.map(d=>`<option value="${d}" ${d===qd.week?'selected':''}>${fmt(d)}</option>`).join('')}</select>
+  <input id="qtl" placeholder="Title (optional)" value="${esc(qd.title)}">
+  <div class="sub" style="margin-top:8px"><b>Total ${n2(tot)} / 10</b> ${tot<10?'· add up to 10 so a full mark is 10':''}</div>
+  ${qd.qs.map((x,i)=>`<div class="qli"><b>${i+1}.</b><span dir="auto">${esc(x.q)}</span><span class="chip">${QT[x.t]} · ${x.m}</span><button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button></div>`).join('')}
+  <div class="qnew"><select id="qty">${Object.entries(QT).map(([k,v])=>`<option value="${k}" ${k===T?'selected':''}>${v}</option>`).join('')}</select><input id="qq" placeholder="Question" value="${esc(qd.dq||'')}">
+  ${T==='mcq'||T==='rank'?`<textarea id="qo" rows="4" placeholder="${T==='rank'?'Items, one per line, in the CORRECT order':'Choices, one per line'}"></textarea>`:''}
+  ${T==='mcq'?'<input id="qa" type="number" inputmode="numeric" min="1" placeholder="Number of the correct choice (1 = first line)">':''}
+  ${T==='tf'?'<select id="qa"><option value="true">Correct answer: True</option><option value="false">Correct answer: False</option></select>':''}
+  ${T==='fill'?'<input id="qa" placeholder="Correct answer (add other accepted answers after a | )">':''}
+  <input id="qm2" type="number" inputmode="decimal" step="0.25" min="0.25" placeholder="Mark for this question, e.g. 2.5" value="${esc(qd.dm||'')}"><button class="btn" data-a="qadd">＋ Add question</button></div>
+  <label class="cancel"><input type="checkbox" id="qpub" ${qd.pub?'checked':''}> Publish to students now</label>
+  <div class="form"><button class="btn" data-a="qsave">💾 Save quiz</button><button class="btn ghost" data-a="qcancel">Cancel</button></div></div>`}
+ else if(qsel&&QZ[qsel]){const z=QZ[qsel];
+  h+=`<div class="qed"><h3>${fmt(z.week)} ${esc(z.title||'')}</h3><div class="sub">${z.qs.length} questions · ${n2(z.qs.reduce((s,x)=>s+x.m,0))} marks · full marks until ${fdt(qWin(z.week).due)}</div><div class="form"><button class="btn" data-a="qtog" data-id="${qsel}">${z.pub?'🙈 Hide from students':'📣 Publish to students'}</button><button class="btn danger" data-a="qdel" data-id="${qsel}">🗑 Delete quiz</button></div></div>`}
+ return h}
+function qbList(){const L=$('list');
+ if(qd){L.innerHTML='';return}
+ if(!qsel||!QZ[qsel]){L.innerHTML='<div class="empty">Pick a quiz above, or tap New quiz.</div>';return}
+ const r=mk[qsel]||{};
+ L.innerHTML=[...db.people].sort((a,b)=>a.name.localeCompare(b.name)).map(p=>{const m=r[p.code];return `<div class="row qz"><div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div><div class="ctl"><span class="pts">${m==null?'—':n2(m)+' / 10'}</span>${m==null?'':`<button class="btn ghost" data-a="qreset" data-id="${p.code}">↺ Reset</button>`}</div></div>`}).join('')||'<div class="empty">No students yet.</div>'}
+async function qSave(){
+ qd.week=$('qw').value;qd.title=$('qtl').value.trim();qd.pub=$('qpub').checked;
+ const tot=qd.qs.reduce((s,x)=>s+x.m,0);
+ if(!qd.qs.length)return alert('Add at least one question.');if(tot>10.0001)return alert('The total can not be more than 10 marks.');
+ const qid='z'+Date.now().toString(36),out=[];
+ for(let i=0;i<qd.qs.length;i++){const x=qd.qs[i],s=qid+i;let o=x.o,ks;
+  if(x.t==='mcq'||x.t==='tf')ks=[await sha(s+'|'+x.a)];
+  else if(x.t==='fill')ks=await Promise.all(x.a.map(a=>sha(s+'|'+nz(a))));
+  else{const n=o.length;let sh;do{sh=[...Array(n).keys()].sort(()=>Math.random()-.5)}while(sh.every((v,j)=>v===j));const items=o;o=sh.map(j=>items[j]);ks=[await sha(s+'|'+items.map((_,j)=>sh.indexOf(j)).join(','))]}
+  out.push({t:x.t,q:x.q,m:x.m,...(o?{o}:{}),ks})}
+ try{await fdb().ref('qz/q/'+qid).set({week:qd.week,title:qd.title,pub:qd.pub,qs:out,at:Date.now()});qsel=qid;qd=null;setStatus('Quiz saved ✓',2500);view()}catch(e){alert('Could not save: '+e.message)}}
+function qAddQ(){
+ const t=qd.nt||'mcq',qt=$('qq').value.trim(),m=+$('qm2').value;
+ if(!qt||!(m>0))return alert('Type the question and its mark.');
+ if(n2(qd.qs.reduce((s,x)=>s+x.m,0)+m)>10)return alert('The total can not be more than 10 marks.');
+ const x={t,q:qt,m};
+ if(t==='mcq'||t==='rank'){x.o=$('qo').value.split('\n').map(s=>s.trim()).filter(Boolean);if(x.o.length<2)return alert('Write at least 2 lines.')}
+ if(t==='mcq'){const a=+$('qa').value;if(!(a>=1&&a<=x.o.length))return alert('Type the number of the correct choice.');x.a=a-1}
+ if(t==='tf')x.a=$('qa').value==='true';
+ if(t==='fill'){x.a=$('qa').value.split('|').map(s=>s.trim()).filter(Boolean);if(!x.a.length)return alert('Type the correct answer.')}
+ qd.qs.push(x);qd.dq='';qd.dm='';view()}
+function qChange(t){if(role!=='teacher'||!qd)return 0;
+ if(t.id==='qty'){qd.dq=$('qq').value;qd.dm=$('qm2').value;qd.nt=t.value;view();return 1}
+ if(t.id==='qw'){qd.week=t.value;return 1}if(t.id==='qtl'){qd.title=t.value;return 1}if(t.id==='qpub'){qd.pub=t.checked;return 1}return 0}
 
-/* ---------- actions ---------- */
-let unlocked=null;
-function isLocked(){return !!(db.done&&db.done[sat])&&unlocked!==sat}
-function mark(id,v){if(isLocked())return setStatus('This Saturday is marked done. Tap Edit to fix a mistake.',3500);
- const r=(db.attendance[sat]??={}),c=r[id]||{};let n;
- if(v==='H')n={...c,h:!c.h};
- else if(v==='B'){if(c.s!=='P')return;n={...c,b:!c.b}}
- else if(c.s===v)n={h:!!c.h};
- else n={s:v,b:v==='P'&&!!c.b,h:!!c.h};
- if(!n.s&&!n.h)delete r[id];else r[id]=n;
- changed();list()}
-document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-a]');if(!t)return;
- if(t.dataset.tab){tab=t.dataset.tab;q='';view();return}
- const a=t.dataset.a,id=t.dataset.id;
- if(a==='lock')return openDlg();if(a==='close')return dlgClose();
- if(a==='prev'||a==='next'){const s=SATS[SATS.indexOf(sat)+(a==='next'?1:-1)];if(s){sat=s;unlocked=null;view()}return}
- if(a==='pick'){quizId=id;view();return}
- if(a==='dl'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));l.download='data.json';l.click();return}
- if(a==='login')return doLogin();
- if(a==='logout'){if(FB)firebase.auth().signOut();cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg));dlgClose();load();return}
- if(needLogin())return;
- if(a==='done'){(db.done??={})[sat]=true;unlocked=null;changed();view();return}
- if(a==='unlock'){if(!confirm('Unlock this Saturday to fix a wrong entry?\nIt locks again when you tap Lock again, change Saturday, or reload.'))return;unlocked=sat;view();return}
- if(a==='relock'){unlocked=null;view();return}
- if(a==='P'||a==='X'||a==='B'||a==='H')return mark(id,a);
- if(a==='bp'||a==='bm'){const b=(db.bonus??={});b[id]=Math.max(0,(b[id]||0)+(a==='bp'?1:-1));changed();return list()}
- if(a==='add')return addPerson();
- if(a==='del'){const p=db.people.find(x=>x.id===id);if(!confirm(`Remove ${p.name}? Their attendance and quiz marks will be deleted.`))return;
-  db.people=db.people.filter(x=>x.id!==id);for(const d in db.attendance)delete db.attendance[d][id];db.quizzes.forEach(x=>delete x.scores[id]);if(db.bonus)delete db.bonus[id];changed();view()}
- if(a==='addq'){const m=+$('qm').value;if(!(m>0))return alert('Enter what the quiz is out of, for example 10 or 20.');
-  const n={id:'q'+Date.now().toString(36),title:$('qt').value.trim()||'Quiz '+(db.quizzes.length+1),max:m,scores:{}};db.quizzes.push(n);quizId=n.id;changed();view()}
- if(a==='delq'){const x=db.quizzes.find(z=>z.id===quizId);if(!confirm(`Delete "${x.title}" and all its marks?`))return;
-  db.quizzes=db.quizzes.filter(z=>z.id!==quizId);quizId=db.quizzes[0]?.id||null;changed();view()}
-});
-function addPerson(){const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').value;if(!n||!c||!k)return alert('Type a name, then choose the prep and the class.');
- const code=newCode();db.people.push({code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k});changed();setStatus('Added '+n+' · number #'+code,4000);view();$('pc').value=c;fillClasses();$('pk').value=k;$('pn').focus()}
-document.addEventListener('change',e=>{const t=e.target;
- if(t.id==='pc')fillClasses();
- if(t.id==='sat'){sat=t.value;unlocked=null;view()}
- if(t.id==='cx'){if(needLogin()){t.checked=!t.checked;return}
-  db.canceled=t.checked?[...new Set([...db.canceled,sat])]:db.canceled.filter(d=>d!==sat);changed();view()}
- if(t.classList.contains('sc')){if(needLogin()){view();return}
-  const x=db.quizzes.find(z=>z.id===quizId);let v=t.value;
-  if(v==='')delete x.scores[t.dataset.id];else{v=Math.min(Math.max(+v,0),x.max);x.scores[t.dataset.id]=v;t.value=v}
-  t.closest('.row').querySelector('.pts').textContent=qPts(x.scores[t.dataset.id],x.max)+' pts';changed()}});
-$('q').addEventListener('input',e=>{q=e.target.value;list()});
-$('tabs').addEventListener('scroll',tabFade,{passive:true});addEventListener('resize',tabFade);
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='pn'||e.target.id==='pk'))addPerson()});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='pw')doLogin()});
-async function poll(){if(FB||cfg.token||document.hidden)return;try{const j=norm(await fetchDB());if(JSON.stringify(j)!==JSON.stringify(db)){db=j;list()}}catch(e){}}
-setInterval(poll,5000);document.addEventListener('visibilitychange',poll);
-fbStart();
-view();load();
-</script></body></html>
+/* ----- student: quizzes ----- */
+const saveDraft=()=>localStorage.setItem('bs_d_'+me+'_'+qrun.id,JSON.stringify(qrun.ans));
+function sqHead(){return qrun?qrunHTML():qres?qresHTML():'<div class="sub">Every quiz has 10 minutes. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>'}
+function sqList(){const L=$('list');if(qrun||qres){L.innerHTML='';return}
+ const now=svNow(),ids=Object.keys(QZ).filter(i=>QZ[i].pub).sort((a,b)=>QZ[b].week.localeCompare(QZ[a].week));
+ L.innerHTML=ids.map(i=>{const z=QZ[i],w=qWin(z.week),m=mk[i]&&mk[i][me];if(m==null&&now>w.gone)return '';
+  return `<div class="row"><div class="who"><b dir="auto">${esc(z.title||'Quiz')}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions</div><div class="sub">${m!=null?'✓ Finished':now>w.due?'Late: the highest mark is 5':'Open until '+fdt(w.due)}</div></div>${m!=null?`<div class="pts big">${n2(m)}<small>/10</small></div>`:`<button class="btn" data-a="qstart" data-id="${i}">▶ Start (10 min)</button>`}</div>`}).join('')||'<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>'}
+async function qStart(id){const z=QZ[id];if(!z)return;const ref=fdb().ref(`qz/start/${me}/${id}`);
+ try{let s=(await ref.get()).val();if(!s){await ref.set(firebase.database.ServerValue.TIMESTAMP);s=(await ref.get()).val()}
+  qrun={id,i:0,ans:JSON.parse(localStorage.getItem(`bs_d_${me}_${id}`)||'{}'),end:s+6e5,z};
+  if(svNow()>=qrun.end){await qSubmit();return}
+  qtimer=setInterval(qTick,500);view();qTick()}catch(e){alert('Could not start the quiz: '+e.message)}}
+function qTick(){if(!qrun)return;const r=Math.max(0,qrun.end-svNow()),el=$('qtm');if(el)el.textContent=Math.floor(r/6e4)+':'+String(Math.floor(r/1e3)%60).padStart(2,'0');if(r<=0)qSubmit()}
+async function qSubmit(){if(!qrun||qrun.busy)return;qrun.busy=1;clearInterval(qtimer);const{id,z,ans}=qrun,w=qWin(z.week);let m=0;
+ for(let i=0;i<z.qs.length;i++){const x=z.qs[i],a=ans[i];if(a==null||a==='')continue;const v=x.t==='fill'?nz(a):x.t==='rank'?a.join(','):String(a);if(x.ks.includes(await sha(id+i+'|'+v)))m+=x.m}
+ m=Math.min(10,n2(m));const late=svNow()>w.due;if(late&&m>5)m=5;
+ try{await fdb().ref().update({[`qz/sub/${me}/${id}`]:{a:ans,m,late,t:firebase.database.ServerValue.TIMESTAMP},[`marks/${id}/${me}`]:m});localStorage.removeItem(`bs_d_${me}_${id}`);qres={m,late};qrun=null}
+ catch(e){qrun.busy=0;qtimer=setInterval(qTick,500);alert('Could not send your answers: '+e.message+'\nCheck your internet and try again.');return}
+ view()}
+function qrunHTML(){const{z,i,ans}=qrun,x=z.qs[i],n=z.qs.length,a=ans[i];let body='';
+ if(x.t==='mcq')body=x.o.map((o,j)=>`<button class="opt ${a===j?'on':''}" data-a="qans" data-id="${j}"><i>${'ABCDEFGH'[j]||j+1}</i><span dir="auto">${esc(o)}</span></button>`).join('');
+ else if(x.t==='tf')body=`<button class="opt ${a===true?'on':''}" data-a="qans" data-id="true"><i>✔</i><span>True · صح</span></button><button class="opt ${a===false?'on':''}" data-a="qans" data-id="false"><i>✖</i><span>False · خطأ</span></button>`;
+ else if(x.t==='fill')body=`<input id="fa" class="fill" dir="auto" placeholder="Type your answer here" value="${esc(a||'')}" autocomplete="off">`;
+ else{const ord=a||x.o.map((_,j)=>j);body='<div class="sub">Use the arrows to put the items in the right order.</div>'+ord.map((j,k)=>`<div class="rkrow"><span class="rkn">${k+1}</span><span class="rkt" dir="auto">${esc(x.o[j])}</span><button class="ic" data-a="qup" data-id="${k}" ${k?'':'disabled'} aria-label="Move up">▲</button><button class="ic" data-a="qdn" data-id="${k}" ${k<ord.length-1?'':'disabled'} aria-label="Move down">▼</button></div>`).join('')}
+ return `<div class="qrun"><div class="qtop"><span class="pill">⏱ <b id="qtm">10:00</b></span><span class="sub">Question ${i+1} of ${n}</span></div><div class="prog"><div style="width:${(i+1)/n*100}%"></div></div><h3 class="qtxt" dir="auto">${esc(x.q)}</h3><div class="qbody">${body}</div><div class="form"><button class="btn ghost" data-a="qprev" ${i?'':'disabled'}>‹ Back</button>${i<n-1?'<button class="btn" data-a="qnext">Next ›</button>':'<button class="btn" data-a="qfin">✔ Finish</button>'}</div></div>`}
+function qresHTML(){return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2><div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late?'<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>':''}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`}
+function qAct(a,id){
+ if(a==='wclose'){const d=$('wd');typeof d.close==='function'?d.close():d.removeAttribute('open');return 1}
+ if(role==='student'&&qrun){const i=qrun.i,x=qrun.z.qs[i],redraw=()=>{saveDraft();view();qTick()};
+  if(a==='qans'){qrun.ans[i]=x.t==='tf'?id==='true':+id;redraw();return 1}
+  if(a==='qup'||a==='qdn'){const k=+id,o=[...(qrun.ans[i]||x.o.map((_,j)=>j))],t=a==='qup'?k-1:k+1;[o[k],o[t]]=[o[t],o[k]];qrun.ans[i]=o;redraw();return 1}
+  if(a==='qnext'){qrun.i++;view();qTick();return 1}if(a==='qprev'){qrun.i--;view();qTick();return 1}
+  if(a==='qfin'){if(confirm('Finish and send your answers?'))qSubmit();return 1}}
+ if(role==='student'){if(a==='qstart'){qStart(id);return 1}if(a==='qdone'){qres=null;view();return 1}}
+ if(role!=='teacher')return 0;
+ if(a==='qnew'){qd={week:sat,title:'',pub:false,qs:[],nt:'mcq'};view();return 1}
+ if(a==='qcancel'){qd=null;view();return 1}
+ if(a==='qopen'){qsel=id;qd=null;view();return 1}
+ if(a==='qadd'){qAddQ();return 1}
+ if(a==='qrm'){qd.qs.splice(+id,1);view();return 1}
+ if(a==='qsave'){qSave();return 1}
+ if(a==='qtog'){fdb().ref('qz/q/'+id+'/pub').set(!QZ[id].pub);return 1}
+ if(a==='qdel'){if(confirm('Delete this quiz and all its marks?')){const up={['qz/q/'+id]:null,['marks/'+id]:null};db.people.forEach(p=>{up['qz/sub/'+p.code+'/'+id]=null;up['qz/start/'+p.code+'/'+id]=null});fdb().ref().update(up);qsel=null}return 1}
+ if(a==='qreset'){if(confirm('Let this student take the quiz again?'))fdb().ref().update({['marks/'+qsel+'/'+id]:null,['qz/sub/'+id+'/'+qsel]:null,['qz/start/'+id+'/'+qsel]:null});return 1}
+ if(a==='plogin'){const p=db.people.find(x=>x.id===id);if(p)loginFor(p);return 1}
+ return 0}
+document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun.i]=e.target.value;saveDraft()}});
+</script>
+<script>
+      const $ = (id) => document.getElementById(id),
+        esc = (s) =>
+          String(s ?? "").replace(
+            /[&<>"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              })[c],
+          );
+      const SATS = [];
+      for (
+        let d = Date.UTC(2026, 9, 3);
+        d <= Date.UTC(2027, 8, 18);
+        d += 6048e5
+      )
+        SATS.push(new Date(d).toISOString().slice(0, 10));
+      const fmt = (s) =>
+        new Date(s + "T00:00:00Z").toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          timeZone: "UTC",
+        });
+      const n1 = (x) => +(+x).toFixed(1),
+        CLASSES = {
+          "1st Prep": [
+            "يوحنا المعمدان",
+            "صموئيل النبي",
+            "يونان النبي",
+            "هوشع النبي",
+            "اشعياء النبي",
+            "داود النبي",
+            "اليشع النبي",
+          ],
+          "2nd Prep": [
+            "ايليا النبي",
+            "ارميا النبي",
+            "موسى النبي",
+            "حزقيال النبي",
+            "دانيال النبي",
+          ],
+        },
+        PREPS = Object.keys(CLASSES);
+      let db = { people: [], attendance: {}, canceled: [], quizzes: [] },
+        cfg = {},
+        tab = "att",
+        q = "",
+        quizId = null,
+        sat = SATS[0];
+      try {
+        cfg = JSON.parse(localStorage.getItem("bs_cfg") || "{}");
+      } catch (e) {}
+      if (!cfg.owner && location.hostname.endsWith("github.io")) {
+        cfg.owner = location.hostname.split(".")[0];
+        cfg.repo = location.pathname.split("/")[1] || "";
+      }
+      const today = new Date().toLocaleDateString("en-CA");
+      sat = [...SATS].reverse().find((d) => d <= today) || SATS[0];
+
+      /* ---------- scoring: attended +10, Bible +5, quiz = 50 for full mark, else score/max x 50 ---------- */
+      const qPts = (s, m) =>
+        s == null || s === ""
+          ? 0
+          : +s >= m
+            ? 50
+            : Math.min(49, Math.round((+s / m) * 50));
+      function score(p) {
+        let a = 0,
+          b = 0,
+          h = 0,
+          z = 0;
+        for (const d in db.attendance) {
+          if (db.canceled.includes(d)) continue;
+          const r = db.attendance[d][p.id];
+          if (r) {
+            if (r.s === "P") {
+              a += 10;
+              if (r.b) b += 5;
+            }
+            if (r.h) h += 5;
+          }
+        }
+        db.quizzes.forEach((x) => (z += qPts(x.scores[p.id], x.max)));
+      z += mkPts(p);
+        const o = +db.bonus?.[p.id] || 0;
+        return { a, b, h, z, o, t: n1(a + b + h + z + o) };
+      }
+      const match = (p) =>
+        (p.name + " " + p.class + " " + (p.cls || "") + " " + (p.code || ""))
+          .toLowerCase()
+          .includes(q.trim().toLowerCase());
+      const tag = (p, all = 1) =>
+        '<div class="tags">' +
+        (p.code ? `<span class="chip code">#${esc(p.code)}</span>` : "") +
+        (all ? `<span class="chip">${esc(p.class)}</span>` : "") +
+        (p.cls ? `<span class="chip" dir="auto">${esc(p.cls)}</span>` : "") +
+        "</div>";
+
+      /* ---------- GitHub storage ---------- */
+      const API = () =>
+        `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/data.json`;
+      const H = () => ({
+        Authorization: "Bearer " + cfg.token,
+        Accept: "application/vnd.github+json",
+      });
+      const enc = (s) => {
+        let b = "";
+        for (const x of new TextEncoder().encode(s))
+          b += String.fromCharCode(x);
+        return btoa(b);
+      };
+      const dec = (s) =>
+        new TextDecoder().decode(
+          Uint8Array.from(atob(s.replace(/\s/g, "")), (c) => c.charCodeAt(0)),
+        );
+      let st,
+        tm,
+        busy = false,
+        dirty = false;
+      function setStatus(t, ms) {
+        const e = $("status");
+        e.textContent = t;
+        e.classList.add("show");
+        clearTimeout(st);
+        if (ms) st = setTimeout(() => e.classList.remove("show"), ms);
+      }
+      const OWN = location.hostname.endsWith("github.io")
+          ? location.hostname.split(".")[0]
+          : "",
+        REP = location.pathname.split("/")[1] || "";
+      let rl = 0;
+      /* read straight from the repo (fresh), fall back to the Pages copy if GitHub rate-limits us */
+      const off = { raw: 0, api: 0 };
+      async function fetchDB() {
+        if (OWN && REP) {
+          if (Date.now() > off.raw) {
+            try {
+              const r = await fetch(
+                `https://raw.githubusercontent.com/${OWN}/${REP}/HEAD/data.json?t=${Date.now()}`,
+                { cache: "no-store" },
+              );
+              if (r.ok) return await r.json();
+              off.raw = Date.now() + (r.status === 429 ? 12e4 : 3e5);
+            } catch (e) {
+              off.raw = Date.now() + 3e5;
+            }
+          }
+          if (Date.now() > off.api) {
+            try {
+              const r = await fetch(
+                `https://api.github.com/repos/${OWN}/${REP}/contents/data.json`,
+                {
+                  cache: "no-cache",
+                  headers: { Accept: "application/vnd.github.raw+json" },
+                },
+              );
+              if (r.ok) return await r.json();
+              off.api = Date.now() + 6e5;
+            } catch (e) {
+              off.api = Date.now() + 6e5;
+            }
+          }
+        }
+        return (
+          await fetch("data.json?" + Date.now(), { cache: "no-store" })
+        ).json();
+      }
+      async function load() {
+        let j = null;
+        try {
+          if (cfg.token) {
+            const r = await fetch(API(), { headers: H(), cache: "no-store" });
+            if (r.ok) j = JSON.parse(dec((await r.json()).content));
+            else setStatus("⚠ Token or repo name is wrong", 4000);
+          }
+          if (!j) j = await fetchDB();
+        } catch (e) {
+          setStatus("⚠ Could not load data.json", 4000);
+        }
+        if (j && !fbGot) db = norm(j);
+        ensureCodes();
+        if (!db.quizzes.find((x) => x.id === quizId))
+          quizId = db.quizzes[0]?.id || null;
+        view();
+        loaded = true;
+        if (pendingSeed && cfg.token) {
+          pendingSeed = false;
+          fbSave();
+        }
+      }
+      async function save() {
+        setStatus("Saving to GitHub…");
+        try {
+          let r = await fetch(API(), { headers: H(), cache: "no-store" }),
+            cur = r.ok ? await r.json() : {};
+          r = await fetch(API(), {
+            method: "PUT",
+            headers: { ...H(), "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: "Update scores " + new Date().toISOString(),
+              content: enc(JSON.stringify(db, null, 2)),
+              sha: cur.sha,
+            }),
+          });
+          if (!r.ok) throw new Error((await r.json()).message);
+          setStatus("Saved ✓", 2500);
+        } catch (e) {
+          setStatus("⚠ Not saved: " + e.message);
+        }
+      }
+      async function run() {
+        if (!cfg.token) return;
+        if (busy) {
+          dirty = true;
+          return;
+        }
+        busy = true;
+        await save();
+        busy = false;
+        if (dirty) {
+          dirty = false;
+          run();
+        }
+      }
+      const changed = () => {
+        setStatus("Unsaved changes…");
+        clearTimeout(tm);
+        clearTimeout(tg);
+        if (FB) tm = setTimeout(fbSave, 250);
+        tg = setTimeout(run, FB ? 4000 : 600);
+      };
+      const needLogin = () => {
+        if (cfg.token) return false;
+        openDlg();
+        return true;
+      };
+      if (typeof HTMLDialogElement !== "function")
+        document.documentElement.classList.add("nodlg");
+      const dlgClose = () => {
+        const d = $("dlg");
+        typeof d.close === "function" ? d.close() : d.removeAttribute("open");
+      };
+      function openDlg() {
+        $("un").value = "";
+        $("pw").value = "";
+        $("err").textContent = "";
+        const d = $("dlg");
+        typeof d.showModal === "function"
+          ? d.showModal()
+          : d.setAttribute("open", "");
+      }
+      
+
+      /* ---------- live database (Firebase): everyone gets changes instantly; GitHub keeps the backup ---------- */
+      const FB =
+        window.FBCFG && FBCFG.databaseURL && window.firebase ? FBCFG : null;
+      let fbRef = null,
+        fbGot = false,
+        loaded = false,
+        pendingSeed = false,
+        tg;
+      const arr = (x) => (Array.isArray(x) ? x : Object.values(x || {}));
+      const norm = (j) => {
+        const n = {
+          attendance: {},
+          bonus: {},
+          ...j,
+          people: arr(j.people),
+          canceled: arr(j.canceled),
+          quizzes: arr(j.quizzes),
+        };
+        n.quizzes.forEach((x) => (x.scores ??= {}));
+        return n;
+      };
+      const canon = (o) =>
+        JSON.stringify(o, (k, v) =>
+          v && typeof v === "object" && !Array.isArray(v)
+            ? Object.fromEntries(
+                Object.entries(v).sort(([a], [b]) => (a < b ? -1 : 1)),
+              )
+            : v,
+        );
+      function fbSave() {
+        if (!FB || !fbRef) return;
+        fbRef
+          .set(JSON.parse(JSON.stringify(db)))
+          .then(() => setStatus("Saved live ✓", 2000))
+          .catch((e) => setStatus("⚠ Live save failed: " + e.message, 6000));
+      }
+      function fbStart() {
+        if (!FB) { role = cfg.token ? "teacher" : null; return; }
+        firebase.initializeApp(FB);
+        fbRef = firebase.database().ref("data");
+        firebase.auth().onAuthStateChanged(authChanged);
+      fbExtra();
+        fbRef.on("value", (s) => {
+          const v = s.val();
+          if (v == null) {
+            if (cfg.token && loaded) fbSave();
+            else pendingSeed = true;
+            return;
+          }
+          fbGot = true;
+          const n = norm(v);
+          if (canon(n) !== canon(db)) {
+            db = n;
+            ensureCodes();
+            if (!db.quizzes.find((x) => x.id === quizId))
+              quizId = db.quizzes[0]?.id || null;
+            list();
+          }
+        });
+      }
+
+      function newCode() {
+        const used = new Set(db.people.map((p) => p.code));
+        let c;
+        do {
+          c = String(100 + Math.floor(Math.random() * 900));
+        } while (used.has(c) && used.size < 900);
+        return c;
+      }
+      function ensureCodes() {
+        if (!cfg.token) return;
+        let n = 0;
+        db.people.forEach((p) => {
+          if (!p.code) {
+            p.code = newCode();
+            n++;
+          }
+        });
+        if (n) changed();
+      }
+      function fillClasses() {
+        $("pk").innerHTML =
+          '<option value="">Choose class…</option>' +
+          (CLASSES[$("pc").value] || [])
+            .map((c) => `<option>${c}</option>`)
+            .join("");
+        $("pk").disabled = !$("pc").value;
+      }
+
+      /* ---------- teacher login: auth.json holds the GitHub token encrypted with the password ---------- */
+      const b64d = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+      async function key(pw, salt) {
+        const k = await crypto.subtle.importKey(
+          "raw",
+          new TextEncoder().encode(pw),
+          "PBKDF2",
+          false,
+          ["deriveKey"],
+        );
+        return crypto.subtle.deriveKey(
+          { name: "PBKDF2", salt, iterations: 250000, hash: "SHA-256" },
+          k,
+          { name: "AES-GCM", length: 256 },
+          false,
+          ["decrypt"],
+        );
+      }
+      
+
+      /* ---------- views ---------- */
+      function tabFade() {
+        const t = $("tabs");
+        t.classList.toggle("fl", t.scrollLeft > 4);
+        t.classList.toggle(
+          "fr",
+          t.scrollLeft + t.clientWidth < t.scrollWidth - 4,
+        );
+      }
+      function view() {
+        applyMode();
+        if (role !== "teacher" && tab !== "sq") tab = "board";
+        if (role === "teacher" && (tab === "sq" || tab === "quiz")) tab = "att";
+        const tb = $("tabs");
+        tb.innerHTML =
+          (TABS())
+            .map(
+              ([k, t]) =>
+                `<button class="tab ${tab === k ? "on" : ""}" data-tab="${k}">${t}</button>`,
+            )
+            .join("") + (role ? '<a class="tab" href="ranking.html">🌟 Top 3</a>' : "");
+        {
+          const on = tb.querySelector(".tab.on");
+          if (on)
+            tb.scrollLeft = Math.max(
+              0,
+              on.offsetLeft - (tb.clientWidth - on.offsetWidth) / 2,
+            );
+          tabFade();
+        }
+        let h = "";
+        if (tab === "att") {
+          const i = SATS.indexOf(sat),
+            c = db.canceled.includes(sat),
+            lk = isLocked(),
+            dn = !!(db.done && db.done[sat]);
+          h = `<div class="bar"><button class="ic" data-a="prev" aria-label="Previous Saturday">‹</button><select id="sat">${SATS.map((d) => `<option value="${d}" ${d === sat ? "selected" : ""}>${fmt(d)}${db.canceled.includes(d) ? " (canceled)" : ""}</option>`).join("")}</select><button class="ic" data-a="next" aria-label="Next Saturday">›</button></div>
+  <div class="sub" style="margin-top:6px">Saturday ${i + 1} of ${SATS.length}</div>
+  ${lk ? "" : `<div class="rules"><span>Attended +10</span><span>Has Bible +5</span><span>🎶 <bdi>درس الألحان</bdi> +5</span><span>Quiz full mark +50</span></div>`}
+  ${lk ? "" : `<label class="cancel edit"><input type="checkbox" id="cx" ${c ? "checked" : ""}> This Saturday is canceled</label>`}
+  ${c ? "" : `<div class="donebar edit">${dn ? (lk ? '<span class="doneb">✅ Done and locked</span><button class="btn ghost" data-a="unlock">✏️ Edit (fix a mistake)</button>' : '<span class="sub">✏️ Editing a finished Saturday</span><button class="btn" data-a="relock">🔒 Lock again</button>') : '<button class="btn" data-a="done">✔ Mark this Saturday as done</button>'}</div>`}
+  ${c ? '<div class="banner">✝ Bible study is canceled this Saturday</div>' : ""}`;
+        }
+        if (tab === "quiz") {
+          const n = db.quizzes.length;
+          h = `<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
+  <div class="qs">${db.quizzes.map((x) => `<button class="qc ${x.id === quizId ? "on" : ""}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join("")}</div>
+  ${n < 6 ? `<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n + 1}"><input id="qm" type="number" inputmode="numeric" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>` : ""}
+  ${quizId ? '<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>' : ""}`;
+        }
+        if (tab === "people") {
+          h = `<div class="form edit"><input id="pn" placeholder="Name"><select id="pc"><option value="">Choose prep first…</option>${PREPS.map((g) => `<option>${g}</option>`).join("")}</select><select id="pk" disabled><option value="">Then choose class…</option></select><input id="ph" type="tel" inputmode="numeric" maxlength="11" placeholder="Mobile (01x xxxx xxxx)" autocomplete="off"><button class="btn" data-a="add">＋ Add person</button></div>
+  <div class="sub" style="margin-top:8px">${db.people.length} people</div>`;
+        }
+        if (tab === "bonus")
+          h =
+            '<div class="sub">Tap ＋ to give one bonus point at a time. Tap − to take one back.</div>';
+        $("top").innerHTML = viewExtra(h);
+        $("q").style.display =
+          !role || tab === "qb" || tab === "sq" || (tab === "att" && isLocked()) ? "none" : "";
+        $("q").value = q;
+        list();
+      }
+
+      function list() {
+        const L = $("list");
+        if (!role) { L.innerHTML = ""; return; }
+        if (tab === "qb") { qbList(); return; }
+        if (tab === "sq") { sqList(); return; }
+        if (!db.people.length) {
+          L.innerHTML = cfg.token
+            ? '<div class="empty">No one here yet ✝<br>Open People and add the first student.</div>'
+            : '<div class="empty">No scores yet ✝<br>Check back soon.</div>';
+          return;
+        }
+        if (tab === "att" && (db.canceled.includes(sat) || isLocked())) {
+          L.innerHTML = "";
+          return;
+        }
+        let h = "";
+        if (tab === "board") {
+          const oth = db.people.some((p) => !PREPS.includes(p.class));
+          [...PREPS, ...(oth ? ["Other"] : [])].forEach((g) => {
+            const all = db.people
+              .filter((p) =>
+                g === "Other" ? !PREPS.includes(p.class) : p.class === g,
+              )
+              .map((p) => ({ p, s: score(p) }))
+              .sort((a, b) => b.s.t - a.s.t || a.p.name.localeCompare(b.p.name))
+              .map((o, i, arr) => ({
+                ...o,
+                i,
+                r: 1 + arr.filter((z) => z.s.t > o.s.t).length,
+              }));
+            h +=
+              `<h2 class="gh">${g}</h2>` +
+              (all
+                .filter((o) => match(o.p))
+                .map(
+                  ({ p, s, r }) =>
+                    `<div class="row lb ${r <= 3 ? "t" + (r - 1) : ""}"><div class="rk">${["🥇", "🥈", "🥉"][r - 1] || r}</div><div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p, 0)}<div class="sub brk"><span>🙏 Attendance ${s.a}</span><span>📖 Bible ${s.b}</span><span>🎶 Hymns ${s.h}</span><span>📝 Quizzes ${n1(s.z)}</span><span>⭐ Bonus ${s.o}</span></div></div><div class="pts big">${s.t}</div></div>`,
+                )
+                .join("") || '<div class="empty">No students</div>');
+          });
+        } else {
+          const ps = [...db.people]
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .filter(match);
+          const x = db.quizzes.find((z) => z.id === quizId);
+          if (tab === "quiz" && !x) {
+            L.innerHTML =
+              '<div class="empty">Add a quiz to start entering marks.</div>';
+            return;
+          }
+          ps.forEach((p) => {
+            const who = `<div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div>`;
+            if (tab === "att") {
+              const lk = isLocked(),
+                r = (db.attendance[sat] || {})[p.id] || {},
+                day = (r.s === "P" ? 10 + (r.b ? 5 : 0) : 0) + (r.h ? 5 : 0);
+              h += `<div class="row att" data-id="${p.id}">${who}<div class="pts">+${day}</div><div class="abtns"><button class="st ${r.s === "P" ? "okon" : ""}" data-a="P" data-id="${p.id}" ${lk ? "disabled" : ""}>✅ Attended</button><button class="st ${r.s === "X" ? "noon" : ""}" data-a="X" data-id="${p.id}" ${lk ? "disabled" : ""}>❌ Absent</button><button class="bib ${r.b ? "on" : ""}" data-a="B" data-id="${p.id}" ${r.s === "P" && !lk ? "" : "disabled"}>📖 Has Bible</button><button class="bib hym ${r.h ? "on" : ""}" data-a="H" data-id="${p.id}" ${lk ? "disabled" : ""}>🎶 <bdi>درس الألحان</bdi></button></div></div>`;
+            }
+            if (tab === "quiz") {
+              const v = x.scores[p.id];
+              h += `<div class="row qz" data-id="${p.id}">${who}<div class="ctl"><input class="sc" type="number" inputmode="decimal" min="0" max="${x.max}" step="0.5" value="${v ?? ""}" placeholder="—" data-id="${p.id}" aria-label="Mark for ${esc(p.name)}"><span class="sub">/ ${x.max}</span><div class="pts">${qPts(v, x.max)} pts</div></div></div>`;
+            }
+            if (tab === "bonus") {
+              const v = db.bonus?.[p.id] || 0;
+              h += `<div class="row bn">${who}<div class="ctl"><button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div></div>`;
+            }
+            if (tab === "people")
+              h += `<div class="row pp">${who}<button class="btn ghost edit" data-a="plogin" data-id="${p.id}">📲 Login</button><button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`;
+          });
+        }
+        L.innerHTML =
+          h || '<div class="empty">No match. Try another name or class.</div>';
+      }
+
+      /* ---------- actions ---------- */
+      let unlocked = null;
+      function isLocked() {
+        return !!(db.done && db.done[sat]) && unlocked !== sat;
+      }
+      function mark(id, v) {
+        if (isLocked())
+          return setStatus(
+            "This Saturday is marked done. Tap Edit to fix a mistake.",
+            3500,
+          );
+        const r = (db.attendance[sat] ??= {}),
+          c = r[id] || {};
+        let n;
+        if (v === "H") n = { ...c, h: !c.h };
+        else if (v === "B") {
+          if (c.s !== "P") return;
+          n = { ...c, b: !c.b };
+        } else if (c.s === v) n = { h: !!c.h };
+        else n = { s: v, b: v === "P" && !!c.b, h: !!c.h };
+        if (!n.s && !n.h) delete r[id];
+        else r[id] = n;
+        changed();
+        list();
+      }
+      document.addEventListener("click", (e) => {
+        const t = e.target.closest("[data-tab],[data-a]");
+        if (!t) return;
+        if (t.dataset.tab) {
+          tab = t.dataset.tab;
+          q = "";
+          view();
+          return;
+        }
+        const a = t.dataset.a,
+          id = t.dataset.id;
+        if (a === "lock") return openDlg();
+        if (a === "close") return dlgClose();
+        if (a === "prev" || a === "next") {
+          const s = SATS[SATS.indexOf(sat) + (a === "next" ? 1 : -1)];
+          if (s) {
+            sat = s;
+            unlocked = null;
+            view();
+          }
+          return;
+        }
+        if (a === "pick") {
+          quizId = id;
+          view();
+          return;
+        }
+        if (a === "dl") {
+          const l = document.createElement("a");
+          l.href = URL.createObjectURL(
+            new Blob([JSON.stringify(db, null, 2)], {
+              type: "application/json",
+            }),
+          );
+          l.download = "data.json";
+          l.click();
+          return;
+        }
+        if (a === "login") return doLogin();
+        if (a === "logout") {
+          if (FB) firebase.auth().signOut();
+          cfg.token = "";
+          localStorage.setItem("bs_cfg", JSON.stringify(cfg));
+          dlgClose();
+          load();
+          return;
+        }
+        if (qAct(a, id)) return;
+        if (needLogin()) return;
+        if (a === "done") {
+          (db.done ??= {})[sat] = true;
+          unlocked = null;
+          changed();
+          view();
+          return;
+        }
+        if (a === "unlock") {
+          if (
+            !confirm(
+              "Unlock this Saturday to fix a wrong entry?\nIt locks again when you tap Lock again, change Saturday, or reload.",
+            )
+          )
+            return;
+          unlocked = sat;
+          view();
+          return;
+        }
+        if (a === "relock") {
+          unlocked = null;
+          view();
+          return;
+        }
+        if (a === "P" || a === "X" || a === "B" || a === "H")
+          return mark(id, a);
+        if (a === "bp" || a === "bm") {
+          const b = (db.bonus ??= {});
+          b[id] = Math.max(0, (b[id] || 0) + (a === "bp" ? 1 : -1));
+          changed();
+          return list();
+        }
+        if (a === "add") return addPerson();
+        if (a === "del") {
+          const p = db.people.find((x) => x.id === id);
+          if (
+            !confirm(
+              `Remove ${p.name}? Their attendance and quiz marks will be deleted.`,
+            )
+          )
+            return;
+          db.people = db.people.filter((x) => x.id !== id);
+          for (const d in db.attendance) delete db.attendance[d][id];
+          db.quizzes.forEach((x) => delete x.scores[id]);
+          if (db.bonus) delete db.bonus[id];
+        rmRemote(p);
+          changed();
+          view();
+        }
+        if (a === "addq") {
+          const m = +$("qm").value;
+          if (!(m > 0))
+            return alert(
+              "Enter what the quiz is out of, for example 10 or 20.",
+            );
+          const n = {
+            id: "q" + Date.now().toString(36),
+            title: $("qt").value.trim() || "Quiz " + (db.quizzes.length + 1),
+            max: m,
+            scores: {},
+          };
+          db.quizzes.push(n);
+          quizId = n.id;
+          changed();
+          view();
+        }
+        if (a === "delq") {
+          const x = db.quizzes.find((z) => z.id === quizId);
+          if (!confirm(`Delete "${x.title}" and all its marks?`)) return;
+          db.quizzes = db.quizzes.filter((z) => z.id !== quizId);
+          quizId = db.quizzes[0]?.id || null;
+          changed();
+          view();
+        }
+      });
+      
+      document.addEventListener("change", (e) => {
+        const t = e.target;
+        if (qChange(t)) return;
+        if (t.id === "pc") fillClasses();
+        if (t.id === "sat") {
+          sat = t.value;
+          unlocked = null;
+          view();
+        }
+        if (t.id === "cx") {
+          if (needLogin()) {
+            t.checked = !t.checked;
+            return;
+          }
+          db.canceled = t.checked
+            ? [...new Set([...db.canceled, sat])]
+            : db.canceled.filter((d) => d !== sat);
+          changed();
+          view();
+        }
+        if (t.classList.contains("sc")) {
+          if (needLogin()) {
+            view();
+            return;
+          }
+          const x = db.quizzes.find((z) => z.id === quizId);
+          let v = t.value;
+          if (v === "") delete x.scores[t.dataset.id];
+          else {
+            v = Math.min(Math.max(+v, 0), x.max);
+            x.scores[t.dataset.id] = v;
+            t.value = v;
+          }
+          t.closest(".row").querySelector(".pts").textContent =
+            qPts(x.scores[t.dataset.id], x.max) + " pts";
+          changed();
+        }
+      });
+      $("q").addEventListener("input", (e) => {
+        q = e.target.value;
+        list();
+      });
+      $("tabs").addEventListener("scroll", tabFade, { passive: true });
+      addEventListener("resize", tabFade);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && (e.target.id === "pn" || e.target.id === "pk"))
+          addPerson();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.id === "pw") doLogin();
+      });
+      async function poll() {
+        if (FB || cfg.token || document.hidden) return;
+        try {
+          const j = norm(await fetchDB());
+          if (JSON.stringify(j) !== JSON.stringify(db)) {
+            db = j;
+            list();
+          }
+        } catch (e) {}
+      }
+      setInterval(poll, 5000);
+      document.addEventListener("visibilitychange", poll);
+      fbStart();
+      view();
+      load();
+    </script>
+  </body>
+</html>
