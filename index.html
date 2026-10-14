@@ -728,6 +728,7 @@
 .qeh{display:flex;align-items:center;gap:8px}.qeh .ic{margin-left:auto}
 .qe summary{cursor:pointer;color:var(--navy);font-weight:700;font-size:13px;padding:4px 0}
 .crow{display:flex;gap:8px;margin-top:8px}.crow .btn{display:block;line-height:46px;padding-top:0;padding-bottom:0;text-decoration:none;text-align:center}.crow .wa{flex:1}
+.btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.wa{display:block;text-align:center;text-decoration:none;line-height:46px;background:#25d366;border-color:#25d366;color:#fff}
 body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
 </style>
@@ -830,7 +831,7 @@ body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
         ><button class="btn ghost" data-a="close">Close</button>
       </div>
     </dialog>
-<dialog id="wd"><h3 style="margin:0 0 8px">📲 Send the login on WhatsApp</h3><div id="wbody"></div><div class="dbtns"><button class="btn ghost" data-a="wclose">Close</button></div></dialog>
+<dialog id="wd"><h3 style="margin:0 0 8px">📲 Send the login on WhatsApp</h3><div id="wbody"></div><div class="dbtns" id="wbtns"><button class="btn ghost" data-a="wclose">Close</button></div></dialog>
 
     <script>
       try {
@@ -853,7 +854,7 @@ const waFrom=()=>{try{const v=localStorage.getItem('waFrom');if(WA_NUMS.includes
 waPick=n=>{try{localStorage.setItem('waFrom',n)}catch(e){}document.querySelectorAll('#wd .wchip[data-n]').forEach(b=>b.classList.toggle('on',b.dataset.n===n));const h=$('wfromtxt');if(h)h.textContent=n};
 const WA_SYM={dagger:['\u2020','†'],cross:['\u271D','✝'],orth:['\u2626','☦'],church:['\u26EA','⛪'],none:['','None']};let waCur=null;
 const waSymGet=()=>{try{const v=localStorage.getItem('waSym');if(v&&WA_SYM[v])return v}catch(e){}return 'dagger'};
-function waSymSet(k){try{localStorage.setItem('waSym',k)}catch(e){}if(waCur)showWA(waCur.p,waCur.s)}
+function waSymSet(k){try{localStorage.setItem('waSym',k)}catch(e){}if(waCur)showWA(waCur.p,waCur.s,waCur.pending)}
 const CT={quiz:['📝 Quiz','الكويز'],board:['🏆 Leaderboard','الليدر بورد (ترتيب النقاط)'],top3:['🌟 Top 3','أفضل ٣ (Top 3)']};let cTp='quiz';
 const cLink=n=>{const p=myP()||{name:'',code:me||''};return 'https://wa.me/20'+n.slice(1)+'?text='+encodeURIComponent('أهلاً، أنا '+p.name+' (اسم المستخدم: '+(p.code||me||'')+').\nعندي مشكلة في '+CT[cTp][1]+':\n')};
 function cSet(k){cTp=k;document.querySelectorAll('.cchip').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('.cwa').forEach(a=>a.href=cLink(a.dataset.n))}
@@ -898,8 +899,8 @@ function viewExtra(h){
 
 /* ----- people: phone + WhatsApp login ----- */
 async function mkAcct(code,pw){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:code+SD,password:pw,returnSecureToken:false})}),j=await r.json();if(j.error)throw new Error(j.error.message)}
-function showWA(p,s){waCur={p,s};const f=waFrom(),sk=waSymGet(),sy=WA_SYM[sk][0],url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name}${sy?' '+sy:''}\nبيانات الدخول لموقع درس كتاب اسرة انبياء:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
- $('wbody').innerHTML=`<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><div class="sub" style="margin-top:10px">Send from:</div><div class="wchips">${WA_NUMS.map(n=>`<button type="button" class="wchip${n===f?' on':''}" data-n="${n}" onclick="waPick('${n}')">${n}</button>`).join('')}</div><div class="sub">Symbol after the name:</div><div class="wchips" style="grid-template-columns:repeat(5,1fr)">${Object.entries(WA_SYM).map(([k,v])=>`<button type="button" class="wchip${k===sk?' on':''}" data-k="${k}" onclick="waSymSet('${k}')">${v[1]}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg.replace(/\uFE0F/g,''))}">💬 Open WhatsApp</a><div class="sub">Tap Send in WhatsApp on the phone that has the number <b id="wfromtxt">${f}</b>.</div>`;
+function showWA(p,s,pend){waCur={p,s,pending:pend||null};const f=waFrom(),sk=waSymGet(),sy=WA_SYM[sk][0],url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name}${sy?' '+sy:''}\nبيانات الدخول لموقع درس كتاب اسرة انبياء:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
+ $('wbody').innerHTML=`<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><div class="sub" style="margin-top:10px">Send from:</div><div class="wchips">${WA_NUMS.map(n=>`<button type="button" class="wchip${n===f?' on':''}" data-n="${n}" onclick="waPick('${n}')">${n}</button>`).join('')}</div><div class="sub">Symbol after the name:</div><div class="wchips" style="grid-template-columns:repeat(5,1fr)">${Object.entries(WA_SYM).map(([k,v])=>`<button type="button" class="wchip${k===sk?' on':''}" data-k="${k}" onclick="waSymSet('${k}')">${v[1]}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" onclick="waOpened()" href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg.replace(/\uFE0F/g,''))}">💬 Open WhatsApp</a><div class="sub">Tap Send in WhatsApp on the phone that has the number <b id="wfromtxt">${f}</b>.</div>${pend?'<div class="sub" style="margin-top:6px"><b>The person is added only after you send the login on WhatsApp and tap “I sent it”.</b></div>':''}`;waBtns();
  const d=$('wd');if(!d.open)typeof d.showModal==='function'?d.showModal():d.setAttribute('open','')}
 async function loginFor(p,ph){
  let s=(await fdb().ref('secrets/'+p.code).get()).val();
@@ -907,17 +908,38 @@ async function loginFor(p,ph){
   s={p:rnd6(),ph};try{await mkAcct(p.code,s.p)}catch(e){return alert('Could not create the login: '+e.message)}
   await fdb().ref('secrets/'+p.code).set(s)}
  showWA(p,s)}
+let addBusy=false;
 async function addPerson(){
+ if(addBusy)return;
  const n=$('pn').value.trim(),c=$('pc').value,k=$('pk').value,ph=$('ph').value.trim();
  if(!n||!c||!k)return alert('Type a name, then choose the prep and the class.');
  if(!PH.test(ph))return alert('The mobile number must be 11 digits and start with 010, 011, 012 or 015.');
- let code,pw=rnd6(),ok=false;
- for(let i=0;i<8&&!ok;i++){code=newCode();try{await mkAcct(code,pw);ok=true}catch(e){if(!/EMAIL_EXISTS/.test(e.message))return alert('Could not create the login: '+e.message)}}
- if(!ok)return alert('Could not find a free number. Try again.');
- const p={code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k};
- db.people.push(p);changed();
- await fdb().ref('secrets/'+code).set({p:pw,ph});
- view();$('pc').value=c;fillClasses();$('pk').value=k;$('pn').focus();showWA(p,{p:pw,ph})}
+ addBusy=true;
+ try{
+  let code,pw=rnd6(),ok=false;
+  for(let i=0;i<8&&!ok;i++){code=newCode();try{await mkAcct(code,pw);ok=true}catch(e){if(!/EMAIL_EXISTS/.test(e.message))return alert('Could not create the login: '+e.message)}}
+  if(!ok)return alert('Could not find a free number. Try again.');
+  const p={code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k};
+  showWA(p,{p:pw,ph},{c,k,opened:false,ok:false,done:false,t:0})
+ }finally{addBusy=false}}
+/* the person is saved only after the teacher confirms the login was sent on WhatsApp */
+function waBtns(){const w=waCur&&waCur.pending,b=document.getElementById('wbtns');if(!b)return;
+ b.innerHTML=w?`<button class="btn" id="wsent" data-a="wsent"${w.ok?'':' disabled'}>${w.ok?'✅ I sent it – add person':'Send it on WhatsApp first'}</button><button class="btn ghost" data-a="wcancel">Cancel</button>`:'<button class="btn ghost" data-a="wclose">Close</button>'}
+function waOpened(){const w=waCur&&waCur.pending;if(!w)return;w.opened=true;w.t=Date.now();setTimeout(waReady,8000)}
+function waReady(){const w=waCur&&waCur.pending;if(!w||w.ok||!w.opened||Date.now()-w.t<1500)return;w.ok=true;waBtns()}
+function waClose(){const d=document.getElementById('wd');typeof d.close==='function'?d.close():d.removeAttribute('open')}
+async function rmAcct(code,pw){const u=m=>'https://identitytoolkit.googleapis.com/v1/accounts:'+m+'?key='+FB.apiKey,post=(m,b)=>fetch(u(m),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json());
+ const j=await post('signInWithPassword',{email:code+SD,password:pw,returnSecureToken:true});if(j.error)throw new Error(j.error.message);
+ const d=await post('delete',{idToken:j.idToken});if(d.error)throw new Error(d.error.message)}
+async function waAbort(){const w=waCur&&waCur.pending;if(!w||w.done)return;w.done=true;const {p,s}=waCur;waCur=null;try{await rmAcct(p.code,s.p)}catch(e){}}
+async function waConfirm(){const w=waCur&&waCur.pending;if(!w||w.done||!w.ok)return;const {p,s}=waCur,b=document.getElementById('wsent');
+ if(b){b.disabled=true;b.textContent='Saving…'}
+ try{await fdb().ref('secrets/'+p.code).set(s)}catch(e){alert('Could not save the person: '+e.message);waBtns();return}
+ w.done=true;db.people.push(p);changed();waClose();
+ view();$('pc').value=w.c;fillClasses();$('pk').value=w.k;$('pn').focus()}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)waReady()});
+addEventListener('focus',waReady);
+(()=>{const d=document.getElementById('wd');if(!d)return;d.addEventListener('cancel',e=>{if(waCur&&waCur.pending&&!waCur.pending.done)e.preventDefault()});d.addEventListener('close',()=>{waAbort()})})();
 function rmRemote(p){if(!FB)return;const up={['secrets/'+p.code]:null};Object.keys(QZ).forEach(i=>{up['marks/'+i+'/'+p.code]=null;up['qz/sub/'+p.code+'/'+i]=null;up['qz/start/'+p.code+'/'+i]=null});fdb().ref().update(up).catch(()=>{})}
 
 /* ----- teacher: quiz builder ----- */
@@ -1027,7 +1049,9 @@ function qrunHTML(){const{z,i,ans}=qrun,x=z.qs[i],n=z.qs.length,a=ans[i];let bod
  return `<div class="qrun"><div class="qtop"><span class="pill">⏱ <b id="qtm">10:00</b></span><span class="sub">Question ${i+1} of ${n}</span></div><div class="prog"><div style="width:${(i+1)/n*100}%"></div></div><h3 class="qtxt" dir="auto">${esc(x.q)}</h3><div class="qbody">${body}</div><div class="form"><button class="btn ghost" data-a="qprev" ${i?'':'disabled'}>‹ Back</button>${i<n-1?'<button class="btn" data-a="qnext">Next ›</button>':'<button class="btn" data-a="qfin">✔ Finish</button>'}</div></div>`}
 function qresHTML(){return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2><div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late?'<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>':''}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`}
 function qAct(a,id){
- if(a==='wclose'){const d=$('wd');typeof d.close==='function'?d.close():d.removeAttribute('open');return 1}
+ if(a==='wclose'){waClose();return 1}
+ if(a==='wsent'){waConfirm();return 1}
+ if(a==='wcancel'){waAbort();waClose();return 1}
  if(role==='student'&&qrun){const i=qrun.i,x=qrun.z.qs[i],redraw=()=>{saveDraft();view();qTick()};
   if(a==='qans'){qrun.ans[i]=x.t==='tf'?id==='true':+id;redraw();return 1}
   if(a==='qup'||a==='qdn'){const k=+id,o=[...(qrun.ans[i]||x.o.map((_,j)=>j))],t=a==='qup'?k-1:k+1;[o[k],o[t]]=[o[t],o[k]];qrun.ans[i]=o;redraw();return 1}
