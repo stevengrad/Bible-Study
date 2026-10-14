@@ -721,6 +721,9 @@
 .mark{font-family:'Playfair Display',serif;font-size:64px;color:var(--navy);margin:8px 0}.mark small{font-size:24px}
 .qrun .form{margin-top:18px}.qrun .form .btn{flex:1}
 #wd{border:3px solid var(--gold);border-radius:20px;max-width:420px;width:92%;background:var(--ivory)}#wd pre{white-space:pre-wrap;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
+.wchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 10px}
+.wchip{font:inherit;font-size:14px;padding:9px 4px;border:2px solid var(--gold);border-radius:12px;background:#fff;color:inherit;cursor:pointer}
+.wchip.on{background:#25d366;border-color:#25d366;color:#fff;font-weight:700}
 .btn.wa{display:block;text-align:center;text-decoration:none;line-height:46px;background:#25d366;border-color:#25d366;color:#fff}
 body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
 </style>
@@ -841,7 +844,9 @@ body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script>
 /* ===== global login, WhatsApp credentials, weekly quizzes ===== */
-const TEACHER_EMAIL='teacher@bible.study',SD='@students.bible.study',WA_FROM='01201567333',PH=/^01[0125]\d{8}$/;
+const TEACHER_EMAIL='teacher@bible.study',SD='@students.bible.study',WA_NUMS=['01201567333','01203034812','01200933953','01270728855'],PH=/^01[0125]\d{8}$/;
+const waFrom=()=>{try{const v=localStorage.getItem('waFrom');if(WA_NUMS.includes(v))return v}catch(e){}return WA_NUMS[0]},
+waPick=n=>{try{localStorage.setItem('waFrom',n)}catch(e){}document.querySelectorAll('#wd .wchip').forEach(b=>b.classList.toggle('on',b.dataset.n===n));const h=$('wfromtxt');if(h)h.textContent=n};
 const QT={mcq:'Multiple choice',tf:'True / False',fill:'Complete',rank:'Rank (put in order)'};
 let role=null,me=null,mk={},QZ={},qsel=null,qd=null,qrun=null,qres=null,srvOff=0,qzOn=false,qtimer=null;
 const fdb=()=>firebase.database(),svNow=()=>Date.now()+srvOff,n2=x=>+(+x).toFixed(2),rnd6=()=>String(100000+Math.floor(Math.random()*900000));
@@ -881,8 +886,8 @@ function viewExtra(h){
 
 /* ----- people: phone + WhatsApp login ----- */
 async function mkAcct(code,pw){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:code+SD,password:pw,returnSecureToken:false})}),j=await r.json();if(j.error)throw new Error(j.error.message)}
-function showWA(p,s){const url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name} ✝️\nبيانات الدخول لموقع نقاط اجتماع الكتاب المقدس:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
- $('wbody').innerHTML=`<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg)}">💬 Open WhatsApp</a><div class="sub">Tap Send in WhatsApp on the phone that has the number <b>${WA_FROM}</b>.</div>`;
+function showWA(p,s){const f=waFrom(),url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name} ✝️\nبيانات الدخول لموقع نقاط اجتماع الكتاب المقدس:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
+ $('wbody').innerHTML=`<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><div class="sub" style="margin-top:10px">Send from:</div><div class="wchips">${WA_NUMS.map(n=>`<button type="button" class="wchip${n===f?' on':''}" data-n="${n}" onclick="waPick('${n}')">${n}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg)}">💬 Open WhatsApp</a><div class="sub">Tap Send in WhatsApp on the phone that has the number <b id="wfromtxt">${f}</b>.</div>`;
  const d=$('wd');typeof d.showModal==='function'?d.showModal():d.setAttribute('open','')}
 async function loginFor(p,ph){
  let s=(await fdb().ref('secrets/'+p.code).get()).val();
