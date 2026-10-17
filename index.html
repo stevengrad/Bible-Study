@@ -721,7 +721,6 @@
 .mark{font-family:'Playfair Display',serif;font-size:64px;color:var(--navy);margin:8px 0}.mark small{font-size:24px}
 .qrun .form{margin-top:18px}.qrun .form .btn{flex:1}
 #wd{border:3px solid var(--gold);border-radius:20px;max-width:420px;width:92%;background:var(--ivory)}#wd pre{white-space:pre-wrap;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
-.wlink{font:inherit;font-size:13px;border:0;background:none;color:#2563eb;text-decoration:underline;cursor:pointer;padding:0 4px}
 .wchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 10px}
 .wchip{font:inherit;font-size:14px;padding:9px 4px;border:2px solid var(--gold);border-radius:12px;background:#fff;color:inherit;cursor:pointer}
 .wchip.on{background:#25d366;border-color:#25d366;color:#fff;font-weight:700}
@@ -850,13 +849,6 @@ body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
     <script>
 /* ===== global login, WhatsApp credentials, weekly quizzes ===== */
 const TEACHER_EMAIL='teacher@bible.study',SD='@students.bible.study',WA_NUMS=['01201567333','01203034812','01200933953','01270728855'],PH=/^01[0125]\d{8}$/;
-let waMem=null,waEdit=false;
-const waStored=()=>{try{const v=localStorage.getItem('waFrom');if(WA_NUMS.includes(v))return v}catch(e){}return null},
-waHas=()=>!!(waMem||waStored()),
-waFrom=()=>waMem||waStored()||WA_NUMS[0],
-waPick=n=>{waMem=n;try{localStorage.setItem('waFrom',n)}catch(e){}waEdit=false;if(waCur)showWA(waCur.p,waCur.s,waCur.pend)};
-function waChange(){waEdit=true;if(waCur)showWA(waCur.p,waCur.s,waCur.pend)}
-function waGo(){if(!waHas()){alert('First choose which number this phone is, then send.');return false}waSent();return true}
 const WA_SYM={dagger:['\u2020','†'],cross:['\u271D','✝'],orth:['\u2626','☦'],church:['\u26EA','⛪'],none:['','None']};let waCur=null;
 const waSymGet=()=>{try{const v=localStorage.getItem('waSym');if(v&&WA_SYM[v])return v}catch(e){}return 'dagger'};
 function waSymSet(k){try{localStorage.setItem('waSym',k)}catch(e){}if(waCur)showWA(waCur.p,waCur.s,waCur.pend)}
@@ -905,8 +897,8 @@ function viewExtra(h){
 
 /* ----- people: phone + WhatsApp login ----- */
 async function mkAcct(code,pw){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:code+SD,password:pw,returnSecureToken:false})}),j=await r.json();if(j.error)throw new Error(j.error.message)}
-function showWA(p,s,pend,added){waCur={p,s,pend:pend||null};const f=waFrom(),sk=waSymGet(),sy=WA_SYM[sk][0],url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name}${sy?' '+sy:''}\nبيانات الدخول لموقع درس كتاب اسرة انبياء:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
- $('wbody').innerHTML=`${pend?`<div class="sub" style="color:#b45309"><b>${esc(p.name)} is not added yet.</b> The person is added when you tap the green button to send the login.</div>`:''}${added?'<div class="sub" style="color:#15803d"><b>✅ Person added.</b></div>':''}<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre>${waHas()&&!waEdit?`<div class="sub" style="margin-top:10px">This phone's number: <b>${f}</b> <button type="button" class="wlink" onclick="waChange()">Change</button></div>`:`<div class="sub" style="margin-top:10px"><b>Which number is this phone?</b> ${waHas()?'':'(choose once, this phone will remember it)'}</div><div class="wchips">${WA_NUMS.map(n=>`<button type="button" class="wchip${waHas()&&n===f?' on':''}" data-n="${n}" onclick="waPick('${n}')">${n}</button>`).join('')}</div>`}<div class="sub">Symbol after the name:</div><div class="wchips" style="grid-template-columns:repeat(5,1fr)">${Object.entries(WA_SYM).map(([k,v])=>`<button type="button" class="wchip${k===sk?' on':''}" data-k="${k}" onclick="waSymSet('${k}')">${v[1]}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" onclick="return waGo()" href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg.replace(/\uFE0F/g,''))}">💬 ${pend?'Send login &amp; add person':'Open WhatsApp'}</a><div class="sub">Tap Send in WhatsApp on this phone (<b>${f}</b>).</div>`;
+function showWA(p,s,pend,added){waCur={p,s,pend:pend||null};const sk=waSymGet(),sy=WA_SYM[sk][0],url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name}${sy?' '+sy:''}\nبيانات الدخول لموقع درس كتاب اسرة انبياء:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
+ $('wbody').innerHTML=`${pend?`<div class="sub" style="color:#b45309"><b>${esc(p.name)} is not added yet.</b> The person is added when you tap the green button to send the login.</div>`:''}${added?'<div class="sub" style="color:#15803d"><b>✅ Person added.</b></div>':''}<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><div class="sub">Symbol after the name:</div><div class="wchips" style="grid-template-columns:repeat(5,1fr)">${Object.entries(WA_SYM).map(([k,v])=>`<button type="button" class="wchip${k===sk?' on':''}" data-k="${k}" onclick="waSymSet('${k}')">${v[1]}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" ${pend?'onclick="waSent()"':''} href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg.replace(/\uFE0F/g,''))}">💬 ${pend?'Send login &amp; add person':'Open WhatsApp'}</a><div class="sub">Tap Send in WhatsApp. It is sent from the number of this phone.</div>`;
  const d=$('wd');if(!d.open)typeof d.showModal==='function'?d.showModal():d.setAttribute('open','')}
 async function loginFor(p,ph){
  let s=(await fdb().ref('secrets/'+p.code).get()).val();
