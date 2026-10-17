@@ -490,18 +490,8 @@
       "code": "115",
       "id": "pmusm538tmz2",
       "name": "Rafe John"
-    },
-    {
-      "code": "156",
-      "id": "pmv8pobfdgp0",
-      "name": "ستيفن بطرس",
-      "class": "2nd Prep",
-      "cls": "موسى النبي"
     }
   ],
   "canceled": [],
-  "quizzes": [],
-  "qpts": {
-    "zmv8pnvom": 10
-  }
+  "quizzes": []
 }
