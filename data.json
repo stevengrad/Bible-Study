@@ -96,16 +96,6 @@
         "h": true,
         "s": "P"
       },
-      "pmusk3absl1r": {
-        "b": false,
-        "h": true,
-        "s": "P"
-      },
-      "pmusk3iyvhpk": {
-        "b": true,
-        "h": true,
-        "s": "P"
-      },
       "pmusk5wxu2xl": {
         "b": false,
         "h": true,
@@ -435,20 +425,6 @@
       "code": "835",
       "id": "pmusk2v572r0",
       "name": "توماس مايكل"
-    },
-    {
-      "class": "1st Prep",
-      "cls": "يونان النبي",
-      "code": "638",
-      "id": "pmusk3absl1r",
-      "name": "بافلي جورج"
-    },
-    {
-      "class": "1st Prep",
-      "cls": "يونان النبي",
-      "code": "746",
-      "id": "pmusk3iyvhpk",
-      "name": "جوليان نادر"
     },
     {
       "class": "2nd Prep",
