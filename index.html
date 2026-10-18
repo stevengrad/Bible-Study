@@ -1500,7 +1500,7 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
         }
         if (tab === "quiz") {
           const n = db.quizzes.length;
-          h = `<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 50 points. Any other mark = mark ÷ total × 50.</div>
+          h = `<div class="sub"><b>${n} of 6 quizzes.</b> Full mark = 10 points. Any other mark = mark ÷ total × 10.</div>
   <div class="qs">${db.quizzes.map((x) => `<button class="qc ${x.id === quizId ? "on" : ""}" data-a="pick" data-id="${x.id}">${esc(x.title)} (out of ${x.max})</button>`).join("")}</div>
   ${n < 6 ? `<div class="form edit"><input id="qt" placeholder="Quiz title, e.g. Quiz ${n + 1}"><input id="qm" type="number" inputmode="numeric" min="1" placeholder="Out of (10, 20…)"><button class="btn" data-a="addq">＋ Add quiz</button></div>` : ""}
   ${quizId ? '<button class="btn danger edit" style="margin-top:10px" data-a="delq">🗑 Delete this quiz</button>' : ""}`;
