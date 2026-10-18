@@ -721,6 +721,10 @@
 .mark{font-family:'Playfair Display',serif;font-size:64px;color:var(--navy);margin:8px 0}.mark small{font-size:24px}
 .qrun .form{margin-top:18px}.qrun .form .btn{flex:1}
 #wd{border:3px solid var(--gold);border-radius:20px;max-width:420px;width:92%;background:var(--ivory)}#wd pre{white-space:pre-wrap;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
+.rvh{margin:14px 0 4px;font-size:15px}
+.rvq{text-align:start;border:2px solid var(--line);border-radius:14px;padding:10px;margin:8px 0;background:#fff}
+.rvq ol{margin:4px 0;padding-inline-start:22px}
+.rvm{color:#b91c1c;margin-top:6px}.rvr{color:#15803d;font-weight:700;margin-top:4px}
 .wlink{font:inherit;font-size:13px;border:0;background:none;color:#2563eb;text-decoration:underline;cursor:pointer;padding:0 4px}
 .wchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 10px}
 .wchip{font:inherit;font-size:14px;padding:9px 4px;border:2px solid var(--gold);border-radius:12px;background:#fff;color:inherit;cursor:pointer}
@@ -1013,17 +1017,35 @@ function sqHead(){return qrun?qrunHTML():qres?qresHTML():'<div class="sub">Every
 function sqList(){const L=$('list');if(qrun||qres){L.innerHTML='';return}
  const now=svNow(),ids=Object.keys(QZ).filter(i=>QZ[i].pub).sort((a,b)=>QZ[b].week.localeCompare(QZ[a].week));
  L.innerHTML=ids.map(i=>{const z=QZ[i],w=qWin(z.week),m=mk[i]&&mk[i][me];if(m==null&&now>w.gone)return '';
-  return `<div class="row"><div class="who"><b dir="auto">${esc(z.title||'Quiz')}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m!=null?'✓ Finished':now>w.due?'Late: the highest mark is 5':'Open until '+fdt(w.due)}</div></div>${m!=null?`<div class="pts big">${n2(m)}<small>/10</small></div>`:`<button class="btn" data-a="qstart" data-id="${i}">▶ Start (10 min)</button>`}</div>`}).join('')||'<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>'}
+  return `<div class="row"><div class="who"><b dir="auto">${esc(z.title||'Quiz')}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m!=null?'✓ Finished <button type="button" class="wlink" data-a="qrev" data-id="'+i+'">📋 See my mistakes</button>':now>w.due?'Late: the highest mark is 5':'Open until '+fdt(w.due)}</div></div>${m!=null?`<div class="pts big">${n2(m)}<small>/10</small></div>`:`<button class="btn" data-a="qstart" data-id="${i}">▶ Start (10 min)</button>`}</div>`}).join('')||'<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>'}
 async function qStart(id){const z=QZ[id];if(!z)return;const ref=fdb().ref(`qz/start/${me}/${id}`);
  try{let s=(await ref.get()).val();if(!s){await ref.set(firebase.database.ServerValue.TIMESTAMP);s=(await ref.get()).val()}
   qrun={id,i:0,ans:JSON.parse(localStorage.getItem(`bs_d_${me}_${id}`)||'{}'),end:s+6e5,z};
   if(svNow()>=qrun.end){await qSubmit();return}
   qtimer=setInterval(qTick,500);view();qTick()}catch(e){alert('Could not start the quiz: '+e.message)}}
 function qTick(){if(!qrun)return;const r=Math.max(0,qrun.end-svNow()),el=$('qtm');if(el)el.textContent=Math.floor(r/6e4)+':'+String(Math.floor(r/1e3)%60).padStart(2,'0');if(r<=0)qSubmit()}
+const TFX=b=>b?'True · صح':'False · خطأ';
+function qPerms(n){const r=[],a=[...Array(n).keys()];(function g(k){if(k===1){r.push([...a]);return}for(let i=0;i<k;i++){g(k-1);const j=k%2?0:i;[a[j],a[k-1]]=[a[k-1],a[j]]}})(n);return r}
+async function qRight(id,i,x){const key=v=>sha(id+i+'|'+v);
+ if(x.t==='mcq'){for(let j=0;j<x.o.length;j++)if(x.ks.includes(await key(j)))return x.o[j];return null}
+ if(x.t==='tf'){for(const b of[true,false])if(x.ks.includes(await key(b)))return TFX(b);return null}
+ if(x.t==='rank'){if(x.o.length>7)return null;const P=qPerms(x.o.length);
+  for(let k=0;k<P.length;k+=400){const part=P.slice(k,k+400),h=await Promise.all(part.map(p=>key(p.join(','))));const f=h.findIndex(v=>x.ks.includes(v));if(f>=0)return part[f].map(j=>x.o[j])}return null}
+ return null}
+function qMine(x,a){if(a==null||a==='')return '—';return x.t==='mcq'?(x.o[a]??'—'):x.t==='tf'?TFX(a):x.t==='rank'?a.map(j=>x.o[j]):String(a)}
+async function qReview(id,z,ans){const out=[];
+ for(let i=0;i<z.qs.length;i++){const x=z.qs[i],a=ans[i],none=a==null||a==='';
+  if(!none&&x.ks.includes(await sha(id+i+'|'+(x.t==='fill'?nz(a):x.t==='rank'?a.join(','):String(a)))))continue;
+  out.push({i,q:x.q,mine:qMine(x,a),right:await qRight(id,i,x),fill:x.t==='fill'})}
+ return out}
+const qv=v=>Array.isArray(v)?'<ol dir="auto">'+v.map(t=>`<li>${esc(t)}</li>`).join('')+'</ol>':`<span dir="auto">${esc(v)}</span>`;
+async function qReviewOpen(id){const z=QZ[id];if(!z)return;
+ try{const sub=(await fdb().ref(`qz/sub/${me}/${id}`).get()).val();if(!sub)return alert('Your answers were not found.');
+  qres={m:sub.m,late:sub.late,rv:await qReview(id,z,sub.a||{})};view()}catch(e){alert('Could not load your answers: '+e.message)}}
 async function qSubmit(){if(!qrun||qrun.busy)return;qrun.busy=1;clearInterval(qtimer);const{id,z,ans}=qrun,w=qWin(z.week);let m=0;
  for(let i=0;i<z.qs.length;i++){const x=z.qs[i],a=ans[i];if(a==null||a==='')continue;const v=x.t==='fill'?nz(a):x.t==='rank'?a.join(','):String(a);if(x.ks.includes(await sha(id+i+'|'+v)))m+=x.m}
  m=Math.min(10,n2(m));const late=svNow()>w.due;if(late&&m>5)m=5;
- try{await fdb().ref().update({[`qz/sub/${me}/${id}`]:{a:ans,m,late,t:firebase.database.ServerValue.TIMESTAMP},[`marks/${id}/${me}`]:m});localStorage.removeItem(`bs_d_${me}_${id}`);qres={m,late};qrun=null}
+ try{await fdb().ref().update({[`qz/sub/${me}/${id}`]:{a:ans,m,late,t:firebase.database.ServerValue.TIMESTAMP},[`marks/${id}/${me}`]:m});localStorage.removeItem(`bs_d_${me}_${id}`);let rv=null;try{rv=await qReview(id,z,ans)}catch(e){}qres={m,late,rv};qrun=null}
  catch(e){qrun.busy=0;qtimer=setInterval(qTick,500);alert('Could not send your answers: '+e.message+'\nCheck your internet and try again.');return}
  view()}
 function qrunHTML(){const{z,i,ans}=qrun,x=z.qs[i],n=z.qs.length,a=ans[i];let body='';
@@ -1032,7 +1054,7 @@ function qrunHTML(){const{z,i,ans}=qrun,x=z.qs[i],n=z.qs.length,a=ans[i];let bod
  else if(x.t==='fill')body=`<input id="fa" class="fill" dir="auto" placeholder="Type your answer here" value="${esc(a||'')}" autocomplete="off">`;
  else{const ord=a||x.o.map((_,j)=>j);body='<div class="sub">Use the arrows to put the items in the right order.</div>'+ord.map((j,k)=>`<div class="rkrow"><span class="rkn">${k+1}</span><span class="rkt" dir="auto">${esc(x.o[j])}</span><button class="ic" data-a="qup" data-id="${k}" ${k?'':'disabled'} aria-label="Move up">▲</button><button class="ic" data-a="qdn" data-id="${k}" ${k<ord.length-1?'':'disabled'} aria-label="Move down">▼</button></div>`).join('')}
  return `<div class="qrun"><div class="qtop"><span class="pill">⏱ <b id="qtm">10:00</b></span><span class="sub">Question ${i+1} of ${n}</span></div><div class="prog"><div style="width:${(i+1)/n*100}%"></div></div><h3 class="qtxt" dir="auto">${esc(x.q)}</h3><div class="qbody">${body}</div><div class="form"><button class="btn ghost" data-a="qprev" ${i?'':'disabled'}>‹ Back</button>${i<n-1?'<button class="btn" data-a="qnext">Next ›</button>':'<button class="btn" data-a="qfin">✔ Finish</button>'}</div></div>`}
-function qresHTML(){return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2><div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late?'<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>':''}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`}
+function qresHTML(){return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2><div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late?'<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>':''}${qres.rv==null?'':qres.rv.length?`<h3 class="rvh">Your mistakes (${qres.rv.length}) - learn the right answer:</h3>${qres.rv.map(r=>`<div class="rvq"><b>${r.i+1}.</b> <span dir="auto">${esc(r.q)}</span><div class="rvm">❌ Your answer: ${qv(r.mine)}</div>${r.right!=null?`<div class="rvr">✅ Right answer: ${qv(r.right)}</div>`:`<div class="sub">${r.fill?'Ask your teacher for the right answer of this question.':'The right answer is not available.'}</div>`}</div>`).join('')}`:'<div class="sub" style="color:#15803d"><b>✅ All your answers are right!</b></div>'}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`}
 function qAct(a,id){
  if(a==='wclose'){if(waCur&&waCur.pend){if(!confirm('The login was not sent, so this person will NOT be added. Close anyway?'))return 1;waCur=null}const d=$('wd');typeof d.close==='function'?d.close():d.removeAttribute('open');return 1}
  if(role==='student'&&qrun){const i=qrun.i,x=qrun.z.qs[i],redraw=()=>{saveDraft();view();qTick()};
@@ -1040,7 +1062,7 @@ function qAct(a,id){
   if(a==='qup'||a==='qdn'){const k=+id,o=[...(qrun.ans[i]||x.o.map((_,j)=>j))],t=a==='qup'?k-1:k+1;[o[k],o[t]]=[o[t],o[k]];qrun.ans[i]=o;redraw();return 1}
   if(a==='qnext'){qrun.i++;view();qTick();return 1}if(a==='qprev'){qrun.i--;view();qTick();return 1}
   if(a==='qfin'){if(confirm('Finish and send your answers?'))qSubmit();return 1}}
- if(role==='student'){if(a==='qstart'){qStart(id);return 1}if(a==='qdone'){qres=null;view();return 1}}
+ if(role==='student'){if(a==='qrev'){qReviewOpen(id);return 1}if(a==='qstart'){qStart(id);return 1}if(a==='qdone'){qres=null;view();return 1}}
  if(role!=='teacher')return 0;
  if(a==='qnew'){qd={week:sat,title:'',pub:false,qs:[],nt:'mcq',pts:'50'};view();return 1}
  if(a==='qedit'){const z=QZ[id];if(!z)return 1;qd={eid:id,week:z.week,title:z.title||'',pub:!!z.pub,pts:String(qpts(id)),nt:'mcq',qs:z.qs.map(x=>({...x,old:1,oc:x.o?x.o.length:0}))};view();return 1}
