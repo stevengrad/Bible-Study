@@ -802,7 +802,7 @@ body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
         <div id="top"></div>
         <input
           id="q"
-          placeholder="🔍 Search name, class or number"
+          placeholder="🔍 Search name, class, code or phone"
           autocomplete="off"
           autocapitalize="off"
           spellcheck="false"
@@ -863,7 +863,7 @@ const cLink=n=>{const p=myP()||{name:'',code:me||''};return 'https://wa.me/20'+n
 function cSet(k){cTp=k;document.querySelectorAll('.cchip').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('.cwa').forEach(a=>a.href=cLink(a.dataset.n))}
 function contactHTML(){return `<div class="sub">Is there a problem in the quizzes, the leaderboard or the Top 3? Choose what it is about, then tap a number to write to us on WhatsApp.</div><div class="sub" style="margin-top:10px"><b>The problem is about:</b></div><div class="wchips" style="grid-template-columns:repeat(auto-fit,minmax(105px,1fr))">${Object.entries(CT).map(([k,v])=>`<button type="button" class="wchip cchip${k===cTp?' on':''}" data-k="${k}" onclick="cSet('${k}')">${v[0]}</button>`).join('')}</div><div class="sub"><b>Contact us:</b></div>${WA_NUMS.map(n=>`<div class="crow"><a class="btn wa cwa" target="_blank" rel="noopener" data-n="${n}" href="${cLink(n)}">💬 ${n}</a><a class="btn ghost" href="tel:+20${n.slice(1)}" aria-label="Call ${n}">📞</a></div>`).join('')}<div class="sub" style="margin-top:10px">Your name and username are added to the message for you. You can write the details before you send it.</div>`}
 const QT={mcq:'Multiple choice',tf:'True / False',fill:'Complete',rank:'Rank (put in order)'};
-let role=null,me=null,mk={},QZ={},qsel=null,qd=null,qrun=null,qres=null,srvOff=0,qzOn=false,qtimer=null;
+let role=null,me=null,mk={},QZ={},qsel=null,qd=null,qrun=null,qres=null,srvOff=0,qzOn=false,qtimer=null,SEC={},secOn=false;
 const fdb=()=>firebase.database(),svNow=()=>Date.now()+srvOff,n2=x=>+(+x).toFixed(2),rnd6=()=>String(100000+Math.floor(Math.random()*900000));
 const qpts=i=>{const v=+((db.qpts&&db.qpts[i])||(QZ[i]&&QZ[i].pts));return v>0?v:50};
 const mkPts=p=>{let z=0;for(const i in mk){const m=mk[i]&&mk[i][p.code];if(m!=null){const P=qpts(i);z+=m>=10?P:Math.min(Math.max(P-1,0),Math.round(+m/10*P))}}return z};
@@ -878,11 +878,17 @@ const myP=()=>db.people.find(p=>p.code===me);
 function applyMode(){document.body.classList.toggle('ro',role!=='teacher');document.body.classList.toggle('quizing',!!(qrun||qres));$('lk').textContent=role==='teacher'?'🔓 Teacher':role==='student'?'👤 '+((myP()||{name:'Student'}).name.split(' ')[0]):'🔐 Log in'}
 function fbExtra(){fdb().ref('.info/serverTimeOffset').on('value',s=>srvOff=s.val()||0);fdb().ref('marks').on('value',s=>{mk=s.val()||{};if(role)list()})}
 function qzListen(){if(qzOn||!role)return;qzOn=true;fdb().ref('qz/q').on('value',s=>{QZ=s.val()||{};Object.values(QZ).forEach(z=>{z.qs=arr(z.qs).map(x=>({...x,o:x.o?arr(x.o):undefined,ks:arr(x.ks)}))});if(tab==='qb'||tab==='sq')view()},()=>{qzOn=false})}
+function secListen(){if(secOn||role!=='teacher')return;secOn=true;
+ const ph=v=>{const o={};for(const k in v||{})o[k]=(v[k]&&v[k].ph)||'';return o};
+ fdb().ref('secrets').on('value',s=>{SEC=ph(s.val());if(role==='teacher')list()},async()=>{
+  for(let t=0;t<10&&!db.people.length;t++)await new Promise(r=>setTimeout(r,500));
+  const r=await Promise.all(db.people.map(p=>fdb().ref('secrets/'+p.code+'/ph').get().then(x=>[p.code,x.val()||'']).catch(()=>[p.code,''])));
+  SEC=Object.fromEntries(r);if(role==='teacher')list()})}
 function authChanged(u){const em=(u&&u.email)||'',clr=()=>{if(cfg.token){cfg.token='';localStorage.setItem('bs_cfg',JSON.stringify(cfg))}};
  if(em===TEACHER_EMAIL&&cfg.token){role='teacher';me=null}
  else if(em.endsWith(SD)){role='student';me=em.slice(0,-SD.length);clr();tab='sq'}
  else{role=null;me=null;clr();if(u)firebase.auth().signOut()}
- if(role)qzListen();view();if(!role)openDlg()}
+ if(role)qzListen();if(role==='teacher')secListen();view();if(!role)openDlg()}
 async function doLogin(){const e=$('err'),un=$('un').value.trim(),pw=$('pw').value;
  if(!FB){e.textContent='The live database is not set up yet (config.js).';return}
  if(!un||!pw){e.textContent='Type your username and password.';return}e.textContent='Checking…';
@@ -924,10 +930,10 @@ async function waNum(){const w=waCur;if(!w)return;
  const raw=prompt('New mobile number (11 digits, starts with 010, 011, 012 or 015)',w.s.ph);if(raw===null)return;
  const v=raw.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[\s-]/g,'');if(v===w.s.ph)return;
  if(!PH.test(v))return alert('The number must be 11 digits and start with 010, 011, 012 or 015.');
- if(!w.pend){try{await fdb().ref('secrets/'+w.p.code+'/ph').set(v)}catch(e){return alert('Could not save the number: '+e.message)}setStatus('Number changed ✓',2500)}
+ if(!w.pend){try{await fdb().ref('secrets/'+w.p.code+'/ph').set(v)}catch(e){return alert('Could not save the number: '+e.message)}SEC[w.p.code]=v;setStatus('Number changed ✓',2500)}
  showWA(w.p,{...w.s,ph:v},w.pend,w.added)}
 function waSent(){const w=waCur;if(!w||!w.pend)return;const{p,s,pend}=w;w.pend=null;
- if(!db.people.some(x=>x.id===p.id)){db.people.push(p);changed();fdb().ref('secrets/'+p.code).set({p:s.p,ph:s.ph}).catch(e=>alert('The login was sent, but it could not be saved: '+e.message))}
+ if(!db.people.some(x=>x.id===p.id)){db.people.push(p);changed();SEC[p.code]=s.ph;fdb().ref('secrets/'+p.code).set({p:s.p,ph:s.ph}).catch(e=>alert('The login was sent, but it could not be saved: '+e.message))}
  setTimeout(()=>{view();$('pc').value=pend.c;fillClasses();$('pk').value=pend.k;$('pn').focus();showWA(p,s,null,true)},400)}
 function rmRemote(p){if(!FB)return;const up={['secrets/'+p.code]:null};Object.keys(QZ).forEach(i=>{up['marks/'+i+'/'+p.code]=null;up['qz/sub/'+p.code+'/'+i]=null;up['qz/start/'+p.code+'/'+i]=null});fdb().ref().update(up).catch(()=>{})}
 
@@ -1171,10 +1177,13 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
         const o = +db.bonus?.[p.id] || 0;
         return { a, b, h, z, o, t: n1(a + b + h + z + o) };
       }
-      const match = (p) =>
-        (p.name + " " + p.class + " " + (p.cls || "") + " " + (p.code || ""))
-          .toLowerCase()
-          .includes(q.trim().toLowerCase());
+      const match = (p) => {
+        const t = q.trim().toLowerCase();
+        if ((p.name + " " + p.class + " " + (p.cls || "") + " " + (p.code || "")).toLowerCase().includes(t)) return true;
+        const d = t.replace(/[٠-٩]/g, (x) => "٠١٢٣٤٥٦٧٨٩".indexOf(x)).replace(/[\s\-+()]/g, "");
+        const ph = SEC[p.code] || "";
+        return !!ph && /^\d{3,}$/.test(d) && (ph.includes(d) || ("2" + ph).includes(d));
+      };
       const tag = (p, all = 1) =>
         '<div class="tags">' +
         (p.code ? `<span class="chip code">#${esc(p.code)}</span>` : "") +
@@ -1578,11 +1587,11 @@ document.addEventListener('input',e=>{if(e.target.id==='fa'&&qrun){qrun.ans[qrun
               h += `<div class="row bn">${who}<div class="ctl"><button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div></div>`;
             }
             if (tab === "people")
-              h += `<div class="row pp">${who}<button class="btn ghost edit" data-a="plogin" data-id="${p.id}">📲 Login</button><button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`;
+              h += `<div class="row pp">${SEC[p.code] ? who.slice(0, -6) + `<div class="sub" dir="ltr">📞 ${esc(SEC[p.code])}</div></div>` : who}<button class="btn ghost edit" data-a="plogin" data-id="${p.id}">📲 Login</button><button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`;
           });
         }
         L.innerHTML =
-          h || '<div class="empty">No match. Try another name or class.</div>';
+          h || '<div class="empty">No match. Try another name, class, code or phone number.</div>';
       }
 
       /* ---------- actions ---------- */
