@@ -116,16 +116,6 @@
         "h": true,
         "s": "P"
       },
-      "pmusk8td3spi": {
-        "b": false,
-        "h": true,
-        "s": "P"
-      },
-      "pmusk8y8b0zd": {
-        "b": false,
-        "h": true,
-        "s": "P"
-      },
       "pmusk951ykgf": {
         "b": true,
         "h": true,
@@ -211,11 +201,6 @@
       "pmusk75mxoig": {
         "b": true,
         "h": true,
-        "s": "P"
-      },
-      "pmusk8y8b0zd": {
-        "b": false,
-        "h": false,
         "s": "P"
       },
       "pmuskcgnu3fn": {
@@ -453,20 +438,6 @@
       "code": "190",
       "id": "pmusk75mxoig",
       "name": "Jeevan Joesph"
-    },
-    {
-      "class": "2nd Prep",
-      "cls": "دانيال النبي",
-      "code": "318",
-      "id": "pmusk8td3spi",
-      "name": "يوسف رفيق"
-    },
-    {
-      "class": "2nd Prep",
-      "cls": "دانيال النبي",
-      "code": "442",
-      "id": "pmusk8y8b0zd",
-      "name": "توني هاني"
     },
     {
       "class": "2nd Prep",
