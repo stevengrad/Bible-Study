@@ -721,6 +721,7 @@
 .mark{font-family:'Playfair Display',serif;font-size:64px;color:var(--navy);margin:8px 0}.mark small{font-size:24px}
 .qrun .form{margin-top:18px}.qrun .form .btn{flex:1}
 #wd{border:3px solid var(--gold);border-radius:20px;max-width:420px;width:92%;background:var(--ivory)}#wd pre{white-space:pre-wrap;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
+.wlink{font:inherit;font-size:13px;border:0;background:none;color:#2563eb;text-decoration:underline;cursor:pointer;padding:0 4px}
 .wchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0 10px}
 .wchip{font:inherit;font-size:14px;padding:9px 4px;border:2px solid var(--gold);border-radius:12px;background:#fff;color:inherit;cursor:pointer}
 .wchip.on{background:#25d366;border-color:#25d366;color:#fff;font-weight:700}
@@ -851,7 +852,7 @@ body.quizing .hero-in{display:none}body.quizing .hero{padding-bottom:56px}
 const TEACHER_EMAIL='teacher@bible.study',SD='@students.bible.study',WA_NUMS=['01201567333','01203034812','01200933953','01270728855'],PH=/^01[0125]\d{8}$/;
 const WA_SYM={dagger:['\u2020','†'],cross:['\u271D','✝'],orth:['\u2626','☦'],church:['\u26EA','⛪'],none:['','None']};let waCur=null;
 const waSymGet=()=>{try{const v=localStorage.getItem('waSym');if(v&&WA_SYM[v])return v}catch(e){}return 'dagger'};
-function waSymSet(k){try{localStorage.setItem('waSym',k)}catch(e){}if(waCur)showWA(waCur.p,waCur.s,waCur.pend)}
+function waSymSet(k){try{localStorage.setItem('waSym',k)}catch(e){}if(waCur)showWA(waCur.p,waCur.s,waCur.pend,waCur.added)}
 document.getElementById('wd').addEventListener('close',()=>{if(waCur&&waCur.pend)waCur=null});
 const CT={quiz:['📝 Quiz','الكويز'],board:['🏆 Leaderboard','الليدر بورد (ترتيب النقاط)'],top3:['🌟 Top 3','أفضل ٣ (Top 3)']};let cTp='quiz';
 const cLink=n=>{const p=myP()||{name:'',code:me||''};return 'https://wa.me/20'+n.slice(1)+'?text='+encodeURIComponent('أهلاً، أنا '+p.name+' (اسم المستخدم: '+(p.code||me||'')+').\nعندي مشكلة في '+CT[cTp][1]+':\n')};
@@ -897,8 +898,8 @@ function viewExtra(h){
 
 /* ----- people: phone + WhatsApp login ----- */
 async function mkAcct(code,pw){const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:code+SD,password:pw,returnSecureToken:false})}),j=await r.json();if(j.error)throw new Error(j.error.message)}
-function showWA(p,s,pend,added){waCur={p,s,pend:pend||null};const sk=waSymGet(),sy=WA_SYM[sk][0],url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name}${sy?' '+sy:''}\nبيانات الدخول لموقع درس كتاب اسرة انبياء:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
- $('wbody').innerHTML=`${pend?`<div class="sub" style="color:#b45309"><b>${esc(p.name)} is not added yet.</b> The person is added when you tap the green button to send the login.</div>`:''}${added?'<div class="sub" style="color:#15803d"><b>✅ Person added.</b></div>':''}<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><pre dir="auto">${esc(msg)}</pre><div class="sub">Symbol after the name:</div><div class="wchips" style="grid-template-columns:repeat(5,1fr)">${Object.entries(WA_SYM).map(([k,v])=>`<button type="button" class="wchip${k===sk?' on':''}" data-k="${k}" onclick="waSymSet('${k}')">${v[1]}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" ${pend?'onclick="waSent()"':''} href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg.replace(/\uFE0F/g,''))}">💬 ${pend?'Send login &amp; add person':'Open WhatsApp'}</a><div class="sub">Tap Send in WhatsApp. It is sent from the number of this phone.</div>`;
+function showWA(p,s,pend,added){waCur={p,s,pend:pend||null,added:!!added};const sk=waSymGet(),sy=WA_SYM[sk][0],url=location.origin+location.pathname.replace(/[^/]*$/,''),msg=`أهلاً ${p.name}${sy?' '+sy:''}\nبيانات الدخول لموقع درس كتاب اسرة انبياء:\nالرابط: ${url}\nاسم المستخدم: ${p.code}\nكلمة المرور: ${s.p}`;
+ $('wbody').innerHTML=`${pend?`<div class="sub" style="color:#b45309"><b>${esc(p.name)} is not added yet.</b> The person is added when you tap the green button to send the login.</div>`:''}${added?'<div class="sub" style="color:#15803d"><b>✅ Person added.</b></div>':''}<b dir="auto">${esc(p.name)}</b><div class="sub">Username <b>${p.code}</b> · Password <b>${s.p}</b></div><div class="sub">Sending to: <b dir="ltr">${esc(s.ph)}</b> <button type="button" class="wlink" onclick="waNum()">Change number</button></div><pre dir="auto">${esc(msg)}</pre><div class="sub">Symbol after the name:</div><div class="wchips" style="grid-template-columns:repeat(5,1fr)">${Object.entries(WA_SYM).map(([k,v])=>`<button type="button" class="wchip${k===sk?' on':''}" data-k="${k}" onclick="waSymSet('${k}')">${v[1]}</button>`).join('')}</div><a class="btn wa" target="_blank" rel="noopener" ${pend?'onclick="waSent()"':''} href="https://wa.me/20${s.ph.slice(1)}?text=${encodeURIComponent(msg.replace(/\uFE0F/g,''))}">💬 ${pend?'Send login &amp; add person':'Open WhatsApp'}</a><div class="sub">Tap Send in WhatsApp. It is sent from the number of this phone.</div>`;
  const d=$('wd');if(!d.open)typeof d.showModal==='function'?d.showModal():d.setAttribute('open','')}
 async function loginFor(p,ph){
  let s=(await fdb().ref('secrets/'+p.code).get()).val();
@@ -915,6 +916,12 @@ async function addPerson(){
  if(!ok)return alert('Could not find a free number. Try again.');
  const p={code,id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,class:c,cls:k};
  showWA(p,{p:pw,ph},{c,k})}
+async function waNum(){const w=waCur;if(!w)return;
+ const raw=prompt('New mobile number (11 digits, starts with 010, 011, 012 or 015)',w.s.ph);if(raw===null)return;
+ const v=raw.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[\s-]/g,'');if(v===w.s.ph)return;
+ if(!PH.test(v))return alert('The number must be 11 digits and start with 010, 011, 012 or 015.');
+ if(!w.pend){try{await fdb().ref('secrets/'+w.p.code+'/ph').set(v)}catch(e){return alert('Could not save the number: '+e.message)}setStatus('Number changed ✓',2500)}
+ showWA(w.p,{...w.s,ph:v},w.pend,w.added)}
 function waSent(){const w=waCur;if(!w||!w.pend)return;const{p,s,pend}=w;w.pend=null;
  if(!db.people.some(x=>x.id===p.id)){db.people.push(p);changed();fdb().ref('secrets/'+p.code).set({p:s.p,ph:s.ph}).catch(e=>alert('The login was sent, but it could not be saved: '+e.message))}
  setTimeout(()=>{view();$('pc').value=pend.c;fillClasses();$('pk').value=pend.k;$('pn').focus();showWA(p,s,null,true)},400)}
