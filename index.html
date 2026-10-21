@@ -2613,7 +2613,7 @@
         clearTimeout(tm);
         clearTimeout(tg);
         if (FB) tm = setTimeout(fbSave, 250);
-        tg = setTimeout(run, FB ? 4000 : 300);
+        tg = setTimeout(run, FB ? 4000 : 600);
       };
       const needLogin = () => {
         if (cfg.token) return false;
