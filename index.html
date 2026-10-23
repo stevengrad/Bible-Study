@@ -2089,7 +2089,7 @@
           ? qrunHTML()
           : qres
             ? qresHTML()
-            : '<div class="sub">Every quiz has 5 minutes. Do NOT leave the page or switch apps during the quiz. You will get a 10-second warning, and if you do not return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
+            : '<div class="sub">Every quiz has 5 minutes. Do NOT leave the page or switch apps during the quiz. You will get a 10-second warning, and if you do not return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks,<bold>but you can use the hard copy bible.</bold></div>';
       }
       function sqList() {
         const L = $("list");
@@ -3413,7 +3413,11 @@
         const z = QZ[id];
         if (!z) return clear();
         try {
-          const sub = (await fdb().ref("qz/sub/" + me + "/" + id).get()).val();
+          const sub = (
+            await fdb()
+              .ref("qz/sub/" + me + "/" + id)
+              .get()
+          ).val();
           if (sub) return clear();
         } catch (e) {
           acChecked = false; // no internet yet: try again later
@@ -3421,7 +3425,9 @@
         }
         let ans = {};
         try {
-          ans = JSON.parse(localStorage.getItem("bs_d_" + me + "_" + id) || "{}");
+          ans = JSON.parse(
+            localStorage.getItem("bs_d_" + me + "_" + id) || "{}",
+          );
         } catch (e) {}
         qrun = { id, i: 0, ans, end: 0, z };
         await qSubmit(
