@@ -1219,10 +1219,9 @@
     <div id="acWarn">
       <div class="acBox">
         <h2>⚠️ Warning!</h2>
-        <p><b>You left the quiz page!</b></p>
+        <p><b>You switched away from the quiz!</b></p>
         <p>
-          If you do not return within the countdown, your quiz will be submitted
-          automatically with your current answers.
+          Return within 10 seconds to continue. If the quiz stays away for 10 seconds, it will be submitted automatically with your saved answers.
         </p>
         <div id="acTimer">10</div>
         <div class="acBtns">
@@ -1237,11 +1236,10 @@
       <h3>Quiz Rules — Read Before Starting</h3>
       <ul>
         <li>⏱ You have <b>5 minutes</b> to finish the quiz.</li>
-        <li>🚫 Do <b>NOT</b> leave this page, reload, or close the browser.</li>
-        <li>📵 Do <b>NOT</b> switch to another app or open a new tab.</li>
+        <li>🚫 Do <b>NOT</b> leave this page, reload, or close the browser during the quiz.</li>
+        <li>📵 Do <b>NOT</b> switch to another tab, webpage, or app during the quiz.</li>
         <li>
-          ⚠️ If you leave, a <b>10-second countdown</b> will start. If you don't
-          return in time, your quiz will be <b>submitted automatically</b>.
+          ⚠️ If the quiz page is hidden or loses focus, a <b>10-second countdown</b> starts. Return and focus the quiz page before it ends, or your quiz will be <b>submitted automatically</b>.
         </li>
         <li>
           🔒 Right-click and copy/paste are <b>disabled</b> during the quiz.
@@ -3284,7 +3282,7 @@
         acChecked = false,
         pendingQStartId = null;
       const acMsg =
-        "You left the quiz page, so your quiz was submitted automatically with your current answers.";
+        "You left the quiz tab or window for at least 10 seconds, so your quiz was submitted automatically with your saved answers.";
 
       function acFs(on) {
         try {
@@ -3334,36 +3332,61 @@
           pendingQStartId = null;
         });
 
-      /* ---- leaving the page ---- */
-      // Reload / close: ask first. If it happens anyway, the quiz is
-      // submitted the next time the student opens the page (acCheckAbandoned).
+      /* ---- leaving the page / cross-browser focus detection ---- */
+      // Browsers cannot keep executing a page after same-tab navigation. Save
+      // the active attempt before unload; acCheckAbandoned submits it when the
+      // student returns. Background-tab switches are handled live below.
+      function acPersistActiveAttempt() {
+        if (!qrun || !me) return;
+        try {
+          localStorage.setItem("bs_act_" + me, qrun.id);
+          localStorage.setItem(
+            "bs_d_" + me + "_" + qrun.id,
+            JSON.stringify(qrun.ans || {}),
+          );
+        } catch (e) {}
+      }
+      function acPageIsActive() {
+        return (
+          !document.hidden &&
+          (document.visibilityState == null ||
+            document.visibilityState === "visible") &&
+          document.hasFocus()
+        );
+      }
       window.addEventListener("beforeunload", function (e) {
-        if (qrun) {
-          e.preventDefault();
-          e.returnValue =
-            "Your quiz is still in progress! If you leave, your quiz will be submitted with your current answers.";
-          return e.returnValue;
-        }
+        if (!qrun) return;
+        acPersistActiveAttempt();
+        e.preventDefault();
+        e.returnValue =
+          "Your quiz is still in progress! If you leave, your quiz will be submitted with your current answers.";
+        return e.returnValue;
       });
 
       function acTick() {
+        if (!acLeftAt) return;
         const left = Math.ceil((AC_GRACE - (Date.now() - acLeftAt)) / 1000);
         const t = document.getElementById("acTimer");
         if (t) t.textContent = Math.max(0, left);
-        if (left <= 0) acBack();
+        // The timer uses the real elapsed time, not the number of interval
+        // ticks, so browser timer throttling cannot grant extra time.
+        if (left <= 0) acBack(true);
       }
       function acLeave() {
-        if (!qrun || acPause || acLeftAt) return;
+        if (!qrun || qrun.busy || acPause || acLeftAt) return;
         acLeftAt = Date.now();
+        acPersistActiveAttempt();
         document.getElementById("acWarn").classList.add("show");
         acTick();
         clearInterval(acInterval);
         acInterval = setInterval(acTick, 250);
       }
-      // Works from the real clock, so it still counts when the phone
-      // freezes the page while the student is in another app.
-      function acBack() {
+      // A focus event alone is not enough to resume: on some desktop browsers,
+      // focus/pageshow can fire while this document is still a background tab.
+      // Only a genuinely visible, focused quiz can cancel the countdown.
+      function acBack(fromTimer) {
         if (!acLeftAt) return;
+        if (!fromTimer && !acPageIsActive()) return;
         const away = Date.now() - acLeftAt;
         acLeftAt = 0;
         clearInterval(acInterval);
@@ -3372,19 +3395,22 @@
         if (qrun && !qrun.busy && away >= AC_GRACE) qSubmit(acMsg);
       }
       function acReturn() {
-        acBack();
+        acBack(false);
       }
 
       document.addEventListener("visibilitychange", function () {
         if (!qrun) return;
-        if (document.hidden) acLeave();
-        else acBack();
+        if (document.hidden || document.visibilityState !== "visible") acLeave();
+        else if (acPageIsActive()) acBack(false);
       });
       window.addEventListener("pagehide", function () {
-        if (qrun) acLeave();
+        if (qrun) {
+          acPersistActiveAttempt();
+          acLeave();
+        }
       });
       window.addEventListener("pageshow", function () {
-        if (acLeftAt) acBack();
+        if (acLeftAt && acPageIsActive()) acBack(false);
       });
       window.addEventListener("blur", function () {
         if (!qrun || acPause) return;
@@ -3393,7 +3419,7 @@
         }, 300);
       });
       window.addEventListener("focus", function () {
-        if (acLeftAt) acBack();
+        if (acLeftAt && acPageIsActive()) acBack(false);
       });
 
       /* ---- quiz was abandoned (page reloaded / closed / reopened) ---- */
