@@ -1007,6 +1007,61 @@
       body.quizing .hero {
         padding-bottom: 56px;
       }
+
+      /* --- Anti-cheat warning overlay --- */
+      #acWarn {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(12, 28, 70, 0.92);
+        color: #fff;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 24px;
+      }
+      #acWarn.show { display: flex; }
+      #acWarn .acBox {
+        background: var(--ivory);
+        color: var(--ink);
+        border: 3px solid var(--no);
+        border-radius: 22px;
+        padding: 28px 22px;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      }
+      #acWarn .acBox h2 { color: var(--no); margin: 0 0 10px; font-size: 22px; }
+      #acWarn .acBox p { margin: 8px 0; font-size: 15px; line-height: 1.6; }
+      #acTimer {
+        font-size: 48px;
+        font-weight: 800;
+        color: var(--no);
+        font-family: 'Playfair Display', serif;
+        margin: 10px 0;
+      }
+      .acBtns { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+      .acBtns .btn { min-width: 140px; }
+
+      /* pre-quiz rules dialog */
+      #qRulesDlg {
+        border: 3px solid var(--gold);
+        border-radius: 20px;
+        max-width: 420px;
+        width: 92%;
+        background: var(--ivory);
+        padding: 22px;
+        color: var(--ink);
+      }
+      #qRulesDlg::backdrop { background: rgba(12, 28, 70, 0.55); }
+      #qRulesDlg h3 { margin: 0 0 12px; color: var(--navy); font-size: 20px; }
+      #qRulesDlg ul { margin: 6px 0 14px; padding-inline-start: 22px; line-height: 2; }
+      #qRulesDlg ul li { font-weight: 600; font-size: 14px; }
+      #qRulesDlg .warn-icon { font-size: 42px; display: block; text-align: center; margin-bottom: 8px; }
+
+      /* Block user-select and context menu during quiz */
+      body.quizing { -webkit-user-select: none; user-select: none; }
     </style>
   </head>
   <body>
@@ -1112,6 +1167,38 @@
       <div id="wbody"></div>
       <div class="dbtns">
         <button class="btn ghost" data-a="wclose">Close</button>
+      </div>
+    </dialog>
+
+    <!-- Anti-cheat: tab/app switch warning overlay -->
+    <div id="acWarn">
+      <div class="acBox">
+        <h2>⚠️ Warning!</h2>
+        <p><b>You left the quiz page!</b></p>
+        <p>If you do not return within the countdown, your quiz will be submitted automatically with your current answers.</p>
+        <div id="acTimer">10</div>
+        <div class="acBtns">
+          <button class="btn" onclick="acReturn()">↩ Return to Quiz</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-quiz rules dialog -->
+    <dialog id="qRulesDlg">
+      <span class="warn-icon">📋</span>
+      <h3>Quiz Rules — Read Before Starting</h3>
+      <ul>
+        <li>⏱ You have <b>5 minutes</b> to finish the quiz.</li>
+        <li>🚫 Do <b>NOT</b> leave this page, reload, or close the browser.</li>
+        <li>📵 Do <b>NOT</b> switch to another app or open a new tab.</li>
+        <li>⚠️ If you leave, a <b>10-second countdown</b> will start. If you don't return in time, your quiz will be <b>submitted automatically</b>.</li>
+        <li>🔒 Right-click and copy/paste are <b>disabled</b> during the quiz.</li>
+        <li>❌ There are <b>no second chances</b> — answer carefully!</li>
+      </ul>
+      <p style="font-size:13px;color:#5a6488;">These rules are to ensure fairness. Good luck! ✝</p>
+      <div class="dbtns">
+        <button class="btn" id="qRulesStart">✅ I understand, start the quiz</button>
+        <button class="btn ghost" id="qRulesCancel">Cancel</button>
       </div>
     </dialog>
 
@@ -1944,7 +2031,7 @@
           ? qrunHTML()
           : qres
             ? qresHTML()
-            : '<div class="sub">Every quiz has 10 minutes. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
+            : '<div class="sub">Every quiz has 5 minutes. Do NOT leave the page or switch apps during the quiz — you will get a 10-second warning, and if you don''t return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
       }
       function sqList() {
         const L = $("list");
@@ -1963,7 +2050,7 @@
                 w = qWin(z.week),
                 m = mk[i] && mk[i][me];
               if (m == null && now > w.gone) return "";
-              return `<div class="row"><div class="who"><b dir="auto">${esc(z.title || "Quiz")}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m != null ? '✓ Finished <button type="button" class="wlink" data-a="qrev" data-id="' + i + '">📋 See my mistakes</button>' : now > w.due ? "Late: the highest mark is 5" : "Open until " + fdt(w.due)}</div></div>${m != null ? `<div class="pts big">${n2(m)}<small>/10</small></div>` : `<button class="btn" data-a="qstart" data-id="${i}">▶ Start (10 min)</button>`}</div>`;
+              return `<div class="row"><div class="who"><b dir="auto">${esc(z.title || "Quiz")}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m != null ? '✓ Finished <button type="button" class="wlink" data-a="qrev" data-id="' + i + '">📋 See my mistakes</button>' : now > w.due ? "Late: the highest mark is 5" : "Open until " + fdt(w.due)}</div></div>${m != null ? `<div class="pts big">${n2(m)}<small>/10</small></div>` : `<button class="btn" data-a="qstart" data-id="${i}">▶ Start (5 min)</button>`}</div>`;
             })
             .join("") ||
           '<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>';
@@ -1982,7 +2069,7 @@
             id,
             i: 0,
             ans: JSON.parse(localStorage.getItem(`bs_d_${me}_${id}`) || "{}"),
-            end: s + 6e5,
+            end: s + 3e5,
             z,
           };
           if (svNow() >= qrun.end) {
@@ -2190,7 +2277,7 @@
               )
               .join("");
         }
-        return `<div class="qrun"><div class="qtop"><span class="pill">⏱ <b id="qtm">10:00</b></span><span class="sub">Question ${i + 1} of ${n}</span></div><div class="prog"><div style="width:${((i + 1) / n) * 100}%"></div></div><h3 class="qtxt" dir="auto">${esc(x.q)}</h3><div class="qbody">${body}</div><div class="form"><button class="btn ghost" data-a="qprev" ${i ? "" : "disabled"}>‹ Back</button>${i < n - 1 ? '<button class="btn" data-a="qnext">Next ›</button>' : '<button class="btn" data-a="qfin">✔ Finish</button>'}</div></div>`;
+        return `<div class="qrun"><div class="qtop"><span class="pill">⏱ <b id="qtm">5:00</b></span><span class="sub">Question ${i + 1} of ${n}</span></div><div class="prog"><div style="width:${((i + 1) / n) * 100}%"></div></div><h3 class="qtxt" dir="auto">${esc(x.q)}</h3><div class="qbody">${body}</div><div class="form"><button class="btn ghost" data-a="qprev" ${i ? "" : "disabled"}>‹ Back</button>${i < n - 1 ? '<button class="btn" data-a="qnext">Next ›</button>' : '<button class="btn" data-a="qfin">✔ Finish</button>'}</div></div>`;
       }
       function qresHTML() {
         return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2><div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late ? '<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>' : ""}${qres.rv == null ? "" : qres.rv.length ? `<h3 class="rvh">Your mistakes (${qres.rv.length}) - learn the right answer:</h3>${qres.rv.map((r) => `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span><div class="rvm">❌ Your answer: ${qv(r.mine)}</div>${r.right != null ? `<div class="rvr">✅ Right answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Ask your teacher for the right answer of this question." : "The right answer is not available."}</div>`}</div>`).join("")}` : '<div class="sub" style="color:#15803d"><b>✅ All your answers are right!</b></div>'}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`;
@@ -3123,6 +3210,160 @@
       }
       setInterval(poll, 5000);
       document.addEventListener("visibilitychange", poll);
+      /* ===== ANTI-CHEAT SYSTEM ===== */
+      let acInterval = null, acSeconds = 10, acActive = false, pendingQStartId = null;
+
+      // Show pre-quiz rules dialog
+      function qShowRules(id) {
+        pendingQStartId = id;
+        const d = document.getElementById('qRulesDlg');
+        if (typeof d.showModal === 'function') d.showModal();
+        else d.setAttribute('open', '');
+      }
+
+      // Rules dialog buttons
+      document.getElementById('qRulesStart').addEventListener('click', function() {
+        const d = document.getElementById('qRulesDlg');
+        if (typeof d.close === 'function') d.close();
+        else d.removeAttribute('open');
+        if (pendingQStartId) {
+          qStart(pendingQStartId);
+          pendingQStartId = null;
+        }
+      });
+      document.getElementById('qRulesCancel').addEventListener('click', function() {
+        const d = document.getElementById('qRulesDlg');
+        if (typeof d.close === 'function') d.close();
+        else d.removeAttribute('open');
+        pendingQStartId = null;
+      });
+
+      // Prevent reload / close tab during quiz
+      window.addEventListener('beforeunload', function(e) {
+        if (qrun) {
+          e.preventDefault();
+          e.returnValue = 'Your quiz is still in progress! If you leave, your quiz will be submitted with your current answers.';
+          return e.returnValue;
+        }
+      });
+
+      // Visibility change detection (works on mobile iOS/Android when switching apps)
+      document.addEventListener('visibilitychange', function() {
+        if (!qrun) return;
+        if (document.hidden) {
+          acStartCountdown();
+        } else {
+          acStopCountdown();
+        }
+      });
+
+      // Window blur (fallback for desktop tab switch)
+      window.addEventListener('blur', function() {
+        if (!qrun) return;
+        // Small delay to avoid false triggers from dialog interactions
+        setTimeout(function() {
+          if (!document.hasFocus() && qrun && !document.hidden) {
+            acStartCountdown();
+          }
+        }, 300);
+      });
+      window.addEventListener('focus', function() {
+        if (qrun && acActive) {
+          acStopCountdown();
+        }
+      });
+
+      function acStartCountdown() {
+        if (acActive) return;
+        acActive = true;
+        acSeconds = 10;
+        var w = document.getElementById('acWarn');
+        var t = document.getElementById('acTimer');
+        w.classList.add('show');
+        t.textContent = acSeconds;
+        acInterval = setInterval(function() {
+          acSeconds--;
+          t.textContent = acSeconds;
+          if (acSeconds <= 0) {
+            acStopCountdown();
+            // Auto-submit quiz
+            if (qrun && !qrun.busy) {
+              qSubmit();
+            }
+          }
+        }, 1000);
+      }
+
+      function acStopCountdown() {
+        acActive = false;
+        if (acInterval) {
+          clearInterval(acInterval);
+          acInterval = null;
+        }
+        document.getElementById('acWarn').classList.remove('show');
+      }
+
+      // Called by the "Return to Quiz" button
+      function acReturn() {
+        acStopCountdown();
+      }
+
+      // Block right-click during quiz
+      document.addEventListener('contextmenu', function(e) {
+        if (qrun) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
+      // Block copy/paste/cut and common cheat shortcuts during quiz
+      document.addEventListener('keydown', function(e) {
+        if (!qrun) return;
+        // Block Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+U (view source), Ctrl+S, F12
+        if (e.ctrlKey && ['c','v','a','u','s','p'].includes(e.key.toLowerCase())) {
+          e.preventDefault();
+          return false;
+        }
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
+      // Block copy/cut events during quiz
+      document.addEventListener('copy', function(e) { if (qrun) e.preventDefault(); });
+      document.addEventListener('cut', function(e) { if (qrun) e.preventDefault(); });
+
+      // Try fullscreen on quiz start (optional, helps on mobile)
+      var origQStart = qStart;
+      qStart = async function(id) {
+        await origQStart(id);
+        if (qrun) {
+          try {
+            var el = document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen().catch(function(){});
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+          } catch(e) {}
+        }
+      };
+
+      // Exit fullscreen when quiz ends
+      var origView = view;
+      view = function() {
+        var wasQuiz = !!qrun;
+        origView();
+        if (!qrun && !qres && wasQuiz) {
+          try {
+            if (document.fullscreenElement) document.exitFullscreen().catch(function(){});
+            else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
+          } catch(e) {}
+        }
+      };
+
+      // Also exit fullscreen when quiz result is dismissed
+      var origQDone = false;
+      /* ===== END ANTI-CHEAT ===== */
+
       fbStart();
       view();
       load();
