@@ -1099,6 +1099,13 @@
       body.quizing {
         -webkit-user-select: none;
         user-select: none;
+        -webkit-touch-callout: none;
+      }
+      /* iOS Safari cannot type in an input that has user-select:none */
+      body.quizing input,
+      body.quizing textarea {
+        -webkit-user-select: text;
+        user-select: text;
       }
     </style>
   </head>
@@ -1494,6 +1501,7 @@
                   ks: arr(x.ks),
                 }));
               });
+              if (typeof acCheckAbandoned === "function") acCheckAbandoned();
               if (tab === "qb" || tab === "sq") view();
             },
             () => {
@@ -2122,6 +2130,9 @@
             end: s + 3e5,
             z,
           };
+          try {
+            localStorage.setItem("bs_act_" + me, id);
+          } catch (e) {}
           if (svNow() >= qrun.end) {
             await qSubmit();
             return;
@@ -2250,7 +2261,7 @@
           alert("Could not load your answers: " + e.message);
         }
       }
-      async function qSubmit() {
+      async function qSubmit(why) {
         if (!qrun || qrun.busy) return;
         qrun.busy = 1;
         clearInterval(qtimer);
@@ -2281,11 +2292,12 @@
               [`marks/${id}/${me}`]: m,
             });
           localStorage.removeItem(`bs_d_${me}_${id}`);
+          localStorage.removeItem("bs_act_" + me);
           let rv = null;
           try {
             rv = await qReview(id, z, ans);
           } catch (e) {}
-          qres = { m, late, rv };
+          qres = { m, late, rv, why };
           qrun = null;
         } catch (e) {
           qrun.busy = 0;
@@ -2330,7 +2342,7 @@
         return `<div class="qrun"><div class="qtop"><span class="pill">⏱ <b id="qtm">5:00</b></span><span class="sub">Question ${i + 1} of ${n}</span></div><div class="prog"><div style="width:${((i + 1) / n) * 100}%"></div></div><h3 class="qtxt" dir="auto">${esc(x.q)}</h3><div class="qbody">${body}</div><div class="form"><button class="btn ghost" data-a="qprev" ${i ? "" : "disabled"}>‹ Back</button>${i < n - 1 ? '<button class="btn" data-a="qnext">Next ›</button>' : '<button class="btn" data-a="qfin">✔ Finish</button>'}</div></div>`;
       }
       function qresHTML() {
-        return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2><div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late ? '<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>' : ""}${qres.rv == null ? "" : qres.rv.length ? `<h3 class="rvh">Your mistakes (${qres.rv.length}) - learn the right answer:</h3>${qres.rv.map((r) => `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span><div class="rvm">❌ Your answer: ${qv(r.mine)}</div>${r.right != null ? `<div class="rvr">✅ Right answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Ask your teacher for the right answer of this question." : "The right answer is not available."}</div>`}</div>`).join("")}` : '<div class="sub" style="color:#15803d"><b>✅ All your answers are right!</b></div>'}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`;
+        return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2>${qres.why ? `<div class="banner">${esc(qres.why)}</div>` : ""}<div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late ? '<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>' : ""}${qres.rv == null ? "" : qres.rv.length ? `<h3 class="rvh">Your mistakes (${qres.rv.length}) - learn the right answer:</h3>${qres.rv.map((r) => `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span><div class="rvm">❌ Your answer: ${qv(r.mine)}</div>${r.right != null ? `<div class="rvr">✅ Right answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Ask your teacher for the right answer of this question." : "The right answer is not available."}</div>`}</div>`).join("")}` : '<div class="sub" style="color:#15803d"><b>✅ All your answers are right!</b></div>'}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`;
       }
       function qAct(a, id) {
         if (a === "wclose") {
@@ -3264,42 +3276,66 @@
       setInterval(poll, 5000);
       document.addEventListener("visibilitychange", poll);
       /* ===== ANTI-CHEAT SYSTEM ===== */
+      const AC_GRACE = 10000; // ms the student has to come back
       let acInterval = null,
-        acSeconds = 10,
-        acActive = false,
+        acLeftAt = 0, // time the student left (0 = not away)
         acPause = false,
+        acChecked = false,
         pendingQStartId = null;
+      const acMsg =
+        "You left the quiz page, so your quiz was submitted automatically with your current answers.";
 
-      // Show pre-quiz rules dialog
+      function acFs(on) {
+        try {
+          const el = document.documentElement;
+          if (on) {
+            const f = el.requestFullscreen || el.webkitRequestFullscreen;
+            if (f && !document.fullscreenElement) {
+              const r = f.call(el);
+              if (r && r.catch) r.catch(function () {});
+            }
+          } else if (document.fullscreenElement) {
+            document.exitFullscreen().catch(function () {});
+          } else if (document.webkitFullscreenElement) {
+            document.webkitExitFullscreen();
+          }
+        } catch (e) {}
+      }
+
+      /* ---- pre-quiz rules ---- */
       function qShowRules(id) {
         pendingQStartId = id;
         const d = document.getElementById("qRulesDlg");
         if (typeof d.showModal === "function") d.showModal();
         else d.setAttribute("open", "");
       }
-
-      // Rules dialog buttons
+      function acCloseRules() {
+        const d = document.getElementById("qRulesDlg");
+        if (typeof d.close === "function") d.close();
+        else d.removeAttribute("open");
+      }
       document
         .getElementById("qRulesStart")
         .addEventListener("click", function () {
-          const d = document.getElementById("qRulesDlg");
-          if (typeof d.close === "function") d.close();
-          else d.removeAttribute("open");
-          if (pendingQStartId) {
-            qStart(pendingQStartId);
-            pendingQStartId = null;
-          }
+          acCloseRules();
+          const id = pendingQStartId;
+          pendingQStartId = null;
+          if (!id) return;
+          acFs(true); // must run inside the click, or browsers refuse
+          qStart(id).then(function () {
+            if (!qrun) acFs(false);
+          });
         });
       document
         .getElementById("qRulesCancel")
         .addEventListener("click", function () {
-          const d = document.getElementById("qRulesDlg");
-          if (typeof d.close === "function") d.close();
-          else d.removeAttribute("open");
+          acCloseRules();
           pendingQStartId = null;
         });
 
-      // Prevent reload / close tab during quiz
+      /* ---- leaving the page ---- */
+      // Reload / close: ask first. If it happens anyway, the quiz is
+      // submitted the next time the student opens the page (acCheckAbandoned).
       window.addEventListener("beforeunload", function (e) {
         if (qrun) {
           e.preventDefault();
@@ -3309,135 +3345,135 @@
         }
       });
 
-      // Visibility change detection (works on mobile iOS/Android when switching apps)
+      function acTick() {
+        const left = Math.ceil((AC_GRACE - (Date.now() - acLeftAt)) / 1000);
+        const t = document.getElementById("acTimer");
+        if (t) t.textContent = Math.max(0, left);
+        if (left <= 0) acBack();
+      }
+      function acLeave() {
+        if (!qrun || acPause || acLeftAt) return;
+        acLeftAt = Date.now();
+        document.getElementById("acWarn").classList.add("show");
+        acTick();
+        clearInterval(acInterval);
+        acInterval = setInterval(acTick, 250);
+      }
+      // Works from the real clock, so it still counts when the phone
+      // freezes the page while the student is in another app.
+      function acBack() {
+        if (!acLeftAt) return;
+        const away = Date.now() - acLeftAt;
+        acLeftAt = 0;
+        clearInterval(acInterval);
+        acInterval = null;
+        document.getElementById("acWarn").classList.remove("show");
+        if (qrun && !qrun.busy && away >= AC_GRACE) qSubmit(acMsg);
+      }
+      function acReturn() {
+        acBack();
+      }
+
       document.addEventListener("visibilitychange", function () {
         if (!qrun) return;
-        if (document.hidden) {
-          acStartCountdown();
-        } else {
-          acStopCountdown();
-        }
+        if (document.hidden) acLeave();
+        else acBack();
       });
-
-      // Window blur (fallback for desktop tab switch)
+      window.addEventListener("pagehide", function () {
+        if (qrun) acLeave();
+      });
+      window.addEventListener("pageshow", function () {
+        if (acLeftAt) acBack();
+      });
       window.addEventListener("blur", function () {
         if (!qrun || acPause) return;
         setTimeout(function () {
-          if (!document.hasFocus() && qrun && !document.hidden && !acPause) {
-            acStartCountdown();
-          }
+          if (qrun && !acPause && !document.hasFocus()) acLeave();
         }, 300);
       });
       window.addEventListener("focus", function () {
-        if (qrun && acActive) {
-          acStopCountdown();
-        }
+        if (acLeftAt) acBack();
       });
 
-      function acStartCountdown() {
-        if (acActive) return;
-        acActive = true;
-        acSeconds = 10;
-        var w = document.getElementById("acWarn");
-        var t = document.getElementById("acTimer");
-        w.classList.add("show");
-        t.textContent = acSeconds;
-        acInterval = setInterval(function () {
-          acSeconds--;
-          t.textContent = acSeconds;
-          if (acSeconds <= 0) {
-            acStopCountdown();
-            // Auto-submit quiz
-            if (qrun && !qrun.busy) {
-              qSubmit();
-            }
-          }
-        }, 1000);
-      }
-
-      function acStopCountdown() {
-        acActive = false;
-        if (acInterval) {
-          clearInterval(acInterval);
-          acInterval = null;
+      /* ---- quiz was abandoned (page reloaded / closed / reopened) ---- */
+      async function acCheckAbandoned() {
+        if (acChecked || role !== "student" || !me || qrun || qres) return;
+        let id = null;
+        try {
+          id = localStorage.getItem("bs_act_" + me);
+        } catch (e) {}
+        acChecked = true;
+        if (!id) return;
+        const clear = function () {
+          try {
+            localStorage.removeItem("bs_act_" + me);
+            localStorage.removeItem("bs_d_" + me + "_" + id);
+          } catch (e) {}
+        };
+        const z = QZ[id];
+        if (!z) return clear();
+        try {
+          const sub = (await fdb().ref("qz/sub/" + me + "/" + id).get()).val();
+          if (sub) return clear();
+        } catch (e) {
+          acChecked = false; // no internet yet: try again later
+          return;
         }
-        document.getElementById("acWarn").classList.remove("show");
+        let ans = {};
+        try {
+          ans = JSON.parse(localStorage.getItem("bs_d_" + me + "_" + id) || "{}");
+        } catch (e) {}
+        qrun = { id, i: 0, ans, end: 0, z };
+        await qSubmit(
+          "You left or reloaded the page during the quiz, so it was submitted automatically.",
+        );
+        if (qrun && !qres) {
+          // sending failed (offline): stop and try again later
+          clearInterval(qtimer);
+          qrun = null;
+          acChecked = false;
+        }
       }
+      window.addEventListener("online", function () {
+        acCheckAbandoned();
+      });
 
-      // Called by the "Return to Quiz" button
-      function acReturn() {
-        acStopCountdown();
-      }
-
-      // Block right-click during quiz
+      /* ---- block copy / paste / shortcuts during the quiz ---- */
       document.addEventListener("contextmenu", function (e) {
-        if (qrun) {
-          e.preventDefault();
-          return false;
-        }
+        if (qrun) e.preventDefault();
       });
-
-      // Block copy/paste/cut and common cheat shortcuts during quiz
+      ["copy", "cut", "paste", "dragstart"].forEach(function (ev) {
+        document.addEventListener(ev, function (e) {
+          if (qrun) e.preventDefault();
+        });
+      });
       document.addEventListener("keydown", function (e) {
         if (!qrun) return;
-        // Block Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+U (view source), Ctrl+S, F12
+        const k = (e.key || "").toLowerCase(),
+          mod = e.ctrlKey || e.metaKey;
         if (
-          e.ctrlKey &&
-          ["c", "v", "a", "u", "s", "p"].includes(e.key.toLowerCase())
+          (mod && ["c", "v", "x", "a", "u", "s", "p", "f", "g"].includes(k)) ||
+          k === "f12" ||
+          k === "printscreen" ||
+          (mod && e.shiftKey && ["i", "j", "c"].includes(k)) ||
+          (e.metaKey && e.altKey && ["i", "j", "c"].includes(k))
         ) {
           e.preventDefault();
-          return false;
-        }
-        if (
-          e.key === "F12" ||
-          (e.ctrlKey &&
-            e.shiftKey &&
-            ["i", "j", "c"].includes(e.key.toLowerCase()))
-        ) {
-          e.preventDefault();
-          return false;
         }
       });
 
-      // Block copy/cut events during quiz
-      document.addEventListener("copy", function (e) {
-        if (qrun) e.preventDefault();
-      });
-      document.addEventListener("cut", function (e) {
-        if (qrun) e.preventDefault();
-      });
-
-      // Try fullscreen on quiz start (optional, helps on mobile)
-      var origQStart = qStart;
-      qStart = async function (id) {
-        await origQStart(id);
-        if (qrun) {
-          try {
-            var el = document.documentElement;
-            if (el.requestFullscreen)
-              el.requestFullscreen().catch(function () {});
-            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-          } catch (e) {}
-        }
-      };
-
-      // Exit fullscreen when quiz ends
+      /* ---- when the quiz ends: hide the warning, leave fullscreen ---- */
       var origView = view;
       view = function () {
         var wasQuiz = !!qrun;
         origView();
-        if (!qrun && !qres && wasQuiz) {
-          try {
-            if (document.fullscreenElement)
-              document.exitFullscreen().catch(function () {});
-            else if (document.webkitFullscreenElement)
-              document.webkitExitFullscreen();
-          } catch (e) {}
+        if (!qrun) {
+          acLeftAt = 0;
+          clearInterval(acInterval);
+          document.getElementById("acWarn").classList.remove("show");
+          if (wasQuiz || document.fullscreenElement) acFs(false);
         }
       };
-
-      // Also exit fullscreen when quiz result is dismissed
-      var origQDone = false;
       /* ===== END ANTI-CHEAT ===== */
 
       fbStart();
