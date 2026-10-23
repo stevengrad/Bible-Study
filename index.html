@@ -1021,7 +1021,9 @@
         text-align: center;
         padding: 24px;
       }
-      #acWarn.show { display: flex; }
+      #acWarn.show {
+        display: flex;
+      }
       #acWarn .acBox {
         background: var(--ivory);
         color: var(--ink);
@@ -1030,19 +1032,34 @@
         padding: 28px 22px;
         max-width: 400px;
         width: 100%;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       }
-      #acWarn .acBox h2 { color: var(--no); margin: 0 0 10px; font-size: 22px; }
-      #acWarn .acBox p { margin: 8px 0; font-size: 15px; line-height: 1.6; }
+      #acWarn .acBox h2 {
+        color: var(--no);
+        margin: 0 0 10px;
+        font-size: 22px;
+      }
+      #acWarn .acBox p {
+        margin: 8px 0;
+        font-size: 15px;
+        line-height: 1.6;
+      }
       #acTimer {
         font-size: 48px;
         font-weight: 800;
         color: var(--no);
-        font-family: 'Playfair Display', serif;
+        font-family: "Playfair Display", serif;
         margin: 10px 0;
       }
-      .acBtns { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
-      .acBtns .btn { min-width: 140px; }
+      .acBtns {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 16px;
+      }
+      .acBtns .btn {
+        min-width: 140px;
+      }
 
       /* pre-quiz rules dialog */
       #qRulesDlg {
@@ -1054,14 +1071,35 @@
         padding: 22px;
         color: var(--ink);
       }
-      #qRulesDlg::backdrop { background: rgba(12, 28, 70, 0.55); }
-      #qRulesDlg h3 { margin: 0 0 12px; color: var(--navy); font-size: 20px; }
-      #qRulesDlg ul { margin: 6px 0 14px; padding-inline-start: 22px; line-height: 2; }
-      #qRulesDlg ul li { font-weight: 600; font-size: 14px; }
-      #qRulesDlg .warn-icon { font-size: 42px; display: block; text-align: center; margin-bottom: 8px; }
+      #qRulesDlg::backdrop {
+        background: rgba(12, 28, 70, 0.55);
+      }
+      #qRulesDlg h3 {
+        margin: 0 0 12px;
+        color: var(--navy);
+        font-size: 20px;
+      }
+      #qRulesDlg ul {
+        margin: 6px 0 14px;
+        padding-inline-start: 22px;
+        line-height: 2;
+      }
+      #qRulesDlg ul li {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      #qRulesDlg .warn-icon {
+        font-size: 42px;
+        display: block;
+        text-align: center;
+        margin-bottom: 8px;
+      }
 
       /* Block user-select and context menu during quiz */
-      body.quizing { -webkit-user-select: none; user-select: none; }
+      body.quizing {
+        -webkit-user-select: none;
+        user-select: none;
+      }
     </style>
   </head>
   <body>
@@ -1175,7 +1213,10 @@
       <div class="acBox">
         <h2>⚠️ Warning!</h2>
         <p><b>You left the quiz page!</b></p>
-        <p>If you do not return within the countdown, your quiz will be submitted automatically with your current answers.</p>
+        <p>
+          If you do not return within the countdown, your quiz will be submitted
+          automatically with your current answers.
+        </p>
         <div id="acTimer">10</div>
         <div class="acBtns">
           <button class="btn" onclick="acReturn()">↩ Return to Quiz</button>
@@ -1191,13 +1232,22 @@
         <li>⏱ You have <b>5 minutes</b> to finish the quiz.</li>
         <li>🚫 Do <b>NOT</b> leave this page, reload, or close the browser.</li>
         <li>📵 Do <b>NOT</b> switch to another app or open a new tab.</li>
-        <li>⚠️ If you leave, a <b>10-second countdown</b> will start. If you don't return in time, your quiz will be <b>submitted automatically</b>.</li>
-        <li>🔒 Right-click and copy/paste are <b>disabled</b> during the quiz.</li>
+        <li>
+          ⚠️ If you leave, a <b>10-second countdown</b> will start. If you don't
+          return in time, your quiz will be <b>submitted automatically</b>.
+        </li>
+        <li>
+          🔒 Right-click and copy/paste are <b>disabled</b> during the quiz.
+        </li>
         <li>❌ There are <b>no second chances</b> — answer carefully!</li>
       </ul>
-      <p style="font-size:13px;color:#5a6488;">These rules are to ensure fairness. Good luck! ✝</p>
+      <p style="font-size: 13px; color: #5a6488">
+        These rules are to ensure fairness. Good luck! ✝
+      </p>
       <div class="dbtns">
-        <button class="btn" id="qRulesStart">✅ I understand, start the quiz</button>
+        <button class="btn" id="qRulesStart">
+          ✅ I understand, start the quiz
+        </button>
         <button class="btn ghost" id="qRulesCancel">Cancel</button>
       </div>
     </dialog>
@@ -1807,34 +1857,34 @@
             T = qd.nt || "mcq",
             E = !!qd.eid;
           h += `<div class="qed"><h3>${E ? "Edit quiz" : "New quiz"}</h3><div class="sub">Choose the week (Saturday)</div><select id="qw">${SATS.includes(qd.week) ? "" : `<option value="${qd.week}" selected>${fmt(qd.week)}</option>`}${SATS.map((d) => `<option value="${d}" ${d === qd.week ? "selected" : ""}>${fmt(d)}</option>`).join("")}</select>
-  <input id="qtl" placeholder="Title (optional)" value="${esc(qd.title)}">
-  <div class="sub" style="margin-top:8px"><b>Points for a full mark</b> (this is what the quiz adds to the leaderboard)</div>
-  <input id="qpt" type="number" inputmode="numeric" min="1" step="1" placeholder="Write the points, e.g. 50" value="${esc(qd.pts)}">
-  <div class="sub" style="margin-top:8px"><b>Total ${n2(tot)} / 10</b> ${tot < 10 ? "· add up to 10 so a full mark is 10" : ""}</div>
-  ${E ? '<div class="sub">Marks that students already got are not changed. Your changes count for new answers.</div>' : ""}
-  ${qd.qs
-    .map((x, i) => {
-      const rm = !x.old || i === qd.qs.length - 1;
-      return x.old
-        ? qEditRow(x, i, rm)
-        : `<div class="qli"><b>${i + 1}.</b><span dir="auto">${esc(x.q)}</span><span class="chip">${QT[x.t]} · ${x.m}</span>${rm ? `<button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button>` : ""}</div>`;
-    })
-    .join("")}
-  <div class="qnew"><select id="qty">${Object.entries(QT)
-    .map(
-      ([k, v]) =>
-        `<option value="${k}" ${k === T ? "selected" : ""}>${v}</option>`,
-    )
-    .join(
-      "",
-    )}</select><input id="qq" placeholder="${E ? "Add a new question" : "Question"}" value="${esc(qd.dq || "")}">
-  ${T === "mcq" || T === "rank" ? `<textarea id="qo" rows="4" placeholder="${T === "rank" ? "Items, one per line, in the CORRECT order" : "Choices, one per line"}"></textarea>` : ""}
-  ${T === "mcq" ? '<input id="qa" type="number" inputmode="numeric" min="1" placeholder="Number of the correct choice (1 = first line)">' : ""}
-  ${T === "tf" ? '<select id="qa"><option value="true">Correct answer: True</option><option value="false">Correct answer: False</option></select>' : ""}
-  ${T === "fill" ? '<input id="qa" placeholder="Correct answer (add other accepted answers after a | )">' : ""}
-  <input id="qm2" type="number" inputmode="decimal" step="0.25" min="0.25" placeholder="Mark for this question, e.g. 2.5" value="${esc(qd.dm || "")}"><button class="btn" data-a="qadd">＋ Add question</button></div>
-  <label class="cancel"><input type="checkbox" id="qpub" ${qd.pub ? "checked" : ""}> Publish to students ${E ? "" : "now"}</label>
-  <div class="form"><button class="btn" data-a="qsave">💾 ${E ? "Save changes" : "Save quiz"}</button><button class="btn ghost" data-a="qcancel">Cancel</button></div></div>`;
+      <input id="qtl" placeholder="Title (optional)" value="${esc(qd.title)}">
+      <div class="sub" style="margin-top:8px"><b>Points for a full mark</b> (this is what the quiz adds to the leaderboard)</div>
+      <input id="qpt" type="number" inputmode="numeric" min="1" step="1" placeholder="Write the points, e.g. 50" value="${esc(qd.pts)}">
+      <div class="sub" style="margin-top:8px"><b>Total ${n2(tot)} / 10</b> ${tot < 10 ? "· add up to 10 so a full mark is 10" : ""}</div>
+      ${E ? '<div class="sub">Marks that students already got are not changed. Your changes count for new answers.</div>' : ""}
+      ${qd.qs
+        .map((x, i) => {
+          const rm = !x.old || i === qd.qs.length - 1;
+          return x.old
+            ? qEditRow(x, i, rm)
+            : `<div class="qli"><b>${i + 1}.</b><span dir="auto">${esc(x.q)}</span><span class="chip">${QT[x.t]} · ${x.m}</span>${rm ? `<button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button>` : ""}</div>`;
+        })
+        .join("")}
+      <div class="qnew"><select id="qty">${Object.entries(QT)
+        .map(
+          ([k, v]) =>
+            `<option value="${k}" ${k === T ? "selected" : ""}>${v}</option>`,
+        )
+        .join(
+          "",
+        )}</select><input id="qq" placeholder="${E ? "Add a new question" : "Question"}" value="${esc(qd.dq || "")}">
+      ${T === "mcq" || T === "rank" ? `<textarea id="qo" rows="4" placeholder="${T === "rank" ? "Items, one per line, in the CORRECT order" : "Choices, one per line"}"></textarea>` : ""}
+      ${T === "mcq" ? '<input id="qa" type="number" inputmode="numeric" min="1" placeholder="Number of the correct choice (1 = first line)">' : ""}
+      ${T === "tf" ? '<select id="qa"><option value="true">Correct answer: True</option><option value="false">Correct answer: False</option></select>' : ""}
+      ${T === "fill" ? '<input id="qa" placeholder="Correct answer (add other accepted answers after a | )">' : ""}
+      <input id="qm2" type="number" inputmode="decimal" step="0.25" min="0.25" placeholder="Mark for this question, e.g. 2.5" value="${esc(qd.dm || "")}"><button class="btn" data-a="qadd">＋ Add question</button></div>
+      <label class="cancel"><input type="checkbox" id="qpub" ${qd.pub ? "checked" : ""}> Publish to students ${E ? "" : "now"}</label>
+      <div class="form"><button class="btn" data-a="qsave">💾 ${E ? "Save changes" : "Save quiz"}</button><button class="btn ghost" data-a="qcancel">Cancel</button></div></div>`;
         } else if (qsel && QZ[qsel]) {
           const z = QZ[qsel];
           h += `<div class="qed"><h3>${fmt(z.week)} ${esc(z.title || "")}</h3><div class="sub">${z.qs.length} questions · ${n2(z.qs.reduce((s, x) => s + x.m, 0))} marks · <b>${qpts(qsel)} points</b> for a full mark · full marks until ${fdt(qWin(z.week).due)}</div><div class="form"><button class="btn" data-a="qedit" data-id="${qsel}">✏️ Edit quiz</button><button class="btn" data-a="qtog" data-id="${qsel}">${z.pub ? "🙈 Hide from students" : "📣 Publish to students"}</button><button class="btn danger" data-a="qdel" data-id="${qsel}">🗑 Delete quiz</button></div></div>`;
@@ -2031,7 +2081,7 @@
           ? qrunHTML()
           : qres
             ? qresHTML()
-            : '<div class="sub">Every quiz has 5 minutes. Do NOT leave the page or switch apps during the quiz — you will get a 10-second warning, and if you don''t return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
+            : '<div class="sub">Every quiz has 5 minutes. Do NOT leave the page or switch apps during the quiz. You will get a 10-second warning, and if you do not return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
       }
       function sqList() {
         const L = $("list");
@@ -2332,7 +2382,10 @@
             return 1;
           }
           if (a === "qfin") {
-            if (confirm("Finish and send your answers?")) qSubmit();
+            acPause = true;
+            const ok = confirm("Finish and send your answers?");
+            setTimeout(() => (acPause = false), 800);
+            if (ok) qSubmit();
             return 1;
           }
         }
@@ -2342,7 +2395,7 @@
             return 1;
           }
           if (a === "qstart") {
-            qStart(id);
+            qShowRules(id);
             return 1;
           }
           if (a === "qdone") {
@@ -3211,44 +3264,53 @@
       setInterval(poll, 5000);
       document.addEventListener("visibilitychange", poll);
       /* ===== ANTI-CHEAT SYSTEM ===== */
-      let acInterval = null, acSeconds = 10, acActive = false, pendingQStartId = null;
+      let acInterval = null,
+        acSeconds = 10,
+        acActive = false,
+        acPause = false,
+        pendingQStartId = null;
 
       // Show pre-quiz rules dialog
       function qShowRules(id) {
         pendingQStartId = id;
-        const d = document.getElementById('qRulesDlg');
-        if (typeof d.showModal === 'function') d.showModal();
-        else d.setAttribute('open', '');
+        const d = document.getElementById("qRulesDlg");
+        if (typeof d.showModal === "function") d.showModal();
+        else d.setAttribute("open", "");
       }
 
       // Rules dialog buttons
-      document.getElementById('qRulesStart').addEventListener('click', function() {
-        const d = document.getElementById('qRulesDlg');
-        if (typeof d.close === 'function') d.close();
-        else d.removeAttribute('open');
-        if (pendingQStartId) {
-          qStart(pendingQStartId);
+      document
+        .getElementById("qRulesStart")
+        .addEventListener("click", function () {
+          const d = document.getElementById("qRulesDlg");
+          if (typeof d.close === "function") d.close();
+          else d.removeAttribute("open");
+          if (pendingQStartId) {
+            qStart(pendingQStartId);
+            pendingQStartId = null;
+          }
+        });
+      document
+        .getElementById("qRulesCancel")
+        .addEventListener("click", function () {
+          const d = document.getElementById("qRulesDlg");
+          if (typeof d.close === "function") d.close();
+          else d.removeAttribute("open");
           pendingQStartId = null;
-        }
-      });
-      document.getElementById('qRulesCancel').addEventListener('click', function() {
-        const d = document.getElementById('qRulesDlg');
-        if (typeof d.close === 'function') d.close();
-        else d.removeAttribute('open');
-        pendingQStartId = null;
-      });
+        });
 
       // Prevent reload / close tab during quiz
-      window.addEventListener('beforeunload', function(e) {
+      window.addEventListener("beforeunload", function (e) {
         if (qrun) {
           e.preventDefault();
-          e.returnValue = 'Your quiz is still in progress! If you leave, your quiz will be submitted with your current answers.';
+          e.returnValue =
+            "Your quiz is still in progress! If you leave, your quiz will be submitted with your current answers.";
           return e.returnValue;
         }
       });
 
       // Visibility change detection (works on mobile iOS/Android when switching apps)
-      document.addEventListener('visibilitychange', function() {
+      document.addEventListener("visibilitychange", function () {
         if (!qrun) return;
         if (document.hidden) {
           acStartCountdown();
@@ -3258,16 +3320,15 @@
       });
 
       // Window blur (fallback for desktop tab switch)
-      window.addEventListener('blur', function() {
-        if (!qrun) return;
-        // Small delay to avoid false triggers from dialog interactions
-        setTimeout(function() {
-          if (!document.hasFocus() && qrun && !document.hidden) {
+      window.addEventListener("blur", function () {
+        if (!qrun || acPause) return;
+        setTimeout(function () {
+          if (!document.hasFocus() && qrun && !document.hidden && !acPause) {
             acStartCountdown();
           }
         }, 300);
       });
-      window.addEventListener('focus', function() {
+      window.addEventListener("focus", function () {
         if (qrun && acActive) {
           acStopCountdown();
         }
@@ -3277,11 +3338,11 @@
         if (acActive) return;
         acActive = true;
         acSeconds = 10;
-        var w = document.getElementById('acWarn');
-        var t = document.getElementById('acTimer');
-        w.classList.add('show');
+        var w = document.getElementById("acWarn");
+        var t = document.getElementById("acTimer");
+        w.classList.add("show");
         t.textContent = acSeconds;
-        acInterval = setInterval(function() {
+        acInterval = setInterval(function () {
           acSeconds--;
           t.textContent = acSeconds;
           if (acSeconds <= 0) {
@@ -3300,7 +3361,7 @@
           clearInterval(acInterval);
           acInterval = null;
         }
-        document.getElementById('acWarn').classList.remove('show');
+        document.getElementById("acWarn").classList.remove("show");
       }
 
       // Called by the "Return to Quiz" button
@@ -3309,7 +3370,7 @@
       }
 
       // Block right-click during quiz
-      document.addEventListener('contextmenu', function(e) {
+      document.addEventListener("contextmenu", function (e) {
         if (qrun) {
           e.preventDefault();
           return false;
@@ -3317,46 +3378,61 @@
       });
 
       // Block copy/paste/cut and common cheat shortcuts during quiz
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener("keydown", function (e) {
         if (!qrun) return;
         // Block Ctrl+C, Ctrl+V, Ctrl+A, Ctrl+U (view source), Ctrl+S, F12
-        if (e.ctrlKey && ['c','v','a','u','s','p'].includes(e.key.toLowerCase())) {
+        if (
+          e.ctrlKey &&
+          ["c", "v", "a", "u", "s", "p"].includes(e.key.toLowerCase())
+        ) {
           e.preventDefault();
           return false;
         }
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase()))) {
+        if (
+          e.key === "F12" ||
+          (e.ctrlKey &&
+            e.shiftKey &&
+            ["i", "j", "c"].includes(e.key.toLowerCase()))
+        ) {
           e.preventDefault();
           return false;
         }
       });
 
       // Block copy/cut events during quiz
-      document.addEventListener('copy', function(e) { if (qrun) e.preventDefault(); });
-      document.addEventListener('cut', function(e) { if (qrun) e.preventDefault(); });
+      document.addEventListener("copy", function (e) {
+        if (qrun) e.preventDefault();
+      });
+      document.addEventListener("cut", function (e) {
+        if (qrun) e.preventDefault();
+      });
 
       // Try fullscreen on quiz start (optional, helps on mobile)
       var origQStart = qStart;
-      qStart = async function(id) {
+      qStart = async function (id) {
         await origQStart(id);
         if (qrun) {
           try {
             var el = document.documentElement;
-            if (el.requestFullscreen) el.requestFullscreen().catch(function(){});
+            if (el.requestFullscreen)
+              el.requestFullscreen().catch(function () {});
             else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-          } catch(e) {}
+          } catch (e) {}
         }
       };
 
       // Exit fullscreen when quiz ends
       var origView = view;
-      view = function() {
+      view = function () {
         var wasQuiz = !!qrun;
         origView();
         if (!qrun && !qres && wasQuiz) {
           try {
-            if (document.fullscreenElement) document.exitFullscreen().catch(function(){});
-            else if (document.webkitFullscreenElement) document.webkitExitFullscreen();
-          } catch(e) {}
+            if (document.fullscreenElement)
+              document.exitFullscreen().catch(function () {});
+            else if (document.webkitFullscreenElement)
+              document.webkitExitFullscreen();
+          } catch (e) {}
         }
       };
 
