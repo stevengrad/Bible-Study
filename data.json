@@ -141,35 +141,40 @@
         "h": false,
         "s": "P"
       },
-      "pmvdl6091hmm": {
-        "s": "P",
+      "pmvcll5zwpwj": {
         "b": false,
-        "h": false
+        "h": true,
+        "s": "P"
       },
-      "pmvdl90aywab": {
-        "s": "P",
+      "pmvdl6091hmm": {
         "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
       "pmvdl7h9jia7": {
-        "s": "P",
         "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
       "pmvdl85q5ytb": {
-        "s": "P",
         "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
-      "pmvcll5zwpwj": {
-        "s": "P",
+      "pmvdl90aywab": {
         "b": false,
-        "h": true
+        "h": false,
+        "s": "P"
       },
       "pmvml9zcadk1": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
+      },
+      "pmvmleih4z84": {
+        "b": true,
+        "h": true,
+        "s": "P"
       }
     },
     "2026-10-10": {
@@ -238,25 +243,30 @@
         "h": false,
         "s": "X"
       },
-      "pmvdl7h9jia7": {
-        "s": "P",
+      "pmvcll5zwpwj": {
         "b": false,
-        "h": false
+        "h": true,
+        "s": "P"
+      },
+      "pmvdl7h9jia7": {
+        "b": false,
+        "h": false,
+        "s": "P"
       },
       "pmvdl90aywab": {
-        "s": "P",
         "b": false,
-        "h": false
-      },
-      "pmvcll5zwpwj": {
-        "s": "P",
-        "b": false,
-        "h": true
+        "h": false,
+        "s": "P"
       },
       "pmvml9zcadk1": {
-        "s": "P",
-        "b": false,
-        "h": true
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmleih4z84": {
+        "b": true,
+        "h": true,
+        "s": "P"
       }
     },
     "2026-10-17": {
@@ -307,15 +317,27 @@
         "b": false,
         "h": true,
         "s": "P"
-      },
-      "pmvml9zcadk1": {
-        "s": "P",
-        "b": true,
-        "h": true
       }
     },
     "2026-10-24": {
       "pmvcll5zwpwj": {
+        "h": true
+      },
+      "pmvmleih4z84": {
+        "b": true,
+        "h": false,
+        "s": "P"
+      },
+      "pmusk75mxoig": {
+        "h": true
+      },
+      "pmusjyml8yqh": {
+        "h": true
+      },
+      "pmusjy6o2bvj": {
+        "h": true
+      },
+      "pmusk2bkk4yj": {
         "h": true
       }
     }
@@ -324,7 +346,8 @@
   "done": {
     "2026-10-03": true,
     "2026-10-10": true,
-    "2026-10-17": true
+    "2026-10-17": true,
+    "2026-10-24": true
   },
   "people": [
     {
@@ -566,60 +589,67 @@
       "name": "George John"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "961",
       "id": "pmvdfdisxn6m",
-      "name": "Karas emil",
-      "class": "1st Prep",
-      "cls": "يونان النبي"
+      "name": "Karas emil"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "365",
       "id": "pmvdfpowkjwi",
-      "name": "بافلي جودت",
-      "class": "1st Prep",
-      "cls": "يونان النبي"
+      "name": "بافلي جودت"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "605",
       "id": "pmvdl6091hmm",
-      "name": "Andrew Ehab",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "Andrew Ehab"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "449",
       "id": "pmvdl7h9jia7",
-      "name": "Andrew Micheal",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "Andrew Micheal"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "253",
       "id": "pmvdl85q5ytb",
-      "name": "Pavly John",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "Pavly John"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "123",
       "id": "pmvdl90aywab",
-      "name": "John Samir",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "John Samir"
     },
     {
+      "class": "1st Prep",
+      "cls": "داود النبي",
       "code": "863",
       "id": "pmvml9zcadk1",
-      "name": "Kevin Sameh",
-      "class": "1st Prep",
-      "cls": "داود النبي"
+      "name": "Kevin Sameh"
     },
     {
+      "class": "1st Prep",
+      "cls": "داود النبي",
       "code": "215",
       "id": "pmvmleih4z84",
-      "name": "Kiro Ramy",
+      "name": "Kiro Ramy"
+    },
+    {
       "class": "1st Prep",
-      "cls": "داود النبي"
+      "cls": "هوشع النبي",
+      "code": "957",
+      "id": "pmvmlj0nxhnz",
+      "name": "George Kamel"
     }
   ],
   "qpts": {
