@@ -510,6 +510,11 @@
         "b": false,
         "h": false,
         "s": "P"
+      },
+      "pmvmmu8x2x2x": {
+        "s": "P",
+        "b": false,
+        "h": true
       }
     }
   },
