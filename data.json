@@ -345,6 +345,16 @@
         "h": true,
         "s": "P"
       },
+      "pmusjzc2y6l7": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjzfzpwcd": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
       "pmusjznvz2ex": {
         "b": false,
         "h": false,
@@ -417,11 +427,6 @@
         "b": false,
         "h": false,
         "s": "P"
-      },
-      "pmusjzc2y6l7": {
-        "s": "P",
-        "b": false,
-        "h": true
       }
     }
   },
@@ -754,6 +759,13 @@
       "code": "505",
       "id": "pmvmm66zw5tt",
       "name": "Philo maged makram"
+    },
+    {
+      "class": "1st Prep",
+      "cls": "هوشع النبي",
+      "code": "396",
+      "id": "pmvmm8a1y0k7",
+      "name": "George Tamer"
     }
   ],
   "qpts": {
