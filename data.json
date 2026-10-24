@@ -180,6 +180,11 @@
         "b": false,
         "h": true,
         "s": "P"
+      },
+      "pmvmmu8x2x2x": {
+        "s": "P",
+        "b": false,
+        "h": true
       }
     },
     "2026-10-10": {
@@ -277,6 +282,11 @@
         "b": false,
         "h": true,
         "s": "P"
+      },
+      "pmvmmu8x2x2x": {
+        "s": "P",
+        "b": false,
+        "h": true
       }
     },
     "2026-10-17": {
