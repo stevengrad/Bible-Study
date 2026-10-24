@@ -320,6 +320,29 @@
       }
     },
     "2026-10-24": {
+      "pmusjy6o2bvj": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjyml8yqh": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjznvz2ex": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusk2bkk4yj": {
+        "h": true
+      },
+      "pmusk75mxoig": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
       "pmvcll5zwpwj": {
         "h": true
       },
@@ -327,24 +350,6 @@
         "b": true,
         "h": false,
         "s": "P"
-      },
-      "pmusk75mxoig": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjyml8yqh": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjy6o2bvj": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusk2bkk4yj": {
-        "h": true
       }
     }
   },
@@ -656,6 +661,13 @@
       "code": "957",
       "id": "pmvmlj0nxhnz",
       "name": "George Kamel"
+    },
+    {
+      "class": "1st Prep",
+      "cls": "اشعياء النبي",
+      "code": "585",
+      "id": "pmvmm2ar9jf7",
+      "name": "Charbel ashraf"
     }
   ],
   "qpts": {
