@@ -1107,8 +1107,11 @@
         -webkit-user-select: text;
         user-select: text;
       }
-    input.bad,textarea.bad{border-color:var(--no)!important}
-</style>
+      input.bad,
+      textarea.bad {
+        border-color: var(--no) !important;
+      }
+    </style>
   </head>
   <body>
     <svg width="0" height="0" style="position: absolute">
@@ -2009,29 +2012,29 @@
             continue;
           }
           if (x.o && x.o.length !== x.oc) {
-          if (
-            x.t === "mcq" &&
-            x.o.length > x.oc &&
-            x.o.slice(0, x.oc).every((v, j) => v === (x.oo || [])[j])
-          ) {
-            out.push({ t: x.t, q, m, o: x.o, ks: x.ks });
-            continue;
+            if (
+              x.t === "mcq" &&
+              x.o.length > x.oc &&
+              x.o.slice(0, x.oc).every((v, j) => v === (x.oo || [])[j])
+            ) {
+              out.push({ t: x.t, q, m, o: x.o, ks: x.ks });
+              continue;
+            }
+            return qBad(
+              i,
+              no +
+                "you changed the number of " +
+                (x.t === "rank" ? "items" : "choices") +
+                " (" +
+                x.oc +
+                " to " +
+                x.o.length +
+                "). The correct answer is saved hidden, so please type it again in the box that is now open: " +
+                (x.t === "rank"
+                  ? "all the items in the CORRECT order."
+                  : "the number of the correct choice."),
+            );
           }
-          return qBad(
-            i,
-            no +
-              "you changed the number of " +
-              (x.t === "rank" ? "items" : "choices") +
-              " (" +
-              x.oc +
-              " to " +
-              x.o.length +
-              "). The correct answer is saved hidden, so please type it again in the box that is now open: " +
-              (x.t === "rank"
-                ? "all the items in the CORRECT order."
-                : "the number of the correct choice."),
-          );
-        }
           out.push({ t: x.t, q, m, ...(x.o ? { o: x.o } : {}), ks: x.ks });
         }
         const body = { week: qd.week, title: qd.title, pub: qd.pub, qs: out };
@@ -2156,7 +2159,7 @@
             id,
             i: 0,
             ans: JSON.parse(localStorage.getItem(`bs_d_${me}_${id}`) || "{}"),
-            end: s + 3e5,
+            end: s + 12e4,
             z,
           };
           try {
