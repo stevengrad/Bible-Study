@@ -1920,7 +1920,7 @@
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((p) => {
               const m = r[p.code];
-              return `<div class="row qz"><div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div><div class="ctl"><span class="pts">${m == null ? "—" : n2(m) + " / 10"}</span>${m == null ? "" : `<button class="btn ghost" data-a="qreset" data-id="${p.code}">↺ Reset</button>`}</div></div>`;
+              return `<div class="row qz"><div class="who"><b><bdi>${esc(p.name)}</bdi></b>${tag(p)}</div><div class="ctl"><span class="pts">${m == null ? "—" : n2(m) + " / 10"}</span>${m == null ? "" : `<button class="btn ghost" data-a="qreset" data-id="${p.code}">↺ Reset</button><button class="btn ghost" data-a="qtrev" data-id="${p.code}">📋 Mistakes</button>`}</div></div>`;
             })
             .join("") || '<div class="empty">No students yet.</div>';
       }
@@ -2376,6 +2376,83 @@
       function qresHTML() {
         return `<div class="qres"><div class="bigx">🎉</div><h2>You finished the quiz!</h2>${qres.why ? `<div class="banner">${esc(qres.why)}</div>` : ""}<div class="mark">${n2(qres.m)} <small>/ 10</small></div>${qres.late ? '<div class="sub">This quiz was sent after the deadline, so the highest mark was 5.</div>' : ""}${qres.rv == null ? "" : qres.rv.length ? `<h3 class="rvh">Your mistakes (${qres.rv.length}) - learn the right answer:</h3>${qres.rv.map((r) => `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span><div class="rvm">❌ Your answer: ${qv(r.mine)}</div>${r.right != null ? `<div class="rvr">✅ Right answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Ask your teacher for the right answer of this question." : "The right answer is not available."}</div>`}</div>`).join("")}` : '<div class="sub" style="color:#15803d"><b>✅ All your answers are right!</b></div>'}<p class="sub">Thank you for your effort. God bless you ✝</p><button class="btn" data-a="qdone">Back to quizzes</button></div>`;
       }
+
+      /* ----- teacher: view a student quiz mistakes ----- */
+      async function qtReviewOpen(qid, code) {
+        const z = QZ[qid];
+        if (!z) return alert("Quiz not found.");
+        try {
+          const sub = (await fdb().ref("qz/sub/" + code + "/" + qid).get()).val();
+          if (!sub) return alert("This student has not submitted the quiz yet.");
+          const p = db.people.find(x => x.code === code);
+          const rv = await qReview(qid, z, sub.a || {});
+          const name = p ? p.name : code;
+          let html = `<h3 style="margin:0 0 8px">Results: ${esc(name)}</h3>`;
+          html += `<div class="sub" style="margin-bottom:10px">Score: <b>${n2(sub.m)} / 10</b>${sub.late ? " (late)" : ""}</div>`;
+          if (!rv.length) {
+            html += `<div class="sub" style="color:#15803d"><b>All answers correct!</b></div>`;
+          } else {
+            html += `<div class="sub"><b>Mistakes (${rv.length}):</b></div>`;
+            html += rv.map(r =>
+              `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span>` +
+              `<div class="rvm">Wrong answer: ${qv(r.mine)}</div>` +
+              `${r.right != null ? `<div class="rvr">Correct answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Fill-in question." : "Correct answer unavailable."}</div>`}` +
+              `</div>`
+            ).join("");
+          }
+          document.getElementById("qtRevBody").innerHTML = html;
+          const d = document.getElementById("qtRevDlg");
+          typeof d.showModal === "function" ? d.showModal() : d.setAttribute("open", "");
+        } catch(e) {
+          alert("Could not load answers: " + e.message);
+        }
+      }
+
+      /* ----- teacher: edit person ----- */
+      let _peditId = null;
+      function openEditPerson(p) {
+        _peditId = p.id;
+        document.getElementById("pe_name").value = p.name;
+        document.getElementById("pe_ph").value = SEC[p.code] || "";
+        const prepSel = document.getElementById("pe_prep");
+        prepSel.innerHTML = '<option value="">Choose prep...</option>' +
+          PREPS.map(g => `<option${g === p.class ? " selected" : ""}>${g}</option>`).join("");
+        prepSel.value = p.class || "";
+        fillEditClasses(p.class, p.cls);
+        const d = document.getElementById("peditDlg");
+        typeof d.showModal === "function" ? d.showModal() : d.setAttribute("open", "");
+      }
+      function fillEditClasses(prep, selectedCls) {
+        const sel = document.getElementById("pe_cls");
+        sel.innerHTML = '<option value="">Choose class...</option>' +
+          (CLASSES[prep] || []).map(c => `<option${c === selectedCls ? " selected" : ""}>${c}</option>`).join("");
+        sel.disabled = !prep;
+      }
+      async function saveEditPerson() {
+        const p = db.people.find(x => x.id === _peditId);
+        if (!p) return;
+        const name = document.getElementById("pe_name").value.trim();
+        const prep = document.getElementById("pe_prep").value;
+        const cls = document.getElementById("pe_cls").value;
+        const ph = document.getElementById("pe_ph").value.trim();
+        if (!name || !prep || !cls) return alert("Please fill in name, prep and class.");
+        if (ph && !PH.test(ph)) return alert("Mobile number must be 11 digits starting with 010, 011, 012 or 015.");
+        p.name = name;
+        p.class = prep;
+        p.cls = cls;
+        if (ph && FB && SEC[p.code] !== ph) {
+          try {
+            await fdb().ref("secrets/" + p.code + "/ph").set(ph);
+            SEC[p.code] = ph;
+          } catch(e) { alert("Could not update phone: " + e.message); }
+        }
+        changed();
+        const d = document.getElementById("peditDlg");
+        typeof d.close === "function" ? d.close() : d.removeAttribute("open");
+        view();
+        setStatus("Person updated", 2500);
+      }
+
       function qAct(a, id) {
         if (a === "wclose") {
           if (waCur && waCur.pend) {
@@ -2542,6 +2619,23 @@
         if (a === "plogin") {
           const p = db.people.find((x) => x.id === id);
           if (p) loginFor(p);
+          return 1;
+        }
+        if (a === "pedit") {
+          const p = db.people.find((x) => x.id === id);
+          if (p) openEditPerson(p);
+          return 1;
+        }
+        if (a === "pesave") { saveEditPerson(); return 1; }
+        if (a === "pecancel") {
+          const d = document.getElementById("peditDlg");
+          typeof d.close === "function" ? d.close() : d.removeAttribute("open");
+          return 1;
+        }
+        if (a === "qtrev") { qtReviewOpen(qsel, id); return 1; }
+        if (a === "qtrevclose") {
+          const d = document.getElementById("qtRevDlg");
+          typeof d.close === "function" ? d.close() : d.removeAttribute("open");
           return 1;
         }
         return 0;
@@ -3092,7 +3186,7 @@
               h += `<div class="row bn">${who}<div class="ctl"><button class="ic mi" data-a="bm" data-id="${p.id}" aria-label="Remove one bonus point from ${esc(p.name)}">−</button><div class="pts big">${v}</div><button class="ic" data-a="bp" data-id="${p.id}" aria-label="Add one bonus point to ${esc(p.name)}">＋</button></div></div>`;
             }
             if (tab === "people")
-              h += `<div class="row pp">${SEC[p.code] ? who.slice(0, -6) + `<div class="sub" dir="ltr">📞 ${esc(SEC[p.code])}</div></div>` : who}<button class="btn ghost edit" data-a="plogin" data-id="${p.id}">📲 Login</button><button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`;
+              h += `<div class="row pp">${SEC[p.code] ? who.slice(0, -6) + `<div class="sub" dir="ltr">📞 ${esc(SEC[p.code])}</div></div>` : who}<button class="btn ghost edit" data-a="plogin" data-id="${p.id}">📲 Login</button><button class="btn ghost edit" data-a="pedit" data-id="${p.id}">✏️ Edit</button><button class="btn danger edit" data-a="del" data-id="${p.id}">✖ Remove</button></div>`;
           });
         }
         L.innerHTML =
@@ -3253,6 +3347,8 @@
         const t = e.target;
         if (qChange(t)) return;
         if (t.id === "pc") fillClasses();
+
+        if (t.id === "pe_prep") fillEditClasses(t.value, "");
         if (t.id === "sat") {
           sat = t.value;
           unlocked = null;
@@ -3523,5 +3619,36 @@
       view();
       load();
     </script>
+
+    <!-- Edit person dialog -->
+    <dialog id="peditDlg">
+      <h3 style="margin:0 0 8px">Edit Person</h3>
+      <div class="sub" style="margin-bottom:10px">Change the name, mobile number, prep or class of this person.</div>
+      <label class="sub">Full name</label>
+      <input id="pe_name" placeholder="Full name" dir="auto" />
+      <label class="sub" style="margin-top:8px;display:block">Prep year</label>
+      <select id="pe_prep">
+        <option value="">Choose prep...</option>
+      </select>
+      <label class="sub" style="margin-top:8px;display:block">Class</label>
+      <select id="pe_cls" disabled>
+        <option value="">Choose class...</option>
+      </select>
+      <label class="sub" style="margin-top:8px;display:block">Mobile number (leave blank to keep current)</label>
+      <input id="pe_ph" type="tel" inputmode="numeric" maxlength="11" placeholder="01x xxxx xxxx" autocomplete="off" />
+      <div class="dbtns">
+        <button class="btn" data-a="pesave">Save</button>
+        <button class="btn ghost" data-a="pecancel">Cancel</button>
+      </div>
+    </dialog>
+
+    <!-- Teacher quiz review dialog -->
+    <dialog id="qtRevDlg" style="max-width:480px;width:94%;max-height:calc(100vh - 32px);overflow:auto">
+      <div id="qtRevBody"></div>
+      <div class="dbtns">
+        <button class="btn ghost" data-a="qtrevclose">Close</button>
+      </div>
+    </dialog>
+
   </body>
 </html>
