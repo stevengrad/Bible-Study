@@ -1236,7 +1236,7 @@
       <span class="warn-icon">📋</span>
       <h3>Quiz Rules — Read Before Starting</h3>
       <ul>
-        <li>⏱ You have <b>5 minutes</b> to finish the quiz.</li>
+        <li>⏱ You have <b>2 minutes</b> to finish the quiz.</li>
         <li>🚫 Do <b>NOT</b> leave this page, reload, or close the browser.</li>
         <li>📵 Do <b>NOT</b> switch to another app or open a new tab.</li>
         <li>
@@ -2089,7 +2089,7 @@
           ? qrunHTML()
           : qres
             ? qresHTML()
-            : '<div class="sub">Every quiz has 5 minutes. Do NOT leave the page or switch apps during the quiz. You will get a 10-second warning, and if you do not return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
+            : '<div class="sub">Every quiz has 2 minutes. Do NOT leave the page or switch apps during the quiz. You will get a 10-second warning, and if you do not return, your quiz is submitted automatically. Full marks until the next Saturday at 7:00 PM, then the highest mark is 5. A quiz closes after 4 weeks.</div>';
       }
       function sqList() {
         const L = $("list");
@@ -2108,7 +2108,7 @@
                 w = qWin(z.week),
                 m = mk[i] && mk[i][me];
               if (m == null && now > w.gone) return "";
-              return `<div class="row"><div class="who"><b dir="auto">${esc(z.title || "Quiz")}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m != null ? '✓ Finished <button type="button" class="wlink" data-a="qrev" data-id="' + i + '">📋 See my mistakes</button>' : now > w.due ? "Late: the highest mark is 5" : "Open until " + fdt(w.due)}</div></div>${m != null ? `<div class="pts big">${n2(m)}<small>/10</small></div>` : `<button class="btn" data-a="qstart" data-id="${i}">▶ Start (5 min)</button>`}</div>`;
+              return `<div class="row"><div class="who"><b dir="auto">${esc(z.title || "Quiz")}</b><div class="sub">${fmt(z.week)} · ${z.qs.length} questions · ${qpts(i)} points</div><div class="sub">${m != null ? '✓ Finished <button type="button" class="wlink" data-a="qrev" data-id="' + i + '">📋 See my mistakes</button>' : now > w.due ? "Late: the highest mark is 5" : "Open until " + fdt(w.due)}</div></div>${m != null ? `<div class="pts big">${n2(m)}<small>/10</small></div>` : `<button class="btn" data-a="qstart" data-id="${i}">▶ Start (2 min)</button>`}</div>`;
             })
             .join("") ||
           '<div class="empty">No quizzes right now ✝<br>Check again after the next class.</div>';
@@ -3389,7 +3389,7 @@
         if (!qrun || acPause) return;
         setTimeout(function () {
           if (qrun && !acPause && !document.hasFocus()) acLeave();
-        }, 300);
+        }, 120);
       });
       window.addEventListener("focus", function () {
         if (acLeftAt) acBack();
@@ -3413,7 +3413,11 @@
         const z = QZ[id];
         if (!z) return clear();
         try {
-          const sub = (await fdb().ref("qz/sub/" + me + "/" + id).get()).val();
+          const sub = (
+            await fdb()
+              .ref("qz/sub/" + me + "/" + id)
+              .get()
+          ).val();
           if (sub) return clear();
         } catch (e) {
           acChecked = false; // no internet yet: try again later
@@ -3421,7 +3425,9 @@
         }
         let ans = {};
         try {
-          ans = JSON.parse(localStorage.getItem("bs_d_" + me + "_" + id) || "{}");
+          ans = JSON.parse(
+            localStorage.getItem("bs_d_" + me + "_" + id) || "{}",
+          );
         } catch (e) {}
         qrun = { id, i: 0, ans, end: 0, z };
         await qSubmit(
