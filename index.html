@@ -1107,7 +1107,8 @@
         -webkit-user-select: text;
         user-select: text;
       }
-    </style>
+    input.bad,textarea.bad{border-color:var(--no)!important}
+</style>
   </head>
   <body>
     <svg width="0" height="0" style="position: absolute">
@@ -1821,7 +1822,7 @@
               : x.t === "fill"
                 ? `<input id="ea${i}" dir="auto" placeholder="New correct answer (other answers after a | ) - empty = keep" value="${esc(x.na || "")}">`
                 : `<textarea id="er${i}" rows="3" dir="auto" placeholder="Type the items in the CORRECT order (empty = keep)">${esc(x.nr || "")}</textarea>`;
-        return `<div class="qli qe"><div class="qeh"><b>${i + 1}.</b><span class="chip">${QT[x.t]}</span>${rm ? `<button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button>` : ""}</div><input id="eq${i}" dir="auto" value="${esc(x.q)}"><input id="em${i}" type="number" inputmode="decimal" step="0.25" min="0.25" value="${esc(x.m)}" aria-label="Mark">${x.o ? `<div class="sub">${x.t === "rank" ? "Items (as the students see them)" : "Choices"}</div><textarea id="eo${i}" rows="${Math.min(6, x.o.length + 1)}" dir="auto">${esc(x.o.join("\n"))}</textarea>` : ""}<details><summary>Change the correct answer</summary>${ans}</details></div>`;
+        return `<div class="qli qe"><div class="qeh"><b>${i + 1}.</b><span class="chip">${QT[x.t]}</span>${rm ? `<button class="ic mi" data-a="qrm" data-id="${i}" aria-label="Remove question">✕</button>` : ""}</div><input id="eq${i}" dir="auto" value="${esc(x.q)}"><input id="em${i}" type="number" inputmode="decimal" step="0.25" min="0.25" value="${esc(x.m)}" aria-label="Mark">${x.o ? `<div class="sub">${x.t === "rank" ? "Items (as the students see them)" : "Choices"}</div><textarea id="eo${i}" rows="${Math.min(6, x.o.length + 1)}" dir="auto">${esc(x.o.join("\n"))}</textarea><div class="sub">${x.t === "rank" ? "Added or removed an item? Also type the correct order in the box below." : "You can add choices at the end. For any other change, also type the correct choice number below."}</div>` : ""}<details ${x.o && x.o.length !== x.oc ? "open" : ""}><summary>Change the correct answer</summary>${ans}</details></div>`;
       }
       function qSync() {
         if (!qd) return;
@@ -1941,6 +1942,17 @@
         }
         return { t: x.t, q: x.q, m: x.m, ...(o ? { o } : {}), ks };
       }
+      function qBad(i, msg) {
+        const e = $("ea" + i) || $("er" + i);
+        if (e) {
+          const d = e.closest("details");
+          if (d) d.open = true;
+          e.classList.add("bad");
+          e.scrollIntoView({ block: "center" });
+          setTimeout(() => e.focus(), 60);
+        }
+        alert(msg);
+      }
       async function qSave() {
         qSync();
         const P = Math.round(+qd.pts),
@@ -1996,13 +2008,30 @@
             out.push(await qKey(qid, i, y));
             continue;
           }
-          if (x.o && x.o.length !== x.oc)
-            return alert(
-              no +
-                "keep the same number of choices (" +
-                x.oc +
-                "), or type a new correct answer.",
-            );
+          if (x.o && x.o.length !== x.oc) {
+          if (
+            x.t === "mcq" &&
+            x.o.length > x.oc &&
+            x.o.slice(0, x.oc).every((v, j) => v === (x.oo || [])[j])
+          ) {
+            out.push({ t: x.t, q, m, o: x.o, ks: x.ks });
+            continue;
+          }
+          return qBad(
+            i,
+            no +
+              "you changed the number of " +
+              (x.t === "rank" ? "items" : "choices") +
+              " (" +
+              x.oc +
+              " to " +
+              x.o.length +
+              "). The correct answer is saved hidden, so please type it again in the box that is now open: " +
+              (x.t === "rank"
+                ? "all the items in the CORRECT order."
+                : "the number of the correct choice."),
+          );
+        }
           out.push({ t: x.t, q, m, ...(x.o ? { o: x.o } : {}), ks: x.ks });
         }
         const body = { week: qd.week, title: qd.title, pub: qd.pub, qs: out };
@@ -2439,7 +2468,12 @@
             pub: !!z.pub,
             pts: String(qpts(id)),
             nt: "mcq",
-            qs: z.qs.map((x) => ({ ...x, old: 1, oc: x.o ? x.o.length : 0 })),
+            qs: z.qs.map((x) => ({
+              ...x,
+              old: 1,
+              oc: x.o ? x.o.length : 0,
+              oo: x.o ? [...x.o] : null,
+            })),
           };
           view();
           return 1;
