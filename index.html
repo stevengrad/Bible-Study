@@ -2382,9 +2382,14 @@
         const z = QZ[qid];
         if (!z) return alert("Quiz not found.");
         try {
-          const sub = (await fdb().ref("qz/sub/" + code + "/" + qid).get()).val();
-          if (!sub) return alert("This student has not submitted the quiz yet.");
-          const p = db.people.find(x => x.code === code);
+          const sub = (
+            await fdb()
+              .ref("qz/sub/" + code + "/" + qid)
+              .get()
+          ).val();
+          if (!sub)
+            return alert("This student has not submitted the quiz yet.");
+          const p = db.people.find((x) => x.code === code);
           const rv = await qReview(qid, z, sub.a || {});
           const name = p ? p.name : code;
           let html = `<h3 style="margin:0 0 8px">Results: ${esc(name)}</h3>`;
@@ -2393,17 +2398,22 @@
             html += `<div class="sub" style="color:#15803d"><b>All answers correct!</b></div>`;
           } else {
             html += `<div class="sub"><b>Mistakes (${rv.length}):</b></div>`;
-            html += rv.map(r =>
-              `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span>` +
-              `<div class="rvm">Wrong answer: ${qv(r.mine)}</div>` +
-              `${r.right != null ? `<div class="rvr">Correct answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Fill-in question." : "Correct answer unavailable."}</div>`}` +
-              `</div>`
-            ).join("");
+            html += rv
+              .map(
+                (r) =>
+                  `<div class="rvq"><b>${r.i + 1}.</b> <span dir="auto">${esc(r.q)}</span>` +
+                  `<div class="rvm">Wrong answer: ${qv(r.mine)}</div>` +
+                  `${r.right != null ? `<div class="rvr">Correct answer: ${qv(r.right)}</div>` : `<div class="sub">${r.fill ? "Fill-in question." : "Correct answer unavailable."}</div>`}` +
+                  `</div>`,
+              )
+              .join("");
           }
           document.getElementById("qtRevBody").innerHTML = html;
           const d = document.getElementById("qtRevDlg");
-          typeof d.showModal === "function" ? d.showModal() : d.setAttribute("open", "");
-        } catch(e) {
+          typeof d.showModal === "function"
+            ? d.showModal()
+            : d.setAttribute("open", "");
+        } catch (e) {
           alert("Could not load answers: " + e.message);
         }
       }
@@ -2415,36 +2425,55 @@
         document.getElementById("pe_name").value = p.name;
         document.getElementById("pe_ph").value = SEC[p.code] || "";
         const prepSel = document.getElementById("pe_prep");
-        prepSel.innerHTML = '<option value="">Choose prep...</option>' +
-          PREPS.map(g => `<option${g === p.class ? " selected" : ""}>${g}</option>`).join("");
+        prepSel.innerHTML =
+          '<option value="">Choose prep...</option>' +
+          PREPS.map(
+            (g) => `<option${g === p.class ? " selected" : ""}>${g}</option>`,
+          ).join("");
         prepSel.value = p.class || "";
         fillEditClasses(p.class, p.cls);
         const d = document.getElementById("peditDlg");
-        typeof d.showModal === "function" ? d.showModal() : d.setAttribute("open", "");
+        typeof d.showModal === "function"
+          ? d.showModal()
+          : d.setAttribute("open", "");
       }
       function fillEditClasses(prep, selectedCls) {
         const sel = document.getElementById("pe_cls");
-        sel.innerHTML = '<option value="">Choose class...</option>' +
-          (CLASSES[prep] || []).map(c => `<option${c === selectedCls ? " selected" : ""}>${c}</option>`).join("");
+        sel.innerHTML =
+          '<option value="">Choose class...</option>' +
+          (CLASSES[prep] || [])
+            .map(
+              (c) =>
+                `<option${c === selectedCls ? " selected" : ""}>${c}</option>`,
+            )
+            .join("");
         sel.disabled = !prep;
       }
       async function saveEditPerson() {
-        const p = db.people.find(x => x.id === _peditId);
+        const p = db.people.find((x) => x.id === _peditId);
         if (!p) return;
         const name = document.getElementById("pe_name").value.trim();
         const prep = document.getElementById("pe_prep").value;
         const cls = document.getElementById("pe_cls").value;
         const ph = document.getElementById("pe_ph").value.trim();
-        if (!name || !prep || !cls) return alert("Please fill in name, prep and class.");
-        if (ph && !PH.test(ph)) return alert("Mobile number must be 11 digits starting with 010, 011, 012 or 015.");
+        if (!name || !prep || !cls)
+          return alert("Please fill in name, prep and class.");
+        if (ph && !PH.test(ph))
+          return alert(
+            "Mobile number must be 11 digits starting with 010, 011, 012 or 015.",
+          );
         p.name = name;
         p.class = prep;
         p.cls = cls;
         if (ph && FB && SEC[p.code] !== ph) {
           try {
-            await fdb().ref("secrets/" + p.code + "/ph").set(ph);
+            await fdb()
+              .ref("secrets/" + p.code + "/ph")
+              .set(ph);
             SEC[p.code] = ph;
-          } catch(e) { alert("Could not update phone: " + e.message); }
+          } catch (e) {
+            alert("Could not update phone: " + e.message);
+          }
         }
         changed();
         const d = document.getElementById("peditDlg");
@@ -2626,13 +2655,19 @@
           if (p) openEditPerson(p);
           return 1;
         }
-        if (a === "pesave") { saveEditPerson(); return 1; }
+        if (a === "pesave") {
+          saveEditPerson();
+          return 1;
+        }
         if (a === "pecancel") {
           const d = document.getElementById("peditDlg");
           typeof d.close === "function" ? d.close() : d.removeAttribute("open");
           return 1;
         }
-        if (a === "qtrev") { qtReviewOpen(qsel, id); return 1; }
+        if (a === "qtrev") {
+          qtReviewOpen(qsel, id);
+          return 1;
+        }
         if (a === "qtrevclose") {
           const d = document.getElementById("qtRevDlg");
           typeof d.close === "function" ? d.close() : d.removeAttribute("open");
@@ -3622,20 +3657,33 @@
 
     <!-- Edit person dialog -->
     <dialog id="peditDlg">
-      <h3 style="margin:0 0 8px">Edit Person</h3>
-      <div class="sub" style="margin-bottom:10px">Change the name, mobile number, prep or class of this person.</div>
+      <h3 style="margin: 0 0 8px">Edit Person</h3>
+      <div class="sub" style="margin-bottom: 10px">
+        Change the name, mobile number, prep or class of this person.
+      </div>
       <label class="sub">Full name</label>
       <input id="pe_name" placeholder="Full name" dir="auto" />
-      <label class="sub" style="margin-top:8px;display:block">Prep year</label>
+      <label class="sub" style="margin-top: 8px; display: block"
+        >Prep year</label
+      >
       <select id="pe_prep">
         <option value="">Choose prep...</option>
       </select>
-      <label class="sub" style="margin-top:8px;display:block">Class</label>
+      <label class="sub" style="margin-top: 8px; display: block">Class</label>
       <select id="pe_cls" disabled>
         <option value="">Choose class...</option>
       </select>
-      <label class="sub" style="margin-top:8px;display:block">Mobile number (leave blank to keep current)</label>
-      <input id="pe_ph" type="tel" inputmode="numeric" maxlength="11" placeholder="01x xxxx xxxx" autocomplete="off" />
+      <label class="sub" style="margin-top: 8px; display: block"
+        >Mobile number (leave blank to keep current)</label
+      >
+      <input
+        id="pe_ph"
+        type="tel"
+        inputmode="numeric"
+        maxlength="11"
+        placeholder="01x xxxx xxxx"
+        autocomplete="off"
+      />
       <div class="dbtns">
         <button class="btn" data-a="pesave">Save</button>
         <button class="btn ghost" data-a="pecancel">Cancel</button>
@@ -3643,12 +3691,19 @@
     </dialog>
 
     <!-- Teacher quiz review dialog -->
-    <dialog id="qtRevDlg" style="max-width:480px;width:94%;max-height:calc(100vh - 32px);overflow:auto">
+    <dialog
+      id="qtRevDlg"
+      style="
+        max-width: 480px;
+        width: 94%;
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+      "
+    >
       <div id="qtRevBody"></div>
       <div class="dbtns">
         <button class="btn ghost" data-a="qtrevclose">Close</button>
       </div>
     </dialog>
-
   </body>
 </html>
