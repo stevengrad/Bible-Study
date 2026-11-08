@@ -306,7 +306,7 @@
       <a class="back" href="index.html">← Scoreboard</a>
       <svg class="cross"><use href="#cross" /></svg>
       <h1>Our Top Students</h1>
-      <p>Updates live</p>
+      <p id="cn">Updates live</p>
     </header>
     <main id="m"></main>
     <script>
@@ -332,6 +332,8 @@
       const norm = (j) => ({
         attendance: {},
         bonus: {},
+        qw: {},
+        cutoff: "",
         ...j,
         people: arr(j.people),
         canceled: arr(j.canceled),
@@ -359,8 +361,10 @@
             ? 50
             : Math.min(49, Math.round((+s / m) * 50));
       function score(db, p) {
+        const from = db.cutoff || "";
         let t = 0;
         for (const d in db.attendance) {
+          if (d < from) continue;
           if (db.canceled.includes(d)) continue;
           const r = db.attendance[d][p.id];
           if (r) {
@@ -368,9 +372,11 @@
             if (r.h) t += 5;
           }
         }
-        db.quizzes.forEach((x) => (t += qPts(x.scores[p.id], x.max)));
+        if (!from) db.quizzes.forEach((x) => (t += qPts(x.scores[p.id], x.max)));
         t += +db.bonus?.[p.id] || 0;
       for (const i in MK) {
+        const w = (db.qw || {})[i];
+        if (!(w ? w >= from : from === "")) continue;
         const m = MK[i] && MK[i][p.code];
         if (m != null) {
           const v = +(db.qpts && db.qpts[i]), P = v > 0 ? v : 50;
@@ -380,6 +386,7 @@
         return n1(t);
       }
       function draw(db) {
+        $("cn").textContent = db.cur && db.cur.name ? "📖 " + db.cur.name + " · live" : "Updates live";
         $("m").innerHTML = PREPS.map((g) => {
           const all = db.people
             .filter((p) => p.class === g)
