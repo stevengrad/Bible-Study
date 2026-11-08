@@ -1111,24 +1111,8 @@
       textarea.bad {
         border-color: var(--no) !important;
       }
-      .cathead {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 4px;
-      }
-      .cathead h3 {
-        margin: 2px 0;
-        color: var(--navy);
-        font-size: 22px;
-      }
-      .cathead .btn {
-        min-height: 42px;
-        padding: 0 14px;
-      }
-    </style>
+    .cathead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}.cathead h3{margin:2px 0;color:var(--navy);font-size:22px}.cathead .btn{min-height:42px;padding:0 14px}
+</style>
   </head>
   <body>
     <svg width="0" height="0" style="position: absolute">
@@ -1484,7 +1468,7 @@
             ? [
                 ["sq", "📝 Quizzes"],
                 ["board", "🏆 Leaderboard"],
-                ...catTabs(),
+              ...catTabs(),
                 ["contact", "📞 Contact"],
               ]
             : [];
@@ -3688,14 +3672,12 @@
       /* ===== END ANTI-CHEAT ===== */
 
       /* ===== categories: save the scores under a name and start again from zero ===== */
-      const curSat = () =>
-        [...SATS].reverse().find((d) => d <= today) || SATS[0];
+      const curSat = () => [...SATS].reverse().find((d) => d <= today) || SATS[0];
       const catOf = (t) =>
         String(t).startsWith("cat:")
           ? (db.cats || []).find((c) => "cat:" + c.id === t)
           : null;
-      const catTabs = () =>
-        (db.cats || []).map((c) => ["cat:" + c.id, "📚 " + c.name]);
+      const catTabs = () => (db.cats || []).map((c) => ["cat:" + c.id, "📚 " + c.name]);
       function nextSat(d) {
         let t = Date.parse(d + "T00:00:00Z");
         do t += 864e5;
@@ -3707,21 +3689,13 @@
           T = role === "teacher";
         if (C)
           return `<div class="cathead"><div><div class="sub">Saved category · Saturdays ${fmt(C.from || SATS[0]).slice(5)} to ${fmt(addDays(C.to, -7)).slice(5)}</div><h3>📚 ${esc(C.name)}</h3></div>${T ? `<div class="ctl"><button class="btn ghost" data-a="catname" data-id="${C.id}">✏️ Rename</button>${db.cats[db.cats.length - 1].id === C.id ? '<button class="btn danger" data-a="catundo">↩ Open it again</button>' : ""}</div>` : ""}</div>`;
-        const nm =
-          (db.cur && db.cur.name) || "Category " + ((db.cats || []).length + 1);
+        const nm = (db.cur && db.cur.name) || "Category " + ((db.cats || []).length + 1);
         return `<div class="cathead"><div><div class="sub">Current category</div><h3>📖 ${esc(nm)}</h3></div>${T ? '<div class="ctl"><button class="btn ghost" data-a="catname">✏️ Title</button><button class="btn" data-a="catfinish">✅ Finish category</button></div>' : ""}</div>`;
       }
       function catRename(id) {
         const C = id ? (db.cats || []).find((c) => c.id === id) : null,
           old = C ? C.name : (db.cur && db.cur.name) || "";
-        const nm = (
-          prompt(
-            C
-              ? "New name for this saved tab:"
-              : "Title of the current category (for example Joseph):",
-            old,
-          ) || ""
-        ).trim();
+        const nm = (prompt(C ? "New name for this saved tab:" : "Title of the current category (for example Joseph):", old) || "").trim();
         if (!nm) return;
         if (C) {
           if (db.cats.some((c) => c.id !== C.id && c.name === nm))
@@ -3734,25 +3708,12 @@
       function catFinish() {
         const from = db.cutoff || "",
           to = nextSat(today);
-        if (from && to <= from)
-          return alert("There is nothing new to save yet.");
-        const nm = (
-          prompt(
-            "Name of the saved tab (the scores of this category):",
-            (db.cur && db.cur.name) || "",
-          ) || ""
-        ).trim();
+        if (from && to <= from) return alert("There is nothing new to save yet.");
+        const nm = (prompt("Name of the saved tab (the scores of this category):", (db.cur && db.cur.name) || "") || "").trim();
         if (!nm) return;
         if ((db.cats || []).some((c) => c.name === nm))
-          return alert(
-            "There is already a saved tab with this name. Choose another name.",
-          );
-        if (
-          !confirm(
-            `Save all scores as "${nm}" and set the live scores to zero for everyone?\n\nSaved: everything up to Saturday ${fmt(addDays(to, -7))}.\nThe new category starts on Saturday ${fmt(to)}.`,
-          )
-        )
-          return;
+          return alert("There is already a saved tab with this name. Choose another name.");
+        if (!confirm(`Save all scores as "${nm}" and set the live scores to zero for everyone?\n\nSaved: everything up to Saturday ${fmt(addDays(to, -7))}.\nThe new category starts on Saturday ${fmt(to)}.`)) return;
         db.qw = db.qw || {};
         Object.keys(QZ).forEach((i) => (db.qw[i] = QZ[i].week));
         (db.cats = db.cats || []).push({
@@ -3765,10 +3726,7 @@
         });
         db.cutoff = to;
         db.bonus = {};
-        const nn = (
-          prompt("Title of the NEW category (you can change it later):", "") ||
-          ""
-        ).trim();
+        const nn = (prompt("Title of the NEW category (you can change it later):", "") || "").trim();
         db.cur = { name: nn || "Category " + (db.cats.length + 1) };
         tab = "board";
         changed();
@@ -3777,17 +3735,9 @@
       }
       function catUndo() {
         const C = (db.cats || [])[(db.cats || []).length - 1];
-        if (
-          !C ||
-          !confirm(
-            `Open "${C.name}" again?\nThe saved tab is removed and its scores return to the live board.`,
-          )
-        )
-          return;
+        if (!C || !confirm(`Open "${C.name}" again?\nThe saved tab is removed and its scores return to the live board.`)) return;
         const b = { ...C.bonus };
-        Object.keys(db.bonus || {}).forEach(
-          (k) => (b[k] = (+b[k] || 0) + (+db.bonus[k] || 0)),
-        );
+        Object.keys(db.bonus || {}).forEach((k) => (b[k] = (+b[k] || 0) + (+db.bonus[k] || 0)));
         db.bonus = b;
         db.cutoff = C.from || "";
         db.cats.pop();
