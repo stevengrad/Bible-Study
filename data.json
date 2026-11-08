@@ -988,6 +988,8 @@
     "pmvmleih4z84": 4,
     "pmvmmu8x2x2x": 5
   },
+  "qw": {},
+  "cutoff": "",
   "done": {
     "2026-10-03": true,
     "2026-10-10": true,
@@ -1495,5 +1497,9 @@
     "zmw6n30zk": 10
   },
   "canceled": [],
-  "quizzes": []
+  "quizzes": [],
+  "cats": [],
+  "cur": {
+    "name": "قصة حياة يوسف تكوين 37-50"
+  }
 }
