@@ -193,6 +193,16 @@
         "h": true,
         "s": "P"
       },
+      "pmusjwtyqyrv": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjwxnxqx0": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
       "pmusjxiism4f": {
         "b": true,
         "h": true,
@@ -258,6 +268,11 @@
         "h": true,
         "s": "P"
       },
+      "pmvdfdisxn6m": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
       "pmvdl7h9jia7": {
         "b": false,
         "h": false,
@@ -293,34 +308,34 @@
         "h": false,
         "s": "P"
       },
-      "pmusjwxnxqx0": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjwtyqyrv": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmvdfdisxn6m": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
       "pmvzh6da5tqc": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       }
     },
     "2026-10-17": {
+      "pmusjwtyqyrv": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjwxnxqx0": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
       "pmusjyml8yqh": {
         "b": false,
         "h": true,
         "s": "P"
       },
       "pmusjyuv9brj": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusk0pr5oqj": {
         "b": false,
         "h": false,
         "s": "P"
@@ -363,30 +378,15 @@
         "h": true,
         "s": "P"
       },
-      "pmusjwxnxqx0": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjwtyqyrv": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
       "pmvdfdisxn6m": {
-        "s": "P",
         "b": false,
-        "h": false
-      },
-      "pmusk0pr5oqj": {
-        "s": "P",
-        "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
       "pmvdfpowkjwi": {
-        "s": "P",
         "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       }
     },
     "2026-10-24": {
@@ -578,503 +578,508 @@
       }
     },
     "2026-10-31": {
+      "pmusjup3ojyi": {
+        "h": true
+      },
+      "pmusjwtyqyrv": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjwxnxqx0": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjxiism4f": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjy6o2bvj": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjyml8yqh": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjyuv9brj": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjzc2y6l7": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjzfzpwcd": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjznvz2ex": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusjzyeu19i": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk0dh5dey": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk1whkkho": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk5wxu2xl": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk66pdjdt": {
+        "h": true
+      },
+      "pmusk75mxoig": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk951ykgf": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusk9gi9oma": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk9r49g1m": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmuska4ujv3a": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmuskcgnu3fn": {
+        "h": true
+      },
+      "pmuskn7vucz1": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusm538tmz2": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvclh7k31mj": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvcll5zwpwj": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvdfdisxn6m": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvdl90aywab": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvml9zcadk1": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmleih4z84": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmm57okwmq": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmm66zw5tt": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvmm90u23zq": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmmg9yzrgn": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvmmio72ij6": {
+        "h": true
+      },
+      "pmvmmjrxrdax": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmmu8x2x2x": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
       "pmvwwbz96r7q": {
         "b": false,
         "h": true,
         "s": "P"
       },
-      "pmusjwtyqyrv": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjwxnxqx0": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
       "pmvzh6da5tqc": {
-        "s": "P",
         "b": false,
-        "h": true
-      },
-      "pmusjyml8yqh": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjy6o2bvj": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusk9r49g1m": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk75mxoig": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmuskcgnu3fn": {
-        "h": true
-      },
-      "pmvclh7k31mj": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvmmjrxrdax": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk0dh5dey": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvcll5zwpwj": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusm538tmz2": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmvmmu8x2x2x": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjzfzpwcd": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjzc2y6l7": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjznvz2ex": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjzyeu19i": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvmm90u23zq": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk66pdjdt": {
-        "h": true
-      },
-      "pmvmmio72ij6": {
-        "h": true
-      },
-      "pmusk9gi9oma": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvmleih4z84": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvmm57okwmq": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjyuv9brj": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjxiism4f": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusjup3ojyi": {
-        "h": true
-      },
-      "pmvml9zcadk1": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusk5wxu2xl": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmuska4ujv3a": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusk1whkkho": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvmm66zw5tt": {
-        "s": "P",
-        "b": false,
-        "h": false
+        "h": true,
+        "s": "P"
       },
       "pmvzhi1olm1o": {
-        "s": "P",
         "b": false,
-        "h": false
-      },
-      "pmusk951ykgf": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvdl90aywab": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmuskn7vucz1": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvmmg9yzrgn": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvdfdisxn6m": {
-        "s": "P",
-        "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
       "pmvzht2e5gt3": {
-        "s": "P",
         "b": false,
-        "h": false
-      },
-      "pmvzkecpw1f6": {
-        "s": "P",
-        "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
       "pmvzkcs2i8s8": {
-        "s": "P",
         "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
-      "pmw8ywccadhd": {
-        "s": "P",
+      "pmvzkecpw1f6": {
         "b": false,
-        "h": true
-      },
-      "pmw8yv0oxb7j": {
-        "s": "P",
-        "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
       },
       "pmw8ytdpobvb": {
-        "s": "P",
         "b": false,
-        "h": false
+        "h": false,
+        "s": "P"
+      },
+      "pmw8yv0oxb7j": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmw8ywccadhd": {
+        "b": false,
+        "h": true,
+        "s": "P"
       }
     },
     "2026-11-07": {
-      "pmw6o6qw1d0b": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvzkecpw1f6": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvzxtfxzjs2": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmw6oaapp9cy": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmw6o9g5isl5": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvclirgdg0w": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusk951ykgf": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmuska4ujv3a": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjzc2y6l7": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmvdl7h9jia7": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvdl90aywab": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmuskn7vucz1": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvzxr6o9v3d": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvzxskwlwrk": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvml9zcadk1": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjxiism4f": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmvmm57okwmq": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
       "pmusjvijez6t": {
-        "s": "P",
         "b": false,
-        "h": true
-      },
-      "pmusjyuv9brj": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmvmleih4z84": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjyml8yqh": {
-        "s": "P",
-        "b": true,
-        "h": true
-      },
-      "pmusjy6o2bvj": {
-        "s": "P",
-        "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmusjwtyqyrv": {
-        "s": "P",
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmusjwxnxqx0": {
-        "s": "P",
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmvzht2e5gt3": {
-        "s": "P",
+      "pmusjxiism4f": {
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmvzh6da5tqc": {
-        "s": "P",
+      "pmusjy6o2bvj": {
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmuskcgnu3fn": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusm538tmz2": {
-        "s": "P",
+      "pmusjyml8yqh": {
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmvmmcwpgm3x": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk75mxoig": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk66pdjdt": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvmmg9yzrgn": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk9gi9oma": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmusk5wxu2xl": {
-        "s": "P",
+      "pmusjyuv9brj": {
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmvmmu8x2x2x": {
-        "s": "P",
-        "b": false,
-        "h": true
+      "pmusjzc2y6l7": {
+        "b": true,
+        "h": true,
+        "s": "P"
       },
       "pmusk1whkkho": {
-        "s": "P",
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmw6ruxf90ta": {
-        "s": "P",
+      "pmusk5wxu2xl": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk66pdjdt": {
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmw6os75eu4i": {
-        "s": "P",
+      "pmusk75mxoig": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk951ykgf": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmusk9gi9oma": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmuska4ujv3a": {
         "b": true,
-        "h": false
+        "h": true,
+        "s": "P"
+      },
+      "pmuskcgnu3fn": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmuskn7vucz1": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusm538tmz2": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvclirgdg0w": {
+        "b": true,
+        "h": true,
+        "s": "P"
       },
       "pmvcll5zwpwj": {
-        "s": "P",
         "b": true,
-        "h": false
-      },
-      "pmvmmio72ij6": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmw8ytdpobvb": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmw8yv0oxb7j": {
-        "s": "P",
-        "b": false,
-        "h": true
+        "h": false,
+        "s": "P"
       },
       "pmvdfdisxn6m": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
+      },
+      "pmvdl7h9jia7": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvdl90aywab": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvml9zcadk1": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmleih4z84": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmm57okwmq": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmmcwpgm3x": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmmg9yzrgn": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmmio72ij6": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvmmu8x2x2x": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvzh6da5tqc": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvzht2e5gt3": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvzkecpw1f6": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvzxr6o9v3d": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvzxskwlwrk": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvzxtfxzjs2": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmw6o6qw1d0b": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmw6o9g5isl5": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmw6oaapp9cy": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmw6os75eu4i": {
+        "b": true,
+        "h": false,
+        "s": "P"
+      },
+      "pmw6ruxf90ta": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmw8ytdpobvb": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmw8yv0oxb7j": {
+        "b": false,
+        "h": true,
+        "s": "P"
       },
       "pmw8ywccadhd": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmw9d9qpm9io": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmw9do0rokaq": {
-        "s": "P",
         "b": false,
-        "h": true
+        "h": true,
+        "s": "P"
       }
     },
     "2026-11-14": {
-      "pmvdl7h9jia7": {
-        "s": "P",
+      "pmusjzc2y6l7": {
         "b": false,
-        "h": false
-      },
-      "pmuskn7vucz1": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmvcll5zwpwj": {
-        "s": "P",
-        "b": false,
-        "h": false
-      },
-      "pmuska4ujv3a": {
-        "s": "P",
-        "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
       "pmusjznvz2ex": {
-        "s": "P",
         "b": true,
-        "h": true
+        "h": true,
+        "s": "P"
       },
-      "pmvmmu8x2x2x": {
-        "s": "P",
-        "b": false,
-        "h": true
+      "pmuska4ujv3a": {
+        "b": true,
+        "h": true,
+        "s": "P"
       },
-      "pmvzxtfxzjs2": {
-        "s": "P",
+      "pmuskn7vucz1": {
         "b": false,
-        "h": false
-      },
-      "pmusjzc2y6l7": {
-        "s": "P",
-        "b": false,
-        "h": true
-      },
-      "pmvzxr6o9v3d": {
-        "s": "P",
-        "b": false,
-        "h": true
+        "h": false,
+        "s": "P"
       },
       "pmvclirgdg0w": {
+        "b": true,
+        "h": true,
+        "s": "P"
+      },
+      "pmvcll5zwpwj": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvdl7h9jia7": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmvmmu8x2x2x": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvzxr6o9v3d": {
+        "b": false,
+        "h": true,
+        "s": "P"
+      },
+      "pmvzxtfxzjs2": {
+        "b": false,
+        "h": false,
+        "s": "P"
+      },
+      "pmusjwxnxqx0": {
         "s": "P",
         "b": true,
         "h": true
@@ -1089,6 +1094,9 @@
     "zmwklvuo8": "2026-11-14"
   },
   "cutoff": "",
+  "cur": {
+    "name": "قصة حياة يوسف تكوين 37-50"
+  },
   "done": {
     "2026-10-03": true,
     "2026-10-10": true,
@@ -1491,137 +1499,137 @@
       "name": "David Rafik"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "398",
       "id": "pmvzh6da5tqc",
-      "name": "David adel",
-      "class": "1st Prep",
-      "cls": "يونان النبي"
+      "name": "David adel"
     },
     {
+      "class": "1st Prep",
+      "cls": "اليشع النبي",
       "code": "984",
       "id": "pmvzhi1olm1o",
-      "name": "Michael remon",
-      "class": "1st Prep",
-      "cls": "اليشع النبي"
+      "name": "Michael remon"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "779",
       "id": "pmvzht2e5gt3",
-      "name": "Daniel ramsis",
-      "class": "1st Prep",
-      "cls": "يونان النبي"
+      "name": "Daniel ramsis"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ارميا النبي",
       "code": "232",
       "id": "pmvzkcs2i8s8",
-      "name": "Samuel ibram",
-      "class": "2nd Prep",
-      "cls": "ارميا النبي"
+      "name": "Samuel ibram"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ارميا النبي",
       "code": "242",
       "id": "pmvzkecpw1f6",
-      "name": "Patrick emad",
-      "class": "2nd Prep",
-      "cls": "ارميا النبي"
+      "name": "Patrick emad"
     },
     {
+      "class": "2nd Prep",
+      "cls": "موسى النبي",
       "code": "321",
       "id": "pmvzxr6o9v3d",
-      "name": "Youssef Nader",
-      "class": "2nd Prep",
-      "cls": "موسى النبي"
+      "name": "Youssef Nader"
     },
     {
+      "class": "2nd Prep",
+      "cls": "موسى النبي",
       "code": "144",
       "id": "pmvzxskwlwrk",
-      "name": "Bavly George",
-      "class": "2nd Prep",
-      "cls": "موسى النبي"
+      "name": "Bavly George"
     },
     {
+      "class": "2nd Prep",
+      "cls": "موسى النبي",
       "code": "514",
       "id": "pmvzxtfxzjs2",
-      "name": "Philopateer Fady",
-      "class": "2nd Prep",
-      "cls": "موسى النبي"
+      "name": "Philopateer Fady"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ارميا النبي",
       "code": "938",
       "id": "pmw6o6qw1d0b",
-      "name": "Philopateer Botros",
-      "class": "2nd Prep",
-      "cls": "ارميا النبي"
+      "name": "Philopateer Botros"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "749",
       "id": "pmw6o9g5isl5",
-      "name": "Youssef Amir",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "Youssef Amir"
     },
     {
+      "class": "2nd Prep",
+      "cls": "ايليا النبي",
       "code": "493",
       "id": "pmw6oaapp9cy",
-      "name": "Adam amir",
-      "class": "2nd Prep",
-      "cls": "ايليا النبي"
+      "name": "Adam amir"
     },
     {
+      "class": "1st Prep",
+      "cls": "داود النبي",
       "code": "119",
       "id": "pmw6os75eu4i",
-      "name": "Karas Romany",
-      "class": "1st Prep",
-      "cls": "داود النبي"
+      "name": "Karas Romany"
     },
     {
+      "class": "2nd Prep",
+      "cls": "حزقيال النبي",
       "code": "165",
       "id": "pmw6pc1be8tn",
-      "name": "Jovany George",
-      "class": "2nd Prep",
-      "cls": "حزقيال النبي"
+      "name": "Jovany George"
     },
     {
+      "class": "1st Prep",
+      "cls": "داود النبي",
       "code": "648",
       "id": "pmw6ruxf90ta",
-      "name": "Daniel John",
-      "class": "1st Prep",
-      "cls": "داود النبي"
+      "name": "Daniel John"
     },
     {
+      "class": "1st Prep",
+      "cls": "داود النبي",
       "code": "595",
       "id": "pmw8ytdpobvb",
-      "name": "Roger hany",
-      "class": "1st Prep",
-      "cls": "داود النبي"
+      "name": "Roger hany"
     },
     {
+      "class": "1st Prep",
+      "cls": "داود النبي",
       "code": "428",
       "id": "pmw8yv0oxb7j",
-      "name": "David mourad",
-      "class": "1st Prep",
-      "cls": "داود النبي"
+      "name": "David mourad"
     },
     {
+      "class": "1st Prep",
+      "cls": "يونان النبي",
       "code": "317",
       "id": "pmw8ywccadhd",
-      "name": "Jano samir",
-      "class": "1st Prep",
-      "cls": "يونان النبي"
+      "name": "Jano samir"
     },
     {
+      "class": "1st Prep",
+      "cls": "هوشع النبي",
       "code": "980",
       "id": "pmw9d9qpm9io",
-      "name": "Youssef george",
-      "class": "1st Prep",
-      "cls": "هوشع النبي"
+      "name": "Youssef george"
     },
     {
+      "class": "1st Prep",
+      "cls": "اليشع النبي",
       "code": "878",
       "id": "pmw9do0rokaq",
-      "name": "Rano Mark",
-      "class": "1st Prep",
-      "cls": "اليشع النبي"
+      "name": "Rano Mark"
     }
   ],
   "qpts": {
@@ -1633,8 +1641,5 @@
   },
   "canceled": [],
   "quizzes": [],
-  "cats": [],
-  "cur": {
-    "name": "قصة حياة يوسف تكوين 37-50"
-  }
+  "cats": []
 }
